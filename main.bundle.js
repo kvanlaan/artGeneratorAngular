@@ -59,12 +59,15 @@ var AppComponent = (function () {
         this.shapeArr = ['Rectangle', 'Triangle', 'Circle'];
         this.recursionStep = 0;
     }
-    AppComponent.prototype.ngOnInit = function () {
+    AppComponent.prototype.getRandomArt = function (clear) {
         var canvas = document.getElementById("myCanvas");
+        var ctx = canvas.getContext("2d");
+        if (clear) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
         var randomScheme = this.colorSchemes[Math.floor(Math.random() * this.colorSchemes.length)];
         var num = 0;
         while (num < this.objNum) {
-            var ctx = canvas.getContext("2d");
             var colorArr = this.genColors('Complementary');
             var randomColor = colorArr[Math.floor(Math.random() * colorArr.length)];
             var randomA = Math.random() * 1;
@@ -111,6 +114,9 @@ var AppComponent = (function () {
             }
             num++;
         }
+    };
+    AppComponent.prototype.ngOnInit = function () {
+        this.getRandomArt(true);
     };
     AppComponent.prototype.componentToHex = function (c) {
         var hex = c.toString(16);
@@ -375,7 +381,7 @@ module.exports = module.exports.toString();
 /***/ 457:
 /***/ (function(module, exports) {
 
-module.exports = "<!-- <h1>\n  {{title}}\n</h1> -->\n<canvas id=\"myCanvas\" width=\"900\" height=\"900\"\nstyle=\"margin: auto;\">\nYour browser does not support the canvas element.\n</canvas>\n"
+module.exports = "<!-- <h1>\n  {{title}}\n</h1> -->\n<button (click)=\"getRandomArt(true)\">Get New Art</button>\n<button (click)=\"getRandomArt(false)\">Add New Layer</button>\n<canvas id=\"myCanvas\" width=\"900\" height=\"900\"\nstyle=\"margin: auto;\">\nYour browser does not support the canvas element.\n</canvas>\n"
 
 /***/ }),
 

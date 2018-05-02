@@ -54,6 +54,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var AppComponent = (function () {
     function AppComponent() {
         this.objNum = 10;
+        this.max = 800;
         this.colorSchemes = ['Monchromatic', 'Complementary', 'Analogous', 'Color Triad', 'Color Tetrad',
             'Split Complementary'];
         this.shapeArr = ['Rectangle', 'Triangle', 'Circle'];
@@ -83,10 +84,10 @@ var AppComponent = (function () {
             ctx.strokeStyle = this.rgbToHex(red, green, blue);
             console.log('test', this.rgbToHex(red, green, blue));
             ctx.lineWidth = Math.random() * 10;
-            var xPos = Math.random() * 900;
-            var yPos = Math.random() * 900;
-            var height = Math.random() * 900;
-            var width = Math.random() * 900;
+            var xPos = Math.random() * 800;
+            var yPos = Math.random() * 800;
+            var height = Math.random() * 800;
+            var width = Math.random() * 800;
             switch (randomShape) {
                 case 'Rectangle':
                     ctx.fillRect(xPos, yPos, width, height);
@@ -94,17 +95,17 @@ var AppComponent = (function () {
                     break;
                 case 'Triangle':
                     ctx.beginPath();
-                    var rand1 = Math.random() * 900;
-                    var rand2 = Math.random() * 900;
-                    ctx.moveTo(rand1, Math.random() * 900);
+                    var rand1 = Math.random() * 800;
+                    var rand2 = Math.random() * 800;
+                    ctx.moveTo(rand1, Math.random() * 800);
                     ctx.lineTo(rand2, rand1);
-                    ctx.lineTo(rand2, Math.random() * 900);
+                    ctx.lineTo(rand2, Math.random() * 800);
                     ctx.fill();
                     ctx.stroke();
                     break;
                 case 'Circle':
-                    var centerX = Math.random() * 900;
-                    var centerY = Math.random() * 900;
+                    var centerX = Math.random() * 800;
+                    var centerY = Math.random() * 800;
                     var radius = Math.random() * 450;
                     ctx.beginPath();
                     ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
@@ -381,7 +382,7 @@ module.exports = module.exports.toString();
 /***/ 457:
 /***/ (function(module, exports) {
 
-module.exports = "<!-- <h1>\n  {{title}}\n</h1> -->\n<button (click)=\"getRandomArt(true)\">Get New Art</button>\n<button (click)=\"getRandomArt(false)\">Add New Layer</button>\n<canvas id=\"myCanvas\" width=\"900\" height=\"900\"\nstyle=\"margin: auto;\">\nYour browser does not support the canvas element.\n</canvas>\n"
+module.exports = "<!-- <h1>\n  {{title}}\n</h1> -->\n<button (click)=\"getRandomArt(true)\" style=\"margin-bottom: auto\" class=\"float-left inline\">Get New Art</button>\n<button (click)=\"getRandomArt(false)\" style=\"margin-bottom: auto\" class=\"float-left inline\">Add New Layer</button>\n<br>\n<canvas id=\"myCanvas\" width=\"800\" height=\"800\"\nstyle=\"display: inline; margin-left: auto; margin-right: auto\">\nYour browser does not support the canvas element.\n</canvas>\n"
 
 /***/ }),
 

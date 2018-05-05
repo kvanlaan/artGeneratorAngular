@@ -51,100 +51,217 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 
+var tinycolor;
+var ColorScheme;
 var AppComponent = (function () {
     function AppComponent() {
-        this.objNum = 10;
-        this.max = 800;
-        this.colorSchemes = ['Monchromatic', 'Complementary', 'Analogous', 'Color Triad', 'Color Tetrad',
-            'Split Complementary'];
+        this.objNum = 23;
+        this.canvasSize = 800;
+        this.maxArea = (800 * 800);
+        // colorSchemes = ['Monchromatic', 'Complementary', 'Analogous', 'Triad', 'Tetrad',
+        //   'Split Complementary'];
+        this.colorSchemes = ['Monochromatic', 'Complementary', 'Random'];
         this.shapeArr = ['Rectangle', 'Triangle', 'Circle'];
         this.recursionStep = 0;
+        this.aggrObjArea = 0;
     }
     AppComponent.prototype.getRandomArt = function (clear) {
-        var canvas = document.getElementById("myCanvas");
-        var ctx = canvas.getContext("2d");
+        this.aggrObjArea = 0;
+        this.objNum = Math.floor(Math.random() * 23) + 10;
         if (clear) {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         }
         var randomScheme = this.colorSchemes[Math.floor(Math.random() * this.colorSchemes.length)];
+        randomScheme = "Random";
         var num = 0;
-        while (num < this.objNum) {
-            var colorArr = this.genColors('Complementary');
+        var colorArr = this.genColors("Random");
+        var randomColor = colorArr[Math.floor(Math.random() * colorArr.length - 1)];
+        var randomB = Math.random() * 1;
+        randomColor = randomColor.substring(0, randomColor.length - 1) + ',' + randomB + ")";
+        this.ctx.fillStyle = randomColor;
+        // var rand = Math.floor(Math.random() * 2) + 1;
+        // if(rand === 1) {
+        // ctx.fillStyle = 'black';
+        // } else {
+        //   ctx.fillStyle = 'white';
+        // }
+        // ctx.fillRect(0, 0, canvas.width, canvas.height);
+        while (num <= 10) {
             var randomColor = colorArr[Math.floor(Math.random() * colorArr.length)];
-            var randomA = Math.random() * 1;
-            randomColor = randomColor.substring(0, randomColor.length - 1) + ',' + randomA + ")";
+            var randomStrokeOpacity = Math.random() * 1;
+            var randomShapeOpacity = Math.random() * 1;
             var randomShape = this.shapeArr[Math.floor(Math.random() * this.shapeArr.length)];
-            ctx.fillStyle = randomColor;
-            var compl = this.getComplementary(this.convertFromRgbStringToObj(randomColor));
-            console.log('test', compl);
-            // newCompl =  this.convertToRgbString(compl);
-            var red = compl.r;
-            var green = compl.g;
-            var blue = compl.b;
-            ctx.strokeStyle = this.rgbToHex(red, green, blue);
-            console.log('test', this.rgbToHex(red, green, blue));
-            ctx.lineWidth = Math.random() * 10;
-            var xPos = Math.random() * 800;
-            var yPos = Math.random() * 800;
-            var height = Math.random() * 800;
-            var width = Math.random() * 800;
-            switch (randomShape) {
-                case 'Rectangle':
-                    ctx.fillRect(xPos, yPos, width, height);
-                    ctx.strokeRect(xPos, yPos, width, height);
-                    break;
-                case 'Triangle':
-                    ctx.beginPath();
-                    var rand1 = Math.random() * 800;
-                    var rand2 = Math.random() * 800;
-                    ctx.moveTo(rand1, Math.random() * 800);
-                    ctx.lineTo(rand2, rand1);
-                    ctx.lineTo(rand2, Math.random() * 800);
-                    ctx.fill();
-                    ctx.stroke();
-                    break;
-                case 'Circle':
-                    var centerX = Math.random() * 800;
-                    var centerY = Math.random() * 800;
-                    var radius = Math.random() * 450;
-                    ctx.beginPath();
-                    ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
-                    ctx.fill();
-                    ctx.stroke();
-                    break;
+            var stroke = this.getStroke(randomScheme, randomColor);
+            if (randomScheme === 'Complementary') {
+                var complStroke = colorArr[Math.floor(Math.random() * colorArr.length)];
+                this.ctx.strokeStyle = complStroke.substring(0, complStroke.length - 1) + ',' + randomStrokeOpacity + ")";
             }
+            else if (randomScheme !== 'Monochromatic') {
+                console.log('setting stroke to color', randomScheme);
+                this.ctx.strokeStyle = 'rgb(' + stroke['r'] + ',' + stroke['g'] + ',' + stroke['b'] + ', 1)';
+            }
+            else {
+                console.log('setting stroke to black', randomScheme);
+                this.ctx.strokeStyle = 'rgb(' + stroke['r'] + ',' + stroke['g'] + ',' + stroke['b'] + ', 1)';
+            }
+            var rand = Math.floor(Math.random() * 2) + 1;
+            if (rand === 1) {
+                this.ctx.strokeStyle = 'black';
+            }
+            randomColor = randomColor.substring(0, randomColor.length - 1) + ',' + randomShapeOpacity + ")";
+            this.ctx.fillStyle = randomColor;
+            this.ctx.lineWidth = Math.random() * 10;
+            this.drawShape(randomShape, true);
+            num++;
+        }
+        num = 0;
+        while (num < this.objNum) {
+            var randomColor = colorArr[Math.floor(Math.random() * colorArr.length)];
+            var randomStrokeOpacity = Math.random() * 1;
+            var randomShapeOpacity = Math.random() * 1;
+            var randomShape = this.shapeArr[Math.floor(Math.random() * this.shapeArr.length)];
+            // var randomAC = Math.random() * 1;
+            var stroke = this.getStroke(randomScheme, randomColor);
+            if (randomScheme === 'Complementary') {
+                var complStroke = colorArr[Math.floor(Math.random() * colorArr.length)];
+                this.ctx.strokeStyle = complStroke.substring(0, complStroke.length - 1) + ',' + randomStrokeOpacity + ")";
+            }
+            else if (randomScheme !== 'Monochromatic') {
+                this.ctx.strokeStyle = 'rgb(' + stroke['r'] + ',' + stroke['g'] + ',' + stroke['b'] + ', 1)';
+            }
+            else {
+                // ctx.strokeStyle = stroke.substring(0, stroke.length - 1) + ',' + randomA + ")";
+                // this.ctx.strokeStyle = 'black';
+                this.ctx.strokeStyle = 'rgb(' + stroke['r'] + ',' + stroke['g'] + ',' + stroke['b'] + ', 1)';
+            }
+            var rand = Math.floor(Math.random() * 2) + 1;
+            if (rand === 1) {
+                this.ctx.strokeStyle = 'black';
+            }
+            randomColor = randomColor.substring(0, randomColor.length - 1) + ',' + randomShapeOpacity + ")";
+            this.ctx.fillStyle = randomColor;
+            this.ctx.lineWidth = Math.random() * 10;
+            this.drawShape(randomShape);
             num++;
         }
     };
     AppComponent.prototype.ngOnInit = function () {
+        // var color = tinycolor("red");
+        this.canvas = document.getElementById("myCanvas");
+        this.ctx = this.canvas.getContext("2d");
         this.getRandomArt(true);
+    };
+    AppComponent.prototype.drawShape = function (shape, small) {
+        var xPos = Math.random() * this.canvasSize;
+        var yPos = Math.random() * this.canvasSize;
+        var height = Math.random() * this.canvasSize;
+        var width = Math.random() * this.canvasSize;
+        // if (this.objNum > 15) {
+        //   height = height / 10;
+        //   width = width / 10;
+        // }
+        var currObjArea = height * width;
+        if (small || (this.aggrObjArea + currObjArea) >= this.maxArea) {
+            height = Math.random() * this.canvasSize / 25;
+            var width = Math.random() * this.canvasSize / 25;
+            currObjArea = height * width;
+        }
+        if (small) {
+            var xPos = Math.random() * this.canvasSize / 2;
+            var yPos = (Math.random() * this.canvasSize) + (this.canvasSize / 2);
+        }
+        this.aggrObjArea += currObjArea;
+        switch (shape) {
+            case 'Rectangle':
+                this.ctx.fillRect(xPos, yPos, width, height);
+                this.ctx.strokeRect(xPos, yPos, width, height);
+                break;
+            case 'Triangle':
+                this.ctx.beginPath();
+                var rand1 = Math.random() * this.canvasSize;
+                var rand2 = Math.random() * this.canvasSize;
+                this.ctx.moveTo(rand1, Math.random() * this.canvasSize);
+                this.ctx.lineTo(rand2, rand1);
+                this.ctx.lineTo(rand2, Math.random() * this.canvasSize);
+                this.ctx.fill();
+                this.ctx.stroke();
+                break;
+            case 'Circle':
+                var radius = width / 2;
+                this.ctx.beginPath();
+                this.ctx.arc(xPos, yPos, radius, 0, 2 * Math.PI, false);
+                this.ctx.fill();
+                this.ctx.stroke();
+                break;
+        }
+    };
+    AppComponent.prototype.getStroke = function (scheme, color) {
+        switch (scheme) {
+            case 'Random':
+                return this.getRandomRgb();
+            case 'Monochromatic':
+                return this.getRandomRgb();
+            case 'Complementary':
+                return this.getComplementary(this.convertFromRgbStringToObj(color));
+            case 'Analogous':
+                return [];
+            case 'Color Triad':
+                return [];
+            case 'Tetrad':
+                return this.getRandomRgb();
+            case 'Split Complementary':
+                return [];
+        }
     };
     AppComponent.prototype.componentToHex = function (c) {
         var hex = c.toString(16);
         return hex.length == 1 ? "0" + hex : hex;
     };
+    //BBOOK WUZ HERE
     AppComponent.prototype.rgbToHex = function (r, g, b) {
         return "#" + this.componentToHex(r) + this.componentToHex(g) + this.componentToHex(b);
     };
     AppComponent.prototype.genColors = function (scheme) {
         switch (scheme) {
-            case 'Monchromatic':
-                return [];
+            case 'Random':
+                return this.getRandom();
+            case 'Monochromatic':
+                return this.getMono();
             case 'Complementary':
                 return this.getComplementaryScheme();
             case 'Analogous':
                 return [];
             case 'Color Triad':
                 return [];
-            case 'Color Tetrad':
-                return [];
+            case 'Tetrad':
+                return this.getTetrad();
             case 'Split Complementary':
                 return [];
         }
     };
     AppComponent.prototype.getMono = function () {
+        this.recursionStep = 0;
+        var tempRgb = this.getRandomRgb();
+        var tempRgbString = 'rgb(' + tempRgb.r + ',' + tempRgb.g + ',' + tempRgb.b + ')';
+        var monoColorArr = [];
+        while (this.recursionStep <= (this.objNum + 600)) {
+            monoColorArr.push(tempRgbString);
+            this.recursionStep++;
+        }
+        return monoColorArr;
     };
-    AppComponent.prototype.randomRgb = function () {
+    AppComponent.prototype.getRandom = function () {
+        this.recursionStep = 0;
+        var colorArr = [];
+        while (this.recursionStep <= this.objNum + 1) {
+            var tempRgb = this.getRandomRgb();
+            var tempRgbString = 'rgb(' + tempRgb.r + ',' + tempRgb.g + ',' + tempRgb.b + ')';
+            colorArr.push(tempRgbString);
+            this.recursionStep++;
+        }
+        return colorArr;
+    };
+    AppComponent.prototype.getRandomRgb = function () {
         var num = Math.round(0xffffff * Math.random());
         var r = num >> 16;
         var g = num >> 8 & 255;
@@ -152,11 +269,11 @@ var AppComponent = (function () {
         return { 'r': r, 'g': g, 'b': b };
     };
     AppComponent.prototype.getComplementaryScheme = function () {
-        var tempRgb = this.randomRgb();
+        var tempRgb = this.getRandomRgb();
         var complementaryColorArr = ['rgb(' + tempRgb.r + ',' + tempRgb.g + ',' + tempRgb.b + ')'];
         this.recursionStep = 0;
         var currRgb = tempRgb;
-        while (this.recursionStep <= this.objNum) {
+        while (this.recursionStep <= (this.objNum + 200)) {
             // recursion
             currRgb = this.getComplementary(currRgb);
             complementaryColorArr.push(this.convertToRgbString(currRgb));
@@ -175,13 +292,9 @@ var AppComponent = (function () {
         g = g.substring(0, g.length - 1);
         var b = rgbStringArr[2];
         b = b.substring(0, b.length - 1);
-        console.log('r', r);
-        console.log('g', g);
-        console.log('b', b);
         return { 'r': r, 'g': g, 'b': b };
     };
     AppComponent.prototype.getComplementary = function (rgb) {
-        // complement
         var temphsv = this.RGB2HSV(rgb);
         temphsv.hue = this.HueShift(temphsv.hue, 180.0);
         var finRgb = this.HSV2RGB(temphsv);
@@ -281,11 +394,30 @@ var AppComponent = (function () {
     };
     AppComponent.prototype.getAnalogous = function () {
     };
-    AppComponent.prototype.getColorTriad = function () {
+    AppComponent.prototype.getTriad = function () {
     };
-    AppComponent.prototype.getColorTetrad = function () {
+    AppComponent.prototype.getTetrad = function () {
+        console.log('inside tetrad');
+        var scheme = new ColorScheme;
+        console.log('here');
+        scheme.from_hue(21)
+            .scheme('tetrad')
+            .variation('soft');
+        var colors = scheme.colors();
+        console.log('colors', colors);
+        return colors;
     };
     AppComponent.prototype.getSplitComplementary = function () {
+    };
+    AppComponent.prototype.saveImage = function (link) {
+        console.log('here');
+        link.href = this.canvas.toDataURL();
+        console.log('linke.href', link.href);
+        link.download = 'test.png';
+    };
+    AppComponent.prototype.download = function (element) {
+        element.href = this.canvas.toDataURL();
+        return;
     };
     AppComponent = __decorate([
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["U" /* Component */])({
@@ -382,7 +514,7 @@ module.exports = module.exports.toString();
 /***/ 457:
 /***/ (function(module, exports) {
 
-module.exports = "<!-- <h1>\n  {{title}}\n</h1> -->\n<button (click)=\"getRandomArt(true)\" style=\"margin-bottom: auto\" class=\"float-left inline\">Get New Art</button>\n<button (click)=\"getRandomArt(false)\" style=\"margin-bottom: auto\" class=\"float-left inline\">Add New Layer</button>\n<br>\n<canvas id=\"myCanvas\" width=\"800\" height=\"800\"\nstyle=\"display: inline; margin-left: auto; margin-right: auto\">\nYour browser does not support the canvas element.\n</canvas>\n"
+module.exports = "<!-- <h1>\n  {{title}}\n</h1> -->\n<button (click)=\"getRandomArt(true)\" style=\"margin-bottom: auto\" class=\"float-left inline\">Get New Art</button>\n<button (click)=\"getRandomArt(false)\" style=\"margin-bottom: auto\" class=\"float-left inline\">Add New Layer</button>\n<a style=\"margin-bottom: auto; display: inline;\" class=\"float-left inline\" href=\"#\" target=\"_blank\" #downloadLink (click)=\"download(downloadLink)\" download=\"test.jpg\">\n Save this art!\n</a>\n<canvas id=\"myCanvas\" width=\"800\" height=\"800\"\nstyle=\"display: inline; margin-left: auto; margin-right: auto\">\nYour browser does not support the canvas element.\n</canvas>\n"
 
 /***/ }),
 

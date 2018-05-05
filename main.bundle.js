@@ -75,9 +75,12 @@ var AppComponent = (function () {
         randomScheme = "Random";
         var num = 0;
         var colorArr = this.genColors("Random");
-        var randomColor = colorArr[Math.floor(Math.random() * colorArr.length - 1)];
+        var randomColor = colorArr[Math.floor(Math.random() * (colorArr.length - 1))];
         var randomB = Math.random() * 1;
+        console.log('colorArr', colorArr);
+        console.log('randomColor before', randomColor);
         randomColor = randomColor.substring(0, randomColor.length - 1) + ',' + randomB + ")";
+        console.log('random past');
         this.ctx.fillStyle = randomColor;
         // var rand = Math.floor(Math.random() * 2) + 1;
         // if(rand === 1) {
@@ -108,7 +111,9 @@ var AppComponent = (function () {
             if (rand === 1) {
                 this.ctx.strokeStyle = 'black';
             }
+            console.log('random color', randomColor);
             randomColor = randomColor.substring(0, randomColor.length - 1) + ',' + randomShapeOpacity + ")";
+            console.log('here past error');
             this.ctx.fillStyle = randomColor;
             this.ctx.lineWidth = Math.random() * 10;
             this.drawShape(randomShape, true);
@@ -397,22 +402,17 @@ var AppComponent = (function () {
     AppComponent.prototype.getTriad = function () {
     };
     AppComponent.prototype.getTetrad = function () {
-        console.log('inside tetrad');
         var scheme = new ColorScheme;
-        console.log('here');
         scheme.from_hue(21)
             .scheme('tetrad')
             .variation('soft');
         var colors = scheme.colors();
-        console.log('colors', colors);
         return colors;
     };
     AppComponent.prototype.getSplitComplementary = function () {
     };
     AppComponent.prototype.saveImage = function (link) {
-        console.log('here');
         link.href = this.canvas.toDataURL();
-        console.log('linke.href', link.href);
         link.download = 'test.png';
     };
     AppComponent.prototype.download = function (element) {
@@ -514,7 +514,7 @@ module.exports = module.exports.toString();
 /***/ 457:
 /***/ (function(module, exports) {
 
-module.exports = "<!-- <h1>\n  {{title}}\n</h1> -->\n<button (click)=\"getRandomArt(true)\" style=\"margin-bottom: auto\" class=\"float-left inline\">Get New Art</button>\n<button (click)=\"getRandomArt(false)\" style=\"margin-bottom: auto\" class=\"float-left inline\">Add New Layer</button>\n<a style=\"margin-bottom: auto; display: inline;\" class=\"float-left inline\" href=\"#\" target=\"_blank\" #downloadLink (click)=\"download(downloadLink)\" download=\"test.jpg\">\n Save this art!\n</a>\n<canvas id=\"myCanvas\" width=\"800\" height=\"800\"\nstyle=\"display: inline; margin-left: auto; margin-right: auto\">\nYour browser does not support the canvas element.\n</canvas>\n"
+module.exports = "<!-- <h1>\n  {{title}}\n</h1> -->\n<button (click)=\"getRandomArt(true)\" style=\"margin-bottom: auto\" class=\"float-left inline\">Get New Art</button>\n<button (click)=\"getRandomArt(false)\" style=\"margin-bottom: auto\" class=\"float-left inline\">Add New Layer</button>\n<button style=\"margin-bottom: auto\" class=\"float-left inline\"><a class=\"float-left inline\" href=\"#\" target=\"_blank\" #downloadLink (click)=\"download(downloadLink)\" download=\"test.jpg\">\n Save this art! </a></button>\n<br>\n<canvas id=\"myCanvas\" width=\"800\" height=\"800\"\nstyle=\"display: inline; margin-left: auto; margin-right: auto\">\nYour browser does not support the canvas element.\n</canvas>\n"
 
 /***/ }),
 

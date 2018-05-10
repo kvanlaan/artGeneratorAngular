@@ -158,14 +158,13 @@ var AppComponent = (function () {
     AppComponent.prototype.saveArt = function (clear) {
         if (clear) {
             this.undoList = [];
-            this.redoList = [];
         }
         this.undoList.push(this.canvas.toDataURL());
         this.redoList = [];
         this.disableCheck();
     };
     AppComponent.prototype.undo = function () {
-        if (this.undoList.length > 1) {
+        if (this.undoList.length) {
             var redoState = this.undoList.pop();
             this.redoList.push(redoState);
             var restoreState = this.undoList[this.undoList.length - 1];
@@ -185,7 +184,7 @@ var AppComponent = (function () {
         else {
             this.disableRedo = false;
         }
-        if (this.undoList.length <= 1) {
+        if (this.undoList.length === 0) {
             this.disableUndo = true;
         }
         else {

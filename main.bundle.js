@@ -1,6 +1,6 @@
 webpackJsonp([1,4],{
 
-/***/ 290:
+/***/ 291:
 /***/ (function(module, exports) {
 
 function webpackEmptyContext(req) {
@@ -9,20 +9,20 @@ function webpackEmptyContext(req) {
 webpackEmptyContext.keys = function() { return []; };
 webpackEmptyContext.resolve = webpackEmptyContext;
 module.exports = webpackEmptyContext;
-webpackEmptyContext.id = 290;
+webpackEmptyContext.id = 291;
 
 
 /***/ }),
 
-/***/ 291:
+/***/ 292:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_platform_browser_dynamic__ = __webpack_require__(379);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__app_app_module__ = __webpack_require__(400);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__environments_environment__ = __webpack_require__(401);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_platform_browser_dynamic__ = __webpack_require__(380);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__app_app_module__ = __webpack_require__(401);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__environments_environment__ = __webpack_require__(402);
 
 
 
@@ -35,7 +35,7 @@ __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__angular_platform_browser_dyna
 
 /***/ }),
 
-/***/ 399:
+/***/ 400:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -64,6 +64,8 @@ var AppComponent = (function () {
         this.shapeArr = ['Rectangle', 'Triangle', 'Circle'];
         this.recursionStep = 0;
         this.aggrObjArea = 0;
+        this.redoList = [];
+        this.undoList = [];
     }
     AppComponent.prototype.getRandomArt = function (clear) {
         this.aggrObjArea = 0;
@@ -149,9 +151,42 @@ var AppComponent = (function () {
             this.drawShape(randomShape);
             num++;
         }
+        this.saveArt(clear);
+    };
+    AppComponent.prototype.saveArt = function (clear) {
+        if (clear) {
+            this.undoList = [];
+            this.redoList = [];
+        }
+        this.undoList.push(this.canvas.toDataURL());
+        this.redoList = [];
+    };
+    AppComponent.prototype.undo = function () {
+        if (this.undoList.length > 1) {
+            var redoState = this.undoList.pop();
+            this.redoList.push(redoState);
+            var restoreState = this.undoList[this.undoList.length - 1];
+            var img = new Image();
+            img.src = restoreState;
+            this.ctx.clearRect(0, 0, this.canvasSize, this.canvasSize);
+            img.onload = function () {
+                this.ctx.drawImage(img, 0, 0, this.canvasSize, this.canvasSize, 0, 0, this.canvasSize, this.canvasSize);
+            }.bind(this);
+        }
+    };
+    AppComponent.prototype.redo = function () {
+        if (this.redoList.length) {
+            var restoreState = this.redoList.pop();
+            var img = new Image();
+            img.src = restoreState;
+            this.ctx.clearRect(0, 0, this.canvasSize, this.canvasSize);
+            img.onload = function () {
+                this.ctx.drawImage(img, 0, 0, this.canvasSize, this.canvasSize, 0, 0, this.canvasSize, this.canvasSize);
+                this.undoList.push(this.canvas.toDataURL());
+            }.bind(this);
+        }
     };
     AppComponent.prototype.ngOnInit = function () {
-        // var color = tinycolor("red");
         this.canvas = document.getElementById("myCanvas");
         this.ctx = this.canvas.getContext("2d");
         this.getRandomArt(true);
@@ -161,10 +196,6 @@ var AppComponent = (function () {
         var yPos = Math.random() * this.canvasSize;
         var height = Math.random() * this.canvasSize;
         var width = Math.random() * this.canvasSize;
-        // if (this.objNum > 15) {
-        //   height = height / 10;
-        //   width = width / 10;
-        // }
         var currObjArea = height * width;
         if (small || (this.aggrObjArea + currObjArea) >= this.maxArea) {
             height = Math.random() * this.canvasSize / 25;
@@ -301,7 +332,7 @@ var AppComponent = (function () {
     };
     AppComponent.prototype.getComplementary = function (rgb) {
         var temphsv = this.RGB2HSV(rgb);
-        temphsv.hue = this.HueShift(temphsv.hue, 180.0);
+        temphsv.hue = this.hueShift(temphsv.hue, 180.0);
         var finRgb = this.HSV2RGB(temphsv);
         return finRgb;
     };
@@ -381,8 +412,8 @@ var AppComponent = (function () {
         }
         return rgb;
     };
-    //Adding HueShift via Jacob (see comments)
-    AppComponent.prototype.HueShift = function (h, s) {
+    //Adding hueShift via Jacob (see comments)
+    AppComponent.prototype.hueShift = function (h, s) {
         h += s;
         while (h >= 360.0)
             h -= 360.0;
@@ -433,15 +464,15 @@ var AppComponent = (function () {
 
 /***/ }),
 
-/***/ 400:
+/***/ 401:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_platform_browser__ = __webpack_require__(166);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_core__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__angular_forms__ = __webpack_require__(369);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__angular_http__ = __webpack_require__(375);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__app_component__ = __webpack_require__(399);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__angular_forms__ = __webpack_require__(370);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__angular_http__ = __webpack_require__(376);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__app_component__ = __webpack_require__(400);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return AppModule; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -481,7 +512,7 @@ var AppModule = (function () {
 
 /***/ }),
 
-/***/ 401:
+/***/ 402:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -514,14 +545,14 @@ module.exports = module.exports.toString();
 /***/ 457:
 /***/ (function(module, exports) {
 
-module.exports = "<!-- <h1>\n  {{title}}\n</h1> -->\n<button (click)=\"getRandomArt(true)\" style=\"margin-bottom: auto\" class=\"float-left inline\">Get New Art</button>\n<button (click)=\"getRandomArt(false)\" style=\"margin-bottom: auto\" class=\"float-left inline\">Add New Layer</button>\n<button style=\"margin-bottom: auto\" class=\"float-left inline\"><a class=\"float-left inline\" href=\"#\" target=\"_blank\" #downloadLink (click)=\"download(downloadLink)\" download=\"test.jpg\">\n Save this art! </a></button>\n<br>\n<canvas id=\"myCanvas\" width=\"800\" height=\"800\"\nstyle=\"display: inline; margin-left: auto; margin-right: auto\">\nYour browser does not support the canvas element.\n</canvas>\n"
+module.exports = "<!-- <h1>\n  {{title}}\n</h1> -->\n<button (click)=\"getRandomArt(true)\" style=\"margin-bottom: auto\" class=\"float-left inline\">Get New Art</button>\n<button (click)=\"getRandomArt(false)\" style=\"margin-bottom: auto\" class=\"float-left inline\">Add New Layer</button>\n<button (click)=\"undo()\" style=\"margin-bottom: auto\" class=\"float-left inline\">Undo Layer</button>\n<button (click)=\"redo()\" style=\"margin-bottom: auto\" class=\"float-left inline\">Redo Layer</button>\n<button style=\"margin-bottom: auto\" class=\"float-left inline\"><a class=\"float-left inline\" href=\"#\" target=\"_blank\" #downloadLink (click)=\"download(downloadLink)\" download=\"test.jpg\">\n Save this art! </a></button>\n<br>\n<canvas id=\"myCanvas\" width=\"800\" height=\"800\" style=\"display: inline; margin-left: auto; margin-right: auto\">\nYour browser does not support the canvas element.\n</canvas>\n"
 
 /***/ }),
 
 /***/ 472:
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(291);
+module.exports = __webpack_require__(292);
 
 
 /***/ })

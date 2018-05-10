@@ -66,6 +66,8 @@ var AppComponent = (function () {
         this.aggrObjArea = 0;
         this.redoList = [];
         this.undoList = [];
+        this.disableRedo = true;
+        this.disableUndo = true;
     }
     AppComponent.prototype.getRandomArt = function (clear) {
         this.aggrObjArea = 0;
@@ -160,6 +162,7 @@ var AppComponent = (function () {
         }
         this.undoList.push(this.canvas.toDataURL());
         this.redoList = [];
+        this.disableCheck();
     };
     AppComponent.prototype.undo = function () {
         if (this.undoList.length > 1) {
@@ -173,6 +176,21 @@ var AppComponent = (function () {
                 this.ctx.drawImage(img, 0, 0, this.canvasSize, this.canvasSize, 0, 0, this.canvasSize, this.canvasSize);
             }.bind(this);
         }
+        this.disableCheck();
+    };
+    AppComponent.prototype.disableCheck = function () {
+        if (this.redoList.length === 0) {
+            this.disableRedo = true;
+        }
+        else {
+            this.disableRedo = false;
+        }
+        if (this.undoList.length <= 1) {
+            this.disableUndo = true;
+        }
+        else {
+            this.disableUndo = false;
+        }
     };
     AppComponent.prototype.redo = function () {
         if (this.redoList.length) {
@@ -185,6 +203,7 @@ var AppComponent = (function () {
                 this.undoList.push(this.canvas.toDataURL());
             }.bind(this);
         }
+        this.disableCheck();
     };
     AppComponent.prototype.ngOnInit = function () {
         this.canvas = document.getElementById("myCanvas");
@@ -545,7 +564,7 @@ module.exports = module.exports.toString();
 /***/ 457:
 /***/ (function(module, exports) {
 
-module.exports = "<!-- <h1>\n  {{title}}\n</h1> -->\n<button (click)=\"getRandomArt(true)\" style=\"margin-bottom: auto\" class=\"float-left inline\">Get New Art</button>\n<button (click)=\"getRandomArt(false)\" style=\"margin-bottom: auto\" class=\"float-left inline\">Add New Layer</button>\n<button (click)=\"undo()\" style=\"margin-bottom: auto\" class=\"float-left inline\">Undo Layer</button>\n<button (click)=\"redo()\" style=\"margin-bottom: auto\" class=\"float-left inline\">Redo Layer</button>\n<button style=\"margin-bottom: auto\" class=\"float-left inline\"><a class=\"float-left inline\" href=\"#\" target=\"_blank\" #downloadLink (click)=\"download(downloadLink)\" download=\"test.jpg\">\n Save this art! </a></button>\n<br>\n<canvas id=\"myCanvas\" width=\"800\" height=\"800\" style=\"display: inline; margin-left: auto; margin-right: auto\">\nYour browser does not support the canvas element.\n</canvas>\n"
+module.exports = "<!-- <h1>\n  {{title}}\n</h1> -->\n<button (click)=\"getRandomArt(true)\" style=\"margin-bottom: auto\" class=\"float-left inline\">Get New Art</button>\n<button (click)=\"getRandomArt(false)\" style=\"margin-bottom: auto\" class=\"float-left inline\">Add New Layer</button>\n<button [disabled]=\"disableUndo\" (click)=\"undo()\" style=\"margin-bottom: auto\" class=\"float-left inline\">Undo Layer</button>\n<button  [disabled]=\"disableRedo\" (click)=\"redo()\" style=\"margin-bottom: auto\" class=\"float-left inline\">Redo Layer</button>\n<button style=\"margin-bottom: auto\" class=\"float-left inline\"><a class=\"float-left inline\" href=\"#\" target=\"_blank\" #downloadLink (click)=\"download(downloadLink)\" download=\"test.jpg\">\n Save this art! </a></button>\n<br>\n<canvas id=\"myCanvas\" width=\"800\" height=\"800\" style=\"display: inline; margin-left: auto; margin-right: auto\">\nYour browser does not support the canvas element.\n</canvas>\n"
 
 /***/ }),
 

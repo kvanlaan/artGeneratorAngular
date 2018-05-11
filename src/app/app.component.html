@@ -1,0 +1,15 @@
+<!-- <h1>
+  {{title}}
+</h1> -->
+<button (click)="getRandomArt(true)" style="margin-bottom: auto" class="float-left inline" mat-button>Get New Art</button>
+
+
+<button (click)="getRandomArt(false)" style="margin-bottom: auto" class="float-left inline" mat-button>Add New Layer</button>
+<button [disabled]="disableUndo" (click)="undo()" style="margin-bottom: auto" class="float-left inline" mat-button>Undo Layer</button>
+<button  [disabled]="disableRedo" (click)="redo()" style="margin-bottom: auto" class="float-left inline" mat-button>Redo Layer</button>
+<button style="margin-bottom: auto" class="float-left inline" mat-button><a class="float-left inline" href="#" target="_blank" #downloadLink (click)="download(downloadLink)" download="test.jpg">
+ Save this art! </a></button>
+<br>
+<canvas id="myCanvas" width="800" height="800" style="display: inline; margin-top: 2%; margin-left: auto; margin-right: auto">
+Your browser does not support the canvas element.
+</canvas>

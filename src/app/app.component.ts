@@ -120,7 +120,7 @@ export class AppComponent {
   }
 
   undo() {
-    if (this.undoList.length) {
+    if (this.undoList.length > 1) {
       var redoState = this.undoList.pop();
       this.redoList.push(redoState)
       var restoreState = this.undoList[this.undoList.length - 1];
@@ -134,12 +134,12 @@ export class AppComponent {
     this.disableCheck();
   }
   disableCheck() {
-    if(this.redoList.length === 0) {
+    if (this.redoList.length === 0) {
       this.disableRedo = true;
     } else {
       this.disableRedo = false;
     }
-    if(this.undoList.length === 0) {
+    if (this.undoList.length <= 1) {
       this.disableUndo = true;
     } else {
       this.disableUndo = false;
@@ -154,8 +154,9 @@ export class AppComponent {
       img.onload = function () {
         this.ctx.drawImage(img, 0, 0, this.canvasSize, this.canvasSize, 0, 0, this.canvasSize, this.canvasSize);
         this.undoList.push(this.canvas.toDataURL());
+        this.disableCheck();
       }.bind(this);
-    } 
+    }
     this.disableCheck();
   }
 
@@ -198,7 +199,6 @@ export class AppComponent {
         this.ctx.stroke();
         break;
       case 'Circle':
-
         var radius = width / 2;
         this.ctx.beginPath();
         this.ctx.arc(xPos, yPos, radius, 0, 2 * Math.PI, false);
@@ -393,7 +393,6 @@ export class AppComponent {
   }
 
   getTriad() {
-
   }
   getTetrad() {
     var scheme = new ColorScheme;

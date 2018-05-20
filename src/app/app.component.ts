@@ -10,8 +10,8 @@ var ColorScheme;
 
 export class AppComponent {
   objNum = 23;
-  canvasSize = 800;
-  maxArea = (800 * 800);
+  canvasSize = 700;
+  maxArea = (700 * 700);
   // colorSchemes = ['Monchromatic', 'Complementary', 'Analogous', 'Triad', 'Tetrad',
   //   'Split Complementary'];
   colorSchemes = ['Monochromatic', 'Complementary', 'Random'];
@@ -24,6 +24,15 @@ export class AppComponent {
   undoList = [];
   disableRedo = true;
   disableUndo = true;
+  isSafari = false;
+
+  ngOnInit() {
+    this.isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+    this.canvas = <HTMLCanvasElement>document.getElementById("myCanvas");
+    this.ctx = this.canvas.getContext("2d");
+    this.getRandomArt(true);
+  }
+
   getRandomArt(clear) {
     this.aggrObjArea = 0;
     this.objNum = Math.floor(Math.random() * 23) + 10;
@@ -32,23 +41,8 @@ export class AppComponent {
     }
     var randomScheme = this.colorSchemes[Math.floor(Math.random() * this.colorSchemes.length)];
     randomScheme = "Random";
-
     var num = 0;
     var colorArr = this.genColors("Random");
-    var randomColor = colorArr[Math.floor(Math.random() * (colorArr.length - 1))];
-    var randomB = Math.random() * 1;
-    console.log('colorArr', colorArr);
-    console.log('randomColor before', randomColor);
-    randomColor = randomColor.substring(0, randomColor.length - 1) + ',' + randomB + ")";
-    console.log('random past');
-    this.ctx.fillStyle = randomColor;
-    // var rand = Math.floor(Math.random() * 2) + 1;
-    // if(rand === 1) {
-    // ctx.fillStyle = 'black';
-    // } else {
-    //   ctx.fillStyle = 'white';
-    // }
-    // ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     while (num <= 10) {
       var randomColor = colorArr[Math.floor(Math.random() * colorArr.length)];
@@ -70,15 +64,67 @@ export class AppComponent {
       if (rand === 1) {
         this.ctx.strokeStyle = 'black';
       }
-      console.log('random color', randomColor);
-      randomColor = randomColor.substring(0, randomColor.length - 1) + ',' + randomShapeOpacity + ")";
-      console.log('here past error');
+      if (!this.isSafari) {
+        this.ctx.globalAlpha = 1;
+        randomColor = randomColor.substring(0, randomColor.length - 1) + ',' + randomShapeOpacity + ")";
+        var rand = Math.floor(Math.random() * 2) + 1;
+        if (rand === 1) {
+          this.ctx.globalAlpha = randomShapeOpacity;
+        }
+      } else {
+        this.ctx.globalAlpha = randomShapeOpacity;
+      }
       this.ctx.fillStyle = randomColor;
       this.ctx.lineWidth = Math.random() * 10;
       this.drawShape(randomShape, true);
       num++;
     }
     num = 0;
+    // while (num < (Math.floor(this.objNum * (2/3)))) {
+      this.aggrObjArea = this.aggrObjArea * (1/4);
+      while (num < this.objNum) {
+      var randomColor = colorArr[Math.floor(Math.random() * colorArr.length)];
+      var randomStrokeOpacity = Math.random() * 1;
+      var randomShapeOpacity = Math.random() * .4;
+      var randomShape = this.shapeArr[Math.floor(Math.random() * this.shapeArr.length)];
+      // var randomAC = Math.random() * 1;
+      var stroke = this.getStroke(randomScheme, randomColor);
+      if (randomScheme === 'Complementary') {
+
+        var complStroke = colorArr[Math.floor(Math.random() * colorArr.length)];
+        this.ctx.strokeStyle = complStroke.substring(0, complStroke.length - 1) + ',' + randomStrokeOpacity + ")";
+      } else if (randomScheme !== 'Monochromatic') {
+        this.ctx.strokeStyle = 'rgb(' + stroke['r'] + ',' + stroke['g'] + ',' + stroke['b'] + ')';
+      } else {
+        this.ctx.strokeStyle = 'rgb(' + stroke['r'] + ',' + stroke['g'] + ',' + stroke['b'] + ')';
+
+      }
+      var rand = Math.floor(Math.random() * 2) + 1;
+      if (rand === 1) {
+        this.ctx.strokeStyle = 'black';
+      }
+
+      if (!this.isSafari) {
+        this.ctx.globalAlpha = 1;
+        randomColor = randomColor.substring(0, randomColor.length - 1) + ',' + randomShapeOpacity + ")";
+        // var rand = Math.floor(Math.random() * 2) + 1;
+        // if (rand === 1) {
+        this.ctx.globalAlpha = randomShapeOpacity;
+        // }
+      } else {
+        this.ctx.globalAlpha = randomShapeOpacity;
+      }
+      this.ctx.fillStyle = randomColor;
+      this.ctx.lineWidth = Math.random() * 10;
+      this.drawShape(randomShape);
+      num++;
+    }
+
+    num = 0;
+    this.ctx.globalAlpha = 1;
+
+    // while (num <  Math.floor(this.objNum * (2/3))) {
+
     while (num < this.objNum) {
       var randomColor = colorArr[Math.floor(Math.random() * colorArr.length)];
       var randomStrokeOpacity = Math.random() * 1;
@@ -91,24 +137,28 @@ export class AppComponent {
         var complStroke = colorArr[Math.floor(Math.random() * colorArr.length)];
         this.ctx.strokeStyle = complStroke.substring(0, complStroke.length - 1) + ',' + randomStrokeOpacity + ")";
       } else if (randomScheme !== 'Monochromatic') {
-        this.ctx.strokeStyle = 'rgb(' + stroke['r'] + ',' + stroke['g'] + ',' + stroke['b'] + ', 1)';
+        this.ctx.strokeStyle = 'rgb(' + stroke['r'] + ',' + stroke['g'] + ',' + stroke['b'] + ')';
       } else {
-        // ctx.strokeStyle = stroke.substring(0, stroke.length - 1) + ',' + randomA + ")";
-        // this.ctx.strokeStyle = 'black';
-        this.ctx.strokeStyle = 'rgb(' + stroke['r'] + ',' + stroke['g'] + ',' + stroke['b'] + ', 1)';
+        this.ctx.strokeStyle = 'rgb(' + stroke['r'] + ',' + stroke['g'] + ',' + stroke['b'] + ')';
 
       }
       var rand = Math.floor(Math.random() * 2) + 1;
       if (rand === 1) {
         this.ctx.strokeStyle = 'black';
       }
-      randomColor = randomColor.substring(0, randomColor.length - 1) + ',' + randomShapeOpacity + ")";
+
+      if (!this.isSafari) {
+        randomColor = randomColor.substring(0, randomColor.length - 1) + ',' + randomShapeOpacity + ")";
+      } else {
+        this.ctx.globalAlpha = randomShapeOpacity;
+      }
       this.ctx.fillStyle = randomColor;
       this.ctx.lineWidth = Math.random() * 10;
       this.drawShape(randomShape);
       num++;
     }
     this.saveArt(clear);
+    this.ctx.globalAlpha = 1;
   }
   saveArt(clear) {
     if (clear) {
@@ -160,11 +210,6 @@ export class AppComponent {
     this.disableCheck();
   }
 
-  ngOnInit() {
-    this.canvas = <HTMLCanvasElement>document.getElementById("myCanvas");
-    this.ctx = this.canvas.getContext("2d");
-    this.getRandomArt(true);
-  }
   drawShape(shape, small?) {
     var xPos = Math.random() * this.canvasSize;
     var yPos = Math.random() * this.canvasSize;

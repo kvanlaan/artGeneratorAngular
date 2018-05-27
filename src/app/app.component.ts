@@ -15,7 +15,9 @@ export class AppComponent {
   // colorSchemes = ['Monchromatic', 'Complementary', 'Analogous', 'Triad', 'Tetrad',
   //   'Split Complementary'];
   colorSchemes = ['Monochromatic', 'Complementary', 'Random'];
-  shapeArr = ['Rectangle', 'Triangle', 'Circle'];
+  shapeArr = ['Rectangle', 'Triangle', 'Circle', 'Line'];
+
+  // shapeArr = ['Triangle', 'Circle', 'Trapezoid', 'Line'];
   canvas;
   ctx;
   recursionStep = 0;
@@ -25,49 +27,63 @@ export class AppComponent {
   disableRedo = true;
   disableUndo = true;
   isSafari = false;
-
+  lastImg;
   ngOnInit() {
     this.isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
     this.canvas = <HTMLCanvasElement>document.getElementById("myCanvas");
     this.ctx = this.canvas.getContext("2d");
     this.getRandomArt(true);
   }
+  renderLast() {
+    var img = new Image();
+    img.src = this.lastImg;
+    this.ctx.clearRect(0, 0, this.canvasSize, this.canvasSize);
+    img.onload = function () {
+      this.ctx.drawImage(img, 0, 0, this.canvasSize, this.canvasSize, 0, 0, this.canvasSize, this.canvasSize);
+    }.bind(this);
 
+  }
+  saveCurrentArt() {
+    this.lastImg = this.canvas.toDataURL();
+    console.log('save save');
+  }
   getRandomArt(clear) {
     this.aggrObjArea = 0;
     this.objNum = Math.floor(Math.random() * 23) + 10;
     if (clear) {
+      this.saveCurrentArt();
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
-    var randomScheme = this.colorSchemes[Math.floor(Math.random() * this.colorSchemes.length)];
+    let randomScheme = this.colorSchemes[Math.floor(Math.random() * this.colorSchemes.length)];
     randomScheme = "Random";
-    var num = 0;
+    let layerCounter = 0;
     var colorArr = this.genColors("Random");
-
-    while (num <= 10) {
-      var randomColor = colorArr[Math.floor(Math.random() * colorArr.length)];
-      var randomStrokeOpacity = Math.random() * 1;
-      var randomShapeOpacity = Math.random() * 1;
+    let randomColor;
+    let randomStrokeOpacity;
+    let randomShapeOpacity;
+    let rand;
+    while (layerCounter <= 10) {
+      randomColor = colorArr[Math.floor(Math.random() * colorArr.length)];
+      randomStrokeOpacity = Math.random() * 1;
+      randomShapeOpacity = Math.random() * 1;
       var randomShape = this.shapeArr[Math.floor(Math.random() * this.shapeArr.length)];
       var stroke = this.getStroke(randomScheme, randomColor);
       if (randomScheme === 'Complementary') {
         var complStroke = colorArr[Math.floor(Math.random() * colorArr.length)];
         this.ctx.strokeStyle = complStroke.substring(0, complStroke.length - 1) + ',' + randomStrokeOpacity + ")";
       } else if (randomScheme !== 'Monochromatic') {
-        console.log('setting stroke to color', randomScheme);
         this.ctx.strokeStyle = 'rgb(' + stroke['r'] + ',' + stroke['g'] + ',' + stroke['b'] + ', 1)';
       } else {
-        console.log('setting stroke to black', randomScheme);
         this.ctx.strokeStyle = 'rgb(' + stroke['r'] + ',' + stroke['g'] + ',' + stroke['b'] + ', 1)';
       }
-      var rand = Math.floor(Math.random() * 2) + 1;
+      rand = Math.floor(Math.random() * 2) + 1;
       if (rand === 1) {
         this.ctx.strokeStyle = 'black';
       }
       if (!this.isSafari) {
         this.ctx.globalAlpha = 1;
         randomColor = randomColor.substring(0, randomColor.length - 1) + ',' + randomShapeOpacity + ")";
-        var rand = Math.floor(Math.random() * 2) + 1;
+        rand = Math.floor(Math.random() * 2) + 1;
         if (rand === 1) {
           this.ctx.globalAlpha = randomShapeOpacity;
         }
@@ -77,15 +93,15 @@ export class AppComponent {
       this.ctx.fillStyle = randomColor;
       this.ctx.lineWidth = Math.random() * 10;
       this.drawShape(randomShape, true);
-      num++;
+      layerCounter++;
     }
-    num = 0;
+    layerCounter = 0;
     // while (num < (Math.floor(this.objNum * (2/3)))) {
-      this.aggrObjArea = this.aggrObjArea * (1/4);
-      while (num < this.objNum) {
-      var randomColor = colorArr[Math.floor(Math.random() * colorArr.length)];
-      var randomStrokeOpacity = Math.random() * 1;
-      var randomShapeOpacity = Math.random() * .4;
+    this.aggrObjArea = 0;
+    while (layerCounter < this.objNum) {
+      randomColor = colorArr[Math.floor(Math.random() * colorArr.length)];
+      randomStrokeOpacity = Math.random() * 1;
+      randomShapeOpacity = Math.random() * .4;
       var randomShape = this.shapeArr[Math.floor(Math.random() * this.shapeArr.length)];
       // var randomAC = Math.random() * 1;
       var stroke = this.getStroke(randomScheme, randomColor);
@@ -99,7 +115,7 @@ export class AppComponent {
         this.ctx.strokeStyle = 'rgb(' + stroke['r'] + ',' + stroke['g'] + ',' + stroke['b'] + ')';
 
       }
-      var rand = Math.floor(Math.random() * 2) + 1;
+      rand = Math.floor(Math.random() * 2) + 1;
       if (rand === 1) {
         this.ctx.strokeStyle = 'black';
       }
@@ -117,18 +133,18 @@ export class AppComponent {
       this.ctx.fillStyle = randomColor;
       this.ctx.lineWidth = Math.random() * 10;
       this.drawShape(randomShape);
-      num++;
+      layerCounter++;
     }
 
-    num = 0;
+    layerCounter = 0;
     this.ctx.globalAlpha = 1;
 
     // while (num <  Math.floor(this.objNum * (2/3))) {
 
-    while (num < this.objNum) {
-      var randomColor = colorArr[Math.floor(Math.random() * colorArr.length)];
-      var randomStrokeOpacity = Math.random() * 1;
-      var randomShapeOpacity = Math.random() * 1;
+    while (layerCounter < this.objNum) {
+      randomColor = colorArr[Math.floor(Math.random() * colorArr.length)];
+      randomStrokeOpacity = Math.random() * 1;
+      randomShapeOpacity = Math.random() * 1;
       var randomShape = this.shapeArr[Math.floor(Math.random() * this.shapeArr.length)];
       // var randomAC = Math.random() * 1;
       var stroke = this.getStroke(randomScheme, randomColor);
@@ -142,7 +158,7 @@ export class AppComponent {
         this.ctx.strokeStyle = 'rgb(' + stroke['r'] + ',' + stroke['g'] + ',' + stroke['b'] + ')';
 
       }
-      var rand = Math.floor(Math.random() * 2) + 1;
+      rand = Math.floor(Math.random() * 2) + 1;
       if (rand === 1) {
         this.ctx.strokeStyle = 'black';
       }
@@ -155,12 +171,12 @@ export class AppComponent {
       this.ctx.fillStyle = randomColor;
       this.ctx.lineWidth = Math.random() * 10;
       this.drawShape(randomShape);
-      num++;
+      layerCounter++;
     }
-    this.saveArt(clear);
+    this.setUndoRedo(clear);
     this.ctx.globalAlpha = 1;
   }
-  saveArt(clear) {
+  setUndoRedo(clear) {
     if (clear) {
       this.undoList = [];
     }
@@ -216,9 +232,9 @@ export class AppComponent {
     var height = Math.random() * this.canvasSize;
     var width = Math.random() * this.canvasSize;
     let currObjArea = height * width;
-    if (small || (this.aggrObjArea + currObjArea) >= this.maxArea) {
+    if (small || (this.aggrObjArea + currObjArea + 200) >= this.maxArea) {
       height = Math.random() * this.canvasSize / 25;
-      var width = Math.random() * this.canvasSize / 25;
+      width = Math.random() * this.canvasSize / 25;
       currObjArea = height * width;
     }
 
@@ -227,22 +243,55 @@ export class AppComponent {
       var yPos = (Math.random() * this.canvasSize) + (this.canvasSize / 2);
     }
 
-    this.aggrObjArea += currObjArea;
+
     switch (shape) {
       case 'Rectangle':
-        this.ctx.fillRect(xPos, yPos, width, height);
-        this.ctx.strokeRect(xPos, yPos, width, height);
+      this.ctx.fillRect(xPos, yPos, width, height);
+      this.ctx.strokeRect(xPos, yPos, width, height);
+      break;
+
+      case 'Trapezoid':
+        this.ctx.beginPath();
+        let rand1 = xPos
+        let rand2 = yPos
+        let rand3 = height
+        let rand4 = width
+
+        this.ctx.moveTo(rand1, Math.random() * this.canvasSize);
+        this.ctx.lineTo(rand2, rand1);
+        this.ctx.lineTo(rand3, rand2);
+        this.ctx.lineTo(rand4, Math.random() * this.canvasSize);
+        this.ctx.fill();
+        this.ctx.stroke();
         break;
       case 'Triangle':
         this.ctx.beginPath();
-        const rand1 = Math.random() * this.canvasSize;
-        const rand2 = Math.random() * this.canvasSize;
+        rand1 = xPos;
+        rand2 = yPos;
         this.ctx.moveTo(rand1, Math.random() * this.canvasSize);
         this.ctx.lineTo(rand2, rand1);
         this.ctx.lineTo(rand2, Math.random() * this.canvasSize);
         this.ctx.fill();
         this.ctx.stroke();
+        if(!small) {
+        currObjArea = currObjArea/2;
+        }
         break;
+      case 'Line':
+        rand1 = Math.random() * this.canvasSize;
+        var rand = Math.floor(Math.random() * 2) + 1;
+        if (rand === 1) {
+          rand2 = rand1 + 15;
+        } else {
+          rand2 = rand1 - 15;
+        }
+        this.ctx.moveTo(rand1, Math.random() * this.canvasSize);
+        this.ctx.lineTo(rand2, rand1);
+        this.ctx.lineTo(rand2, Math.random() * this.canvasSize);
+        this.ctx.stroke();
+        // if(!small) {
+        // currObjArea = height;
+        // }
       case 'Circle':
         var radius = width / 2;
         this.ctx.beginPath();
@@ -251,6 +300,7 @@ export class AppComponent {
         this.ctx.stroke();
         break;
     }
+    this.aggrObjArea += currObjArea;
   }
   getStroke(scheme, color): any {
     switch (scheme) {
@@ -451,10 +501,7 @@ export class AppComponent {
   }
   getSplitComplementary() {
   }
-  saveImage(link) {
-    link.href = this.canvas.toDataURL();
-    link.download = 'test.png';
-  }
+
   download(element) {
     element.href = this.canvas.toDataURL();
     return;

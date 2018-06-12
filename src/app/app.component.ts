@@ -16,8 +16,8 @@ export class AppComponent {
   //   'Split Complementary'];
   colorSchemes = ['Monochromatic', 'Complementary', 'Random'];
   shapeArr = ['Rectangle', 'Triangle', 'Circle', 'Line'];
-
-  smallShapeArr = ['Rectangle',  'Circle'];
+  // shapeArr = ['Trapezoid'];
+  smallShapeArr = ['Rectangle', 'Circle'];
   backgroundShapeArr = ['Rectangle', 'Triangle', 'Circle', 'Line'];
 
   // shapeArr = ['Rectangle', 'Triangle', 'Circle', 'Trapezoid', 'Line'];
@@ -31,6 +31,14 @@ export class AppComponent {
   disableUndo = true;
   isSafari = false;
   lastImg;
+  colorArr = [];
+  layerCounter = 0;
+  randomColor;
+  randomStrokeOpacity;
+  randomShapeOpacity;
+  randomScheme;
+  randomShape;
+
   ngOnInit() {
     this.isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
     this.canvas = <HTMLCanvasElement>document.getElementById("myCanvas");
@@ -48,8 +56,9 @@ export class AppComponent {
   }
   saveCurrentArt() {
     this.lastImg = this.canvas.toDataURL();
-    console.log('save save');
   }
+
+
   getRandomArt(clear) {
     this.aggrObjArea = 0;
     this.objNum = Math.floor(Math.random() * 23) + 10;
@@ -57,138 +66,125 @@ export class AppComponent {
       this.saveCurrentArt();
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
-    let randomScheme = this.colorSchemes[Math.floor(Math.random() * this.colorSchemes.length)];
-    randomScheme = "Random";
-    let layerCounter = 0;
-    var colorArr = this.genColors("Random");
-    let randomColor;
-    let randomStrokeOpacity;
-    let randomShapeOpacity;
-    let rand;
+    this.randomScheme = this.colorSchemes[Math.floor(Math.random() * this.colorSchemes.length)];
+    this.randomScheme = "Random";
+    this.layerCounter = 0;
+    this.colorArr = this.genColors("Random");
+    let rand = 1;
     // first layer of small objects;
-    while (layerCounter <= 15) {
-      randomColor = colorArr[Math.floor(Math.random() * colorArr.length)];
-      randomStrokeOpacity = Math.random() * 1;
-      randomShapeOpacity = Math.random() * 1;
+
+    while (this.layerCounter <= 15) {
+      this.randomColor = this.colorArr[Math.floor(Math.random() * this.colorArr.length)];
+      this.randomStrokeOpacity = Math.random();
+      this.randomShapeOpacity = Math.random();
       var randomShape = this.smallShapeArr[Math.floor(Math.random() * this.shapeArr.length)];
-      var stroke = this.getStroke(randomScheme, randomColor);
-      if (randomScheme === 'Complementary') {
-        var complStroke = colorArr[Math.floor(Math.random() * colorArr.length)];
-        this.ctx.strokeStyle = complStroke.substring(0, complStroke.length - 1) + ',' + randomStrokeOpacity + ")";
-      } else if (randomScheme !== 'Monochromatic') {
+      var stroke = this.getStroke(this.randomScheme, this.randomColor);
+      if (this.randomScheme === 'Complementary') {
+        var complStroke = this.colorArr[Math.floor(Math.random() * this.colorArr.length)];
+        this.ctx.strokeStyle = complStroke.substring(0, complStroke.length - 1) + ',' + this.randomStrokeOpacity + ")";
+      } else if (this.randomScheme !== 'Monochromatic') {
         this.ctx.strokeStyle = 'rgb(' + stroke['r'] + ',' + stroke['g'] + ',' + stroke['b'] + ', 1)';
       } else {
         this.ctx.strokeStyle = 'rgb(' + stroke['r'] + ',' + stroke['g'] + ',' + stroke['b'] + ', 1)';
       }
-      rand = Math.floor(Math.random() * 2) + 1;
+      rand = this.randomlyChooseOneOrTwo();
       if (rand === 1) {
         this.ctx.strokeStyle = 'black';
       }
       if (!this.isSafari) {
         this.ctx.globalAlpha = 1;
-        randomColor = randomColor.substring(0, randomColor.length - 1) + ',' + randomShapeOpacity + ")";
+        this.randomColor = this.randomColor.substring(0, this.randomColor.length - 1) + ',' + this.randomShapeOpacity + ")";
         rand = Math.floor(Math.random() * 2) + 1;
         if (rand === 1) {
-          this.ctx.globalAlpha = randomShapeOpacity;
+          this.ctx.globalAlpha = this.randomShapeOpacity;
         }
       } else {
-        this.ctx.globalAlpha = randomShapeOpacity;
+        this.ctx.globalAlpha = this.randomShapeOpacity;
       }
-      this.ctx.fillStyle = randomColor;
+      this.ctx.fillStyle = this.randomColor;
       this.ctx.lineWidth = Math.random() * 10;
       this.drawShape(randomShape, true);
-      layerCounter++;
+      this.layerCounter++;
     }
-    layerCounter = 0;
+    this.layerCounter = 0;
     this.aggrObjArea = 0;
 
     // second layer of transparent objects
-    while (layerCounter < 20) {
-      randomColor = colorArr[Math.floor(Math.random() * colorArr.length)];
-      randomStrokeOpacity = Math.random() * 1;
-      randomShapeOpacity = Math.random() * 1;
-      var randomShape = this.backgroundShapeArr[Math.floor(Math.random() * this.shapeArr.length)];
-      // var randomAC = Math.random() * 1;
-      var stroke = this.getStroke(randomScheme, randomColor);
-      if (randomScheme === 'Complementary') {
-        var complStroke = colorArr[Math.floor(Math.random() * colorArr.length)];
-        this.ctx.strokeStyle = complStroke.substring(0, complStroke.length - 1) + ',' + randomStrokeOpacity + ")";
-      } else if (randomScheme !== 'Monochromatic') {
-        this.ctx.strokeStyle = 'rgb(' + stroke['r'] + ',' + stroke['g'] + ',' + stroke['b'] + ')';
+    let norm = true;
+    rand = Math.floor(Math.random() * 3) + 1;
+    if (rand === 2) {
+      norm = false;
+    }
+    let trapTrans = 2;
+    if (rand === 2) {
+      trapTrans = this.randomlyChooseOneOrTwo();
+    }
+
+    if (rand !== 2 || trapTrans === 1) {
+      let layerNum = 25
+      if (trapTrans === 1) {
+        layerNum = 10;
+        this.backgroundShapeArr = ['Rectangle', 'Circle', 'Line'];
       } else {
-        this.ctx.strokeStyle = 'rgb(' + stroke['r'] + ',' + stroke['g'] + ',' + stroke['b'] + ')';
-
+        this.backgroundShapeArr = ['Rectangle', 'Triangle', 'Circle', 'Line'];
       }
-      rand = Math.floor(Math.random() * 2) + 1;
-      if (rand === 1) {
-        this.ctx.strokeStyle = 'black';
-      }
+      while (this.layerCounter < layerNum) {
+        this.randomColor = this.colorArr[Math.floor(Math.random() * this.colorArr.length)];
+        this.randomStrokeOpacity = Math.random() * 1;
+        this.randomShapeOpacity = Math.random() * 1;
+        var randomShape = this.backgroundShapeArr[Math.floor(Math.random() * this.shapeArr.length)];
+        // var randomAC = Math.random() * 1;
+        var stroke = this.getStroke(this.randomScheme, this.randomColor);
+        if (this.randomScheme === 'Complementary') {
+          var complStroke = this.colorArr[Math.floor(Math.random() * this.colorArr.length)];
+          this.ctx.strokeStyle = complStroke.substring(0, complStroke.length - 1) + ',' + this.randomStrokeOpacity + ")";
+        } else if (this.randomScheme !== 'Monochromatic') {
+          this.ctx.strokeStyle = 'rgb(' + stroke['r'] + ',' + stroke['g'] + ',' + stroke['b'] + ')';
+        } else {
+          this.ctx.strokeStyle = 'rgb(' + stroke['r'] + ',' + stroke['g'] + ',' + stroke['b'] + ')';
 
-      if (!this.isSafari) {
-        randomColor = randomColor.substring(0, randomColor.length - 1) + ',' + randomShapeOpacity + ")";
+        }
+        rand = this.randomlyChooseOneOrTwo();
+        if (rand === 1) {
+          this.ctx.strokeStyle = 'black';
+        }
 
-      } 
+        if (!this.isSafari) {
+          this.randomColor = this.randomColor.substring(0, this.randomColor.length - 1) + ',' + this.randomShapeOpacity + ")";
+
+        }
         this.ctx.globalAlpha = (Math.random() * .5);
-      
-      this.ctx.fillStyle = randomColor;
-      this.ctx.lineWidth = Math.random() * 10;
-      this.drawShape(randomShape);
-      layerCounter++;
-    }
 
-    layerCounter = 0;
+        this.ctx.fillStyle = this.randomColor;
+        this.ctx.lineWidth = Math.random() * 10;
+        this.drawShape(randomShape);
+        this.layerCounter++;
+      }
+    }
+    this.layerCounter = 0;
     this.ctx.globalAlpha = 1;
     this.aggrObjArea = 0;
-// layer of main shapes
-    while (layerCounter < this.objNum) {
-      randomColor = colorArr[Math.floor(Math.random() * colorArr.length)];
-      randomStrokeOpacity = Math.random() * 1;
-      randomShapeOpacity = Math.random() * 1;
-      var randomShape = this.shapeArr[Math.floor(Math.random() * this.shapeArr.length)];
-      // var randomAC = Math.random() * 1;
-      var stroke = this.getStroke(randomScheme, randomColor);
-      if (randomScheme === 'Complementary') {
-        var complStroke = colorArr[Math.floor(Math.random() * colorArr.length)];
-        this.ctx.strokeStyle = complStroke.substring(0, complStroke.length - 1) + ',' + randomStrokeOpacity + ")";
-      } else if (randomScheme !== 'Monochromatic') {
-        this.ctx.strokeStyle = 'rgb(' + stroke['r'] + ',' + stroke['g'] + ',' + stroke['b'] + ')';
-      } else {
-        this.ctx.strokeStyle = 'rgb(' + stroke['r'] + ',' + stroke['g'] + ',' + stroke['b'] + ')';
-
-      }
-      rand = Math.floor(Math.random() * 2) + 1;
-      if (rand === 1) {
-        this.ctx.strokeStyle = 'black';
-      }
-
-      if (!this.isSafari) {
-        randomColor = randomColor.substring(0, randomColor.length - 1) + ',' + randomShapeOpacity + ")";
-      } else {
-        this.ctx.globalAlpha = randomShapeOpacity;
-      }
-      this.ctx.fillStyle = randomColor;
-      this.ctx.lineWidth = Math.random() * 10;
-      this.drawShape(randomShape);
-      layerCounter++;
-    }
-    layerCounter = 0;
+    // layer of main shapes
+    let objNum = this.objNum;
+    this.getMainLayer(objNum, norm, rand);
+    this.layerCounter = 0;
     this.ctx.globalAlpha = 1;
     this.aggrObjArea = 0;
-    while (layerCounter <= 15) {
-      randomColor = colorArr[Math.floor(Math.random() * colorArr.length)];
-      randomStrokeOpacity = Math.random() * 1;
-      randomShapeOpacity = Math.random() * .5;
+    while (this.layerCounter <= 15) {
+      this.randomColor = this.colorArr[Math.floor(Math.random() * this.colorArr.length)];
+      this.randomStrokeOpacity = Math.random() * 1;
+      this.randomShapeOpacity = Math.random() * .5;
       var randomShape = this.smallShapeArr[Math.floor(Math.random() * this.shapeArr.length)];
-      var stroke = this.getStroke(randomScheme, randomColor);
-      if (randomScheme === 'Complementary') {
-        var complStroke = colorArr[Math.floor(Math.random() * colorArr.length)];
-        this.ctx.strokeStyle = complStroke.substring(0, complStroke.length - 1) + ',' + randomStrokeOpacity + ")";
-      } else if (randomScheme !== 'Monochromatic') {
+      var stroke = this.getStroke(this.randomScheme, this.randomColor);
+      if (this.randomScheme === 'Complementary') {
+        var complStroke = this.colorArr[Math.floor(Math.random() * this.colorArr.length)];
+        this.ctx.strokeStyle = complStroke.substring(0, complStroke.length - 1) + ',' + this.randomStrokeOpacity + ")";
+      } else if (this.randomScheme !== 'Monochromatic') {
         this.ctx.strokeStyle = 'rgb(' + stroke['r'] + ',' + stroke['g'] + ',' + stroke['b'] + ', 1)';
       } else {
         this.ctx.strokeStyle = 'rgb(' + stroke['r'] + ',' + stroke['g'] + ',' + stroke['b'] + ', 1)';
       }
-      rand = Math.floor(Math.random() * 2) + 1;
+      rand = this.randomlyChooseOneOrTwo();
       if (rand === 1) {
         this.ctx.strokeStyle = 'black';
       }
@@ -202,13 +198,18 @@ export class AppComponent {
       // } else {
       //   this.ctx.globalAlpha = randomShapeOpacity;
       // }
-      this.ctx.fillStyle = randomColor;
+      this.ctx.fillStyle = this.randomColor;
       this.ctx.lineWidth = Math.random() * 10;
       this.drawShape(randomShape, true);
-      layerCounter++;
+      this.layerCounter++;
     }
     this.setUndoRedo(clear);
     this.ctx.globalAlpha = 1;
+  }
+  resetForNewLayer() {
+    this.layerCounter = 0;
+    this.ctx.globalAlpha = 1;
+    this.aggrObjArea = 0;
   }
   setUndoRedo(clear) {
     if (clear) {
@@ -259,7 +260,82 @@ export class AppComponent {
     }
     this.disableCheck();
   }
+  getMainLayer(objNum, norm, rand) {
+    this.shapeArr = ['Rectangle', 'Triangle', 'Circle', 'Line'];
+    if (norm === false) {
+      objNum = Math.floor(Math.random() * 1) + 5;
+      // this.shapeArr = ['Trapezoid', 'Circle'];
+      this.shapeArr = ['Trapezoid'];
 
+      const rand = this.randomlyChooseOneOrTwo();
+      if (rand === 1) {
+        this.shapeArr = ['Trapezoid', 'Line'];
+      }
+    }   
+    let lineWidthArr = [];
+    while (this.layerCounter < objNum) {
+   
+      this.randomColor = this.colorArr[Math.floor(Math.random() * this.colorArr.length)];
+      this.randomStrokeOpacity = Math.random() * (1);
+
+      // randomShapeOpacity = Math.random() * (1) - layerCounter/objNum;
+      this.randomShapeOpacity = Math.random() * (1);
+
+      if (this.randomShapeOpacity < 0) {
+        this.randomShapeOpacity = 0;
+      }
+      if (this.layerCounter === (objNum - 1) && !norm) {
+        this.randomShapeOpacity = .1;
+      }
+      if (this.layerCounter === (objNum - 2) && !norm) {
+        this.randomShapeOpacity = .1;
+      }
+      var randomShape = this.shapeArr[Math.floor(Math.random() * this.shapeArr.length)];
+      // var randomAC = Math.random() * 1;
+      var stroke = this.getStroke(this.randomScheme, this.randomColor);
+      if (this.randomScheme === 'Complementary') {
+        var complStroke = this.colorArr[Math.floor(Math.random() * this.colorArr.length)];
+        this.ctx.strokeStyle = complStroke.substring(0, complStroke.length - 1) + ',' + this.randomStrokeOpacity + ")";
+      } else if (this.randomScheme !== 'Monochromatic') {
+        this.ctx.strokeStyle = 'rgb(' + stroke['r'] + ',' + stroke['g'] + ',' + stroke['b'] + ')';
+      } else {
+        this.ctx.strokeStyle = 'rgb(' + stroke['r'] + ',' + stroke['g'] + ',' + stroke['b'] + ')';
+      }
+
+      rand = Math.floor(Math.random() * 2) + 1;
+      if (rand === 1) {
+        this.ctx.strokeStyle = 'black';
+      }
+
+      if (!this.isSafari) {
+        this.randomColor = this.randomColor.substring(0, this.randomColor.length - 1) + ',' + this.randomShapeOpacity + ")";
+      } else {
+        this.ctx.globalAlpha = this.randomShapeOpacity;
+      }
+      this.ctx.fillStyle = this.randomColor;
+      let newLineWidth = Math.random() * 10;
+      lineWidthArr.push(newLineWidth);
+      if(!norm) {
+      if(this.isLineWidthArrMostlyThick(lineWidthArr)) {
+        newLineWidth = Math.random() * 5;
+      }
+    }
+      this.ctx.lineWidth = newLineWidth;
+      this.drawShape(randomShape);
+      this.layerCounter++;
+    }
+  }
+
+  isLineWidthArrMostlyThick(lineWidthArr) {
+    let widthCounter = 0;
+    for(let lineWidth of lineWidthArr) {
+      if (lineWidth > 6) {
+      widthCounter++;
+      }
+    }
+    (widthCounter/ lineWidthArr.length) > .75;
+    return true;
+  }
   drawShape(shape, small?) {
     var xPos = Math.random() * this.canvasSize;
     var yPos = Math.random() * this.canvasSize;
@@ -279,36 +355,64 @@ export class AppComponent {
 
     switch (shape) {
       case 'Rectangle':
-      this.ctx.fillRect(xPos, yPos, width, height);
-      this.ctx.strokeRect(xPos, yPos, width, height);
-      break;
+        this.ctx.fillRect(xPos, yPos, width, height);
+        this.ctx.strokeRect(xPos, yPos, width, height);
+        break;
 
       case 'Trapezoid':
         this.ctx.beginPath();
         let rand1 = Math.random() * this.canvasSize;
-        let rand2 = Math.random() * this.canvasSize;
-        let rand3 = height;
-        let rand4 = width;
+        const y1 = Math.random() * this.canvasSize;
+        //first point
+        this.ctx.moveTo(rand1, y1);
 
-        this.ctx.moveTo(rand1, Math.random() * this.canvasSize);
-        this.ctx.lineTo(rand2, rand1);
-        this.ctx.lineTo(rand3, rand2);
-        this.ctx.lineTo(rand4, Math.random() * this.canvasSize);
+        let rand2 = Math.random() * this.canvasSize;
+
+        //second point completes first side
+        let y2 = Math.random() * this.canvasSize;
+        this.ctx.lineTo(rand2, y2);
+        let rand3 = Math.random() * this.canvasSize;
+
+        let y3 = Math.random() * this.canvasSize;
+
+        // third point completes second side
+        this.ctx.lineTo(rand3, y3);
+        // fourth point -- cannot cross first line
+        //logic here such 
+        const heightLow = Math.max(y1, y3);
+        const heightHigh = Math.min(y1, y3);
+
+        //
+        const leftMost = Math.min(rand1, rand3);
+        const rightMost = Math.max(rand1, rand3);
+        const addToLeftMost = Math.random() * (rightMost - leftMost);
+        let rand4 = leftMost + addToLeftMost;
+        let y4 = heightLow - (Math.random() * (heightLow - heightHigh));
+
+        // this.drawShape('Circle', true);
+        if (rand1 === leftMost && y1 === heightHigh && rand4 < rand2) {
+          y4 = y1 + Math.random() * this.canvasSize;
+        }
+        this.ctx.lineTo(rand4, y4);
+        // this.ctx.lineTo(rand4, y4);
         this.ctx.fill();
+        this.ctx.lineTo(rand1, y1);
         this.ctx.stroke();
+        currObjArea = this.calcPolygonArea([{ x: rand1, y: y1 }, { x: rand2, y: rand1 }, { x: rand3, y: rand2 }, { x: rand4, y: y2 }]);
         break;
       case 'Triangle':
         this.ctx.beginPath();
         rand1 = xPos;
         rand2 = yPos;
-        this.ctx.moveTo(rand1, Math.random() * this.canvasSize);
+        const ty1 = Math.random() * this.canvasSize;
+        const ty2 = Math.random() * this.canvasSize;
+        this.ctx.moveTo(rand1, ty1);
         this.ctx.lineTo(rand2, rand1);
-        this.ctx.lineTo(rand2, Math.random() * this.canvasSize);
+        this.ctx.lineTo(rand2, ty2);
+        this.ctx.lineTo(rand1, ty1);
         this.ctx.fill();
         this.ctx.stroke();
-        // if(!small) {
-        // currObjArea = currObjArea/2;
-        // }
+        currObjArea = this.calcPolygonArea([{ x: rand1, y: ty1 }, { x: rand2, y: rand1 }, { x: rand2, y: ty2 }]);
         break;
       case 'Line':
         rand1 = Math.random() * this.canvasSize;
@@ -335,6 +439,23 @@ export class AppComponent {
     }
     this.aggrObjArea += currObjArea;
   }
+
+  calcPolygonArea(vertices) {
+    var total = 0;
+
+    for (var i = 0, l = vertices.length; i < l; i++) {
+      var addX = vertices[i].x;
+      var addY = vertices[i == vertices.length - 1 ? 0 : i + 1].y;
+      var subX = vertices[i == vertices.length - 1 ? 0 : i + 1].x;
+      var subY = vertices[i].y;
+
+      total += (addX * addY * 0.5);
+      total -= (subX * subY * 0.5);
+    }
+
+    return Math.abs(total);
+  }
+
   getStroke(scheme, color): any {
     switch (scheme) {
       case 'Random':
@@ -538,5 +659,13 @@ export class AppComponent {
   download(element) {
     element.href = this.canvas.toDataURL();
     return;
+  }
+  randomlyChooseOneOrTwo() {
+    const num = Math.random() + 1;
+    if (num < 1.5) {
+      return 1;
+    } else {
+      return 2;
+    }
   }
 }

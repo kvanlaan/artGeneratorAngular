@@ -58,22 +58,8 @@ export class AppComponent {
     this.lastImg = this.canvas.toDataURL();
   }
 
-
-  getRandomArt(clear) {
-    this.aggrObjArea = 0;
-    this.objNum = Math.floor(Math.random() * 23) + 10;
-    if (clear) {
-      this.saveCurrentArt();
-      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    }
-    this.randomScheme = this.colorSchemes[Math.floor(Math.random() * this.colorSchemes.length)];
-    this.randomScheme = "Random";
-    this.layerCounter = 0;
-    this.colorArr = this.genColors("Random");
-    let rand = 1;
-    // first layer of small objects;
-
-    while (this.layerCounter <= 15) {
+  getFirstSmallLayer() {
+    while (this.layerCounter <= 25) {
       this.randomColor = this.colorArr[Math.floor(Math.random() * this.colorArr.length)];
       this.randomStrokeOpacity = Math.random();
       this.randomShapeOpacity = Math.random();
@@ -87,7 +73,7 @@ export class AppComponent {
       } else {
         this.ctx.strokeStyle = 'rgb(' + stroke['r'] + ',' + stroke['g'] + ',' + stroke['b'] + ', 1)';
       }
-      rand = this.randomlyChooseOneOrTwo();
+      let rand = this.randomlyChooseOneOrTwo();
       if (rand === 1) {
         this.ctx.strokeStyle = 'black';
       }
@@ -106,8 +92,28 @@ export class AppComponent {
       this.drawShape(randomShape, true);
       this.layerCounter++;
     }
-    this.layerCounter = 0;
-    this.aggrObjArea = 0;
+  }
+
+  getRandomArt(clear) {
+
+    this.objNum = Math.floor(Math.random() * 23) + 10;
+    if (clear) {
+      this.saveCurrentArt();
+      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      this.ctx.fillStyle = "white";
+      this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    }
+
+        this.resetForNewLayer();
+    this.randomScheme = this.colorSchemes[Math.floor(Math.random() * this.colorSchemes.length)];
+    this.randomScheme = "Random";
+    this.colorArr = this.genColors("Random");
+    let rand = 1;
+    // first layer of small objects;
+    this.resetForNewLayer();
+    this.getFirstSmallLayer();
+
+    this.resetForNewLayer();
 
     // second layer of transparent objects
     let norm = true;
@@ -120,8 +126,9 @@ export class AppComponent {
       trapTrans = this.randomlyChooseOneOrTwo();
     }
 
+    let layerNum = 20;
     if (rand !== 2 || trapTrans === 1) {
-      let layerNum = 25
+      let layerNum = 20
       if (trapTrans === 1) {
         layerNum = 10;
         this.backgroundShapeArr = ['Rectangle', 'Circle', 'Line'];
@@ -153,7 +160,7 @@ export class AppComponent {
           this.randomColor = this.randomColor.substring(0, this.randomColor.length - 1) + ',' + this.randomShapeOpacity + ")";
 
         }
-        this.ctx.globalAlpha = (Math.random() * .5);
+        this.ctx.globalAlpha = (Math.random() * .4);
 
         this.ctx.fillStyle = this.randomColor;
         this.ctx.lineWidth = Math.random() * 10;
@@ -161,33 +168,28 @@ export class AppComponent {
         this.layerCounter++;
       }
     }
-    this.layerCounter = 0;
-    this.ctx.globalAlpha = 1;
-    this.aggrObjArea = 0;
+    this.resetForNewLayer();
     // layer of main shapes
     let objNum = this.objNum;
     this.getMainLayer(objNum, norm, rand);
-    this.layerCounter = 0;
-    this.ctx.globalAlpha = 1;
-    this.aggrObjArea = 0;
-    while (this.layerCounter <= 15) {
+    // this.resetForNewLayer();
+    // this.getLineLayer(15, norm, rand);
+    this.resetForNewLayer();
+    let lineWidthArr = [];
+    while (this.layerCounter <= 25) {
       this.randomColor = this.colorArr[Math.floor(Math.random() * this.colorArr.length)];
       this.randomStrokeOpacity = Math.random() * 1;
       this.randomShapeOpacity = Math.random() * .5;
       var randomShape = this.smallShapeArr[Math.floor(Math.random() * this.shapeArr.length)];
       var stroke = this.getStroke(this.randomScheme, this.randomColor);
-      if (this.randomScheme === 'Complementary') {
-        var complStroke = this.colorArr[Math.floor(Math.random() * this.colorArr.length)];
-        this.ctx.strokeStyle = complStroke.substring(0, complStroke.length - 1) + ',' + this.randomStrokeOpacity + ")";
-      } else if (this.randomScheme !== 'Monochromatic') {
-        this.ctx.strokeStyle = 'rgb(' + stroke['r'] + ',' + stroke['g'] + ',' + stroke['b'] + ', 1)';
-      } else {
-        this.ctx.strokeStyle = 'rgb(' + stroke['r'] + ',' + stroke['g'] + ',' + stroke['b'] + ', 1)';
-      }
+
+      this.ctx.strokeStyle = 'rgb(' + stroke['r'] + ',' + stroke['g'] + ',' + stroke['b'] + ', 1)';
       rand = this.randomlyChooseOneOrTwo();
       if (rand === 1) {
         this.ctx.strokeStyle = 'black';
       }
+              this.randomColor = this.randomColor.substring(0, this.randomColor.length - 1) + ',' + this.randomShapeOpacity + ")";
+
       // if (!this.isSafari) {
       //   this.ctx.globalAlpha = 1;
       //   randomColor = randomColor.substring(0, randomColor.length - 1) + ',' + randomShapeOpacity + ")";
@@ -199,7 +201,15 @@ export class AppComponent {
       //   this.ctx.globalAlpha = randomShapeOpacity;
       // }
       this.ctx.fillStyle = this.randomColor;
-      this.ctx.lineWidth = Math.random() * 10;
+      let newLineWidth = Math.random() * 10;
+
+      // lineWidthArr.push(newLineWidth);
+      // if (!norm) {
+      //   if (this.isLineWidthArrMostlyThick(lineWidthArr)) {
+      //     newLineWidth = Math.random() * 5;
+      //   }
+      // }
+      this.ctx.lineWidth = newLineWidth;
       this.drawShape(randomShape, true);
       this.layerCounter++;
     }
@@ -210,6 +220,7 @@ export class AppComponent {
     this.layerCounter = 0;
     this.ctx.globalAlpha = 1;
     this.aggrObjArea = 0;
+    this.shapeArr = ['Rectangle', 'Triangle', 'Circle', 'Line'];
   }
   setUndoRedo(clear) {
     if (clear) {
@@ -260,26 +271,15 @@ export class AppComponent {
     }
     this.disableCheck();
   }
-  getMainLayer(objNum, norm, rand) {
-    this.shapeArr = ['Rectangle', 'Triangle', 'Circle', 'Line'];
-    if (norm === false) {
-      objNum = Math.floor(Math.random() * 1) + 5;
-      // this.shapeArr = ['Trapezoid', 'Circle'];
-      this.shapeArr = ['Trapezoid'];
-
-      const rand = this.randomlyChooseOneOrTwo();
-      if (rand === 1) {
-        this.shapeArr = ['Trapezoid', 'Line'];
-      }
-    }   
-    let lineWidthArr = [];
+  getLineLayer(objNum, norm, rand) {
+    this.shapeArr = ['Line'];
     while (this.layerCounter < objNum) {
-   
+
       this.randomColor = this.colorArr[Math.floor(Math.random() * this.colorArr.length)];
-      this.randomStrokeOpacity = Math.random() * (1);
+      this.randomStrokeOpacity = Math.random();
 
       // randomShapeOpacity = Math.random() * (1) - layerCounter/objNum;
-      this.randomShapeOpacity = Math.random() * (1);
+      this.randomShapeOpacity = Math.random();
 
       if (this.randomShapeOpacity < 0) {
         this.randomShapeOpacity = 0;
@@ -313,13 +313,80 @@ export class AppComponent {
         this.ctx.globalAlpha = this.randomShapeOpacity;
       }
       this.ctx.fillStyle = this.randomColor;
-      let newLineWidth = Math.random() * 10;
-      lineWidthArr.push(newLineWidth);
-      if(!norm) {
-      if(this.isLineWidthArrMostlyThick(lineWidthArr)) {
-        newLineWidth = Math.random() * 5;
+      // default is middle
+      let newLineWidth = Math.random() * 5;
+      this.ctx.lineWidth = newLineWidth;
+      this.drawShape(randomShape);
+      this.layerCounter++;
+    }
+  }
+  getMainLayer(objNum, norm, rand) {
+    this.shapeArr = ['Rectangle', 'Triangle',  'Circle', 'Line'];
+    if (norm === false) {
+      objNum = Math.floor(Math.random() * 1) + 5;
+      // this.shapeArr = ['Trapezoid', 'Circle'];
+      this.shapeArr = ['Trapezoid'];
+
+      const rand = this.randomlyChooseOneOrTwo();
+      if (rand === 1) {
+        this.shapeArr = ['Trapezoid', 'Line'];
       }
     }
+    let lineWidthArr = [];
+    while (this.layerCounter < objNum) {
+
+      this.randomColor = this.colorArr[Math.floor(Math.random() * this.colorArr.length)];
+
+      // randomShapeOpacity = Math.random() * (1) - layerCounter/objNum;
+      this.randomShapeOpacity = Math.random();
+
+      if (this.randomShapeOpacity < 0) {
+        this.randomShapeOpacity = 0;
+      }
+      if (this.layerCounter === (objNum - 1)) {
+        this.randomShapeOpacity = .1;
+      }
+      if (this.layerCounter === (objNum - 2) && !norm) {
+        this.randomShapeOpacity = .1;
+      }
+      var randomShape = this.shapeArr[Math.floor(Math.random() * this.shapeArr.length)];
+      // var randomAC = Math.random() * 1;
+      var stroke = this.getStroke(this.randomScheme, this.randomColor);
+
+      this.ctx.strokeStyle = 'rgb(' + stroke['r'] + ',' + stroke['g'] + ',' + stroke['b'] + ')';
+
+
+      rand = Math.floor(Math.random() * 2) + 1;
+      if (rand === 1) {
+        this.ctx.strokeStyle = 'black';
+      }
+        this.randomColor = this.randomColor.substring(0, this.randomColor.length - 1) + ',' + this.randomShapeOpacity + ")";
+
+      // if (!this.isSafari) {
+      //   this.randomColor = this.randomColor.substring(0, this.randomColor.length - 1) + ',' + this.randomShapeOpacity + ")";
+      // } else {
+      //   this.ctx.globalAlpha = this.randomShapeOpacity;
+      // }
+      this.ctx.fillStyle = this.randomColor;
+      // default is middle
+      let newLineWidth = Math.random() * 5 + 1;
+      if (this.layerCounter < (objNum / 4)|| ( this.layerCounter > (objNum * .5) && this.layerCounter < (objNum * .6) )) {
+        newLineWidth = Math.random() * 20 + 16;
+      }
+      // if(this.layerCounter === objNum/2) {
+      //   ne
+      // }
+      // if(this.layerCounter > (objNum - objNum/3)) {
+      //   newLineWidth = Math.random() * 5;
+      // }
+
+      // let newLineWidth = Math.random() * 10;
+      // lineWidthArr.push(newLineWidth);
+      // if (!norm) {
+      //   if (this.isLineWidthArrMostlyThick(lineWidthArr)) {
+      //     newLineWidth = Math.random() * 5;
+      //   }
+      // }
       this.ctx.lineWidth = newLineWidth;
       this.drawShape(randomShape);
       this.layerCounter++;
@@ -328,12 +395,12 @@ export class AppComponent {
 
   isLineWidthArrMostlyThick(lineWidthArr) {
     let widthCounter = 0;
-    for(let lineWidth of lineWidthArr) {
+    for (let lineWidth of lineWidthArr) {
       if (lineWidth > 6) {
-      widthCounter++;
+        widthCounter++;
       }
     }
-    (widthCounter/ lineWidthArr.length) > .75;
+    (widthCounter / lineWidthArr.length) > .75;
     return true;
   }
   drawShape(shape, small?) {
@@ -342,7 +409,7 @@ export class AppComponent {
     var height = Math.random() * this.canvasSize;
     var width = Math.random() * this.canvasSize;
     let currObjArea = height * width;
-    if (small || (this.aggrObjArea + currObjArea + 200) >= this.maxArea) {
+    if (small || (this.aggrObjArea + currObjArea + 250) >= this.maxArea) {
       height = Math.random() * this.canvasSize / 25;
       width = Math.random() * this.canvasSize / 25;
       currObjArea = height * width;
@@ -409,9 +476,9 @@ export class AppComponent {
         this.ctx.moveTo(rand1, ty1);
         this.ctx.lineTo(rand2, rand1);
         this.ctx.lineTo(rand2, ty2);
+        this.ctx.stroke();
         this.ctx.lineTo(rand1, ty1);
         this.ctx.fill();
-        this.ctx.stroke();
         currObjArea = this.calcPolygonArea([{ x: rand1, y: ty1 }, { x: rand2, y: rand1 }, { x: rand2, y: ty2 }]);
         break;
       case 'Line':
@@ -422,12 +489,16 @@ export class AppComponent {
         } else {
           rand2 = rand1 - 15;
         }
-        this.ctx.moveTo(rand1, Math.random() * this.canvasSize);
-        this.ctx.lineTo(rand2, rand1);
-        this.ctx.lineTo(rand2, Math.random() * this.canvasSize);
-        this.ctx.stroke();
+        let ly1 = Math.random() * this.canvasSize;
+        let ly2 = Math.random() * this.canvasSize;
 
-        // currObjArea = height * (width* .1);
+        this.ctx.moveTo(rand1, ly1);
+        this.ctx.lineTo(rand2, rand1);
+        this.ctx.lineTo(rand2, ly2);
+        this.ctx.stroke();
+        // pythagorean theorem
+        currObjArea = this.ctx.lineWidth * (this.getDistance(rand1, ly1, rand2, rand1) + this.getDistance(rand2, rand1, rand2, ly2));
+        // currObjArea = this.ctx.lineWidth * (rand1 - ly1);
         break;
       case 'Circle':
         var radius = width / 2;
@@ -435,11 +506,20 @@ export class AppComponent {
         this.ctx.arc(xPos, yPos, radius, 0, 2 * Math.PI, false);
         this.ctx.fill();
         this.ctx.stroke();
+
+        currObjArea = Math.PI * Math.pow(radius, 2);
+        // get better with calculating for circles
         break;
     }
     this.aggrObjArea += currObjArea;
   }
-
+  getDistance( x1, y1, x2, y2 ) {
+    var 	xs = x2 - x1,
+      ys = y2 - y1;		
+    xs *= xs;
+    ys *= ys;  
+    return Math.sqrt( xs + ys );
+  }
   calcPolygonArea(vertices) {
     var total = 0;
 

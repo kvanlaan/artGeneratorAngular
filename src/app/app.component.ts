@@ -48,6 +48,7 @@ export class AppComponent {
   renderLast() {
     var img = new Image();
     img.src = this.lastImg;
+    this.saveCurrentArt();
     this.ctx.clearRect(0, 0, this.canvasSize, this.canvasSize);
     img.onload = function () {
       this.ctx.drawImage(img, 0, 0, this.canvasSize, this.canvasSize, 0, 0, this.canvasSize, this.canvasSize);
@@ -188,7 +189,7 @@ export class AppComponent {
       if (rand === 1) {
         this.ctx.strokeStyle = 'black';
       }
-              this.randomColor = this.randomColor.substring(0, this.randomColor.length - 1) + ',' + this.randomShapeOpacity + ")";
+      this.randomColor = this.randomColor.substring(0, this.randomColor.length - 1) + ',' + this.randomShapeOpacity + ")";
 
       // if (!this.isSafari) {
       //   this.ctx.globalAlpha = 1;

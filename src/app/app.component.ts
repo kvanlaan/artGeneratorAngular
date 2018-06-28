@@ -7,30 +7,27 @@ var ColorScheme;
   styleUrls: ['./app.component.css']
 })
 
-
 export class AppComponent {
   objNum = 23;
   canvasSize = 700;
   maxArea = (700 * 700);
-  // colorSchemes = ['Monchromatic', 'Complementary', 'Analogous', 'Triad', 'Tetrad',
-  //   'Split Complementary'];
   colorSchemes = ['Monochromatic', 'Complementary', 'Random'];
   shapeArr = ['Rectangle', 'Triangle', 'Circle', 'Line'];
-  // shapeArr = ['Trapezoid'];
   smallShapeArr = ['Rectangle', 'Circle'];
   backgroundShapeArr = ['Rectangle', 'Triangle', 'Circle', 'Line'];
-
-  // shapeArr = ['Rectangle', 'Triangle', 'Circle', 'Trapezoid', 'Line'];
+  edit = false;
   canvas;
   ctx;
-  recursionStep = 0;
   aggrObjArea = 0;
   redoList = [];
   undoList = [];
+  redoListLayer = [];
+  undoListLayer = [];
   disableRedo = true;
   disableUndo = true;
   isSafari = false;
-  lastImg;
+  lastImg = '';
+  lastImgLayer;
   colorArr = [];
   layerCounter = 0;
   randomColor;
@@ -38,6 +35,14 @@ export class AppComponent {
   randomShapeOpacity;
   randomScheme;
   randomShape;
+  savedImageArr = [];
+  startEditing = false;
+  borderColor = 'none';
+  currImageIndex;
+  // colorSchemes = ['Monchromatic', 'Complementary', 'Analogous', 'Triad', 'Tetrad',
+  //   'Split Complementary'];
+  // shapeArr = ['Rectangle', 'Triangle', 'Circle', 'Trapezoid', 'Line'];
+  // shapeArr = ['Trapezoid'];
 
   ngOnInit() {
     this.isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
@@ -45,67 +50,50 @@ export class AppComponent {
     this.ctx = this.canvas.getContext("2d");
     this.getRandomArt(true);
   }
-  renderLast() {
-    var img = new Image();
-    img.src = this.lastImg;
-    this.saveCurrentArt();
-    this.ctx.clearRect(0, 0, this.canvasSize, this.canvasSize);
-    img.onload = function () {
-      this.ctx.drawImage(img, 0, 0, this.canvasSize, this.canvasSize, 0, 0, this.canvasSize, this.canvasSize);
-    }.bind(this);
-
-  }
-  saveCurrentArt() {
-    this.lastImg = this.canvas.toDataURL();
-  }
-
-  getFirstSmallLayer() {
-    while (this.layerCounter <= 25) {
-      this.randomColor = this.colorArr[Math.floor(Math.random() * this.colorArr.length)];
-      this.randomStrokeOpacity = Math.random();
-      this.randomShapeOpacity = Math.random();
-      var randomShape = this.smallShapeArr[Math.floor(Math.random() * this.shapeArr.length)];
-      var stroke = this.getStroke(this.randomScheme, this.randomColor);
-      if (this.randomScheme === 'Complementary') {
-        var complStroke = this.colorArr[Math.floor(Math.random() * this.colorArr.length)];
-        this.ctx.strokeStyle = complStroke.substring(0, complStroke.length - 1) + ',' + this.randomStrokeOpacity + ")";
-      } else if (this.randomScheme !== 'Monochromatic') {
-        this.ctx.strokeStyle = 'rgb(' + stroke['r'] + ',' + stroke['g'] + ',' + stroke['b'] + ', 1)';
-      } else {
-        this.ctx.strokeStyle = 'rgb(' + stroke['r'] + ',' + stroke['g'] + ',' + stroke['b'] + ', 1)';
-      }
-      let rand = this.randomlyChooseOneOrTwo();
-      if (rand === 1) {
-        this.ctx.strokeStyle = 'black';
-      }
-      if (!this.isSafari) {
-        this.ctx.globalAlpha = 1;
-        this.randomColor = this.randomColor.substring(0, this.randomColor.length - 1) + ',' + this.randomShapeOpacity + ")";
-        rand = Math.floor(Math.random() * 2) + 1;
-        if (rand === 1) {
-          this.ctx.globalAlpha = this.randomShapeOpacity;
-        }
-      } else {
-        this.ctx.globalAlpha = this.randomShapeOpacity;
-      }
-      this.ctx.fillStyle = this.randomColor;
-      this.ctx.lineWidth = Math.random() * 10;
-      this.drawShape(randomShape, true);
-      this.layerCounter++;
+  delete(index?: number) {
+    if (index === undefined) {
+      index = this.currImageIndex;
     }
+    this.savedImageArr.splice(index, 1);
+
+    if (index > this.savedImageArr.length - 1) {
+      index--;
+    }
+    this.renderImage(index);
   }
-
+  zoomIn() {
+    this.ctx.scale(2, 2);
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this.ctx.fillStyle = "white";
+    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    this.renderImage();
+  }
+  zoomOut() {
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this.ctx.fillStyle = "white";
+    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    this.ctx.scale(.5, .5);
+    this.renderImage();
+  }
   getRandomArt(clear) {
-
+    if (this.edit) {
+      this.toggleEdit();
+    }
+    // this.saveCurrentArt();
     this.objNum = Math.floor(Math.random() * 23) + 10;
     if (clear) {
-      this.saveCurrentArt();
+      // if (this.lastImg && this.lastImg !== this.canvas.toDataURL() && this.savedImageArr.indexOf(this.canvas.toDataURL()) < 0) {
+      //   this.saveCurrentArt();
+      // }
+      this.undoListLayer = [];
+      this.redoListLayer = [];
+      this.edit = false;
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
       this.ctx.fillStyle = "white";
       this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
     }
 
-        this.resetForNewLayer();
+    this.resetForNewLayer();
     this.randomScheme = this.colorSchemes[Math.floor(Math.random() * this.colorSchemes.length)];
     this.randomScheme = "Random";
     this.colorArr = this.genColors("Random");
@@ -113,7 +101,6 @@ export class AppComponent {
     // first layer of small objects;
     this.resetForNewLayer();
     this.getFirstSmallLayer();
-
     this.resetForNewLayer();
 
     // second layer of transparent objects
@@ -167,6 +154,7 @@ export class AppComponent {
         this.ctx.lineWidth = Math.random() * 10;
         this.drawShape(randomShape);
         this.layerCounter++;
+        this.saveCurrentArtLayer();
       }
     }
     this.resetForNewLayer();
@@ -213,9 +201,47 @@ export class AppComponent {
       this.ctx.lineWidth = newLineWidth;
       this.drawShape(randomShape, true);
       this.layerCounter++;
+      this.saveCurrentArtLayer();
     }
     this.setUndoRedo(clear);
     this.ctx.globalAlpha = 1;
+    this.saveCurrentArt(false, true);
+  }
+  getFirstSmallLayer() {
+    while (this.layerCounter <= 25) {
+      this.randomColor = this.colorArr[Math.floor(Math.random() * this.colorArr.length)];
+      this.randomStrokeOpacity = Math.random();
+      this.randomShapeOpacity = Math.random();
+      var randomShape = this.smallShapeArr[Math.floor(Math.random() * this.shapeArr.length)];
+      var stroke = this.getStroke(this.randomScheme, this.randomColor);
+      if (this.randomScheme === 'Complementary') {
+        var complStroke = this.colorArr[Math.floor(Math.random() * this.colorArr.length)];
+        this.ctx.strokeStyle = complStroke.substring(0, complStroke.length - 1) + ',' + this.randomStrokeOpacity + ")";
+      } else if (this.randomScheme !== 'Monochromatic') {
+        this.ctx.strokeStyle = 'rgb(' + stroke['r'] + ',' + stroke['g'] + ',' + stroke['b'] + ', 1)';
+      } else {
+        this.ctx.strokeStyle = 'rgb(' + stroke['r'] + ',' + stroke['g'] + ',' + stroke['b'] + ', 1)';
+      }
+      let rand = this.randomlyChooseOneOrTwo();
+      if (rand === 1) {
+        this.ctx.strokeStyle = 'black';
+      }
+      if (!this.isSafari) {
+        this.ctx.globalAlpha = 1;
+        this.randomColor = this.randomColor.substring(0, this.randomColor.length - 1) + ',' + this.randomShapeOpacity + ")";
+        rand = Math.floor(Math.random() * 2) + 1;
+        if (rand === 1) {
+          this.ctx.globalAlpha = this.randomShapeOpacity;
+        }
+      } else {
+        this.ctx.globalAlpha = this.randomShapeOpacity;
+      }
+      this.ctx.fillStyle = this.randomColor;
+      this.ctx.lineWidth = Math.random() * 10;
+      this.drawShape(randomShape, true);
+      this.layerCounter++;
+      this.saveCurrentArtLayer();
+    }
   }
   resetForNewLayer() {
     this.layerCounter = 0;
@@ -223,106 +249,10 @@ export class AppComponent {
     this.aggrObjArea = 0;
     this.shapeArr = ['Rectangle', 'Triangle', 'Circle', 'Line'];
   }
-  setUndoRedo(clear) {
-    if (clear) {
-      this.undoList = [];
-    }
-    this.undoList.push(this.canvas.toDataURL());
-    this.redoList = [];
-    this.disableCheck();
-  }
 
-  undo() {
-    if (this.undoList.length > 1) {
-      var redoState = this.undoList.pop();
-      this.redoList.push(redoState)
-      var restoreState = this.undoList[this.undoList.length - 1];
-      var img = new Image();
-      img.src = restoreState;
-      this.ctx.clearRect(0, 0, this.canvasSize, this.canvasSize);
-      img.onload = function () {
-        this.ctx.drawImage(img, 0, 0, this.canvasSize, this.canvasSize, 0, 0, this.canvasSize, this.canvasSize);
-      }.bind(this);
-    }
-    this.disableCheck();
-  }
-  disableCheck() {
-    if (this.redoList.length === 0) {
-      this.disableRedo = true;
-    } else {
-      this.disableRedo = false;
-    }
-    if (this.undoList.length <= 1) {
-      this.disableUndo = true;
-    } else {
-      this.disableUndo = false;
-    }
-  }
-  redo() {
-    if (this.redoList.length) {
-      var restoreState = this.redoList.pop();
-      var img = new Image();
-      img.src = restoreState;
-      this.ctx.clearRect(0, 0, this.canvasSize, this.canvasSize);
-      img.onload = function () {
-        this.ctx.drawImage(img, 0, 0, this.canvasSize, this.canvasSize, 0, 0, this.canvasSize, this.canvasSize);
-        this.undoList.push(this.canvas.toDataURL());
-        this.disableCheck();
-      }.bind(this);
-    }
-    this.disableCheck();
-  }
-  getLineLayer(objNum, norm, rand) {
-    this.shapeArr = ['Line'];
-    while (this.layerCounter < objNum) {
 
-      this.randomColor = this.colorArr[Math.floor(Math.random() * this.colorArr.length)];
-      this.randomStrokeOpacity = Math.random();
-
-      // randomShapeOpacity = Math.random() * (1) - layerCounter/objNum;
-      this.randomShapeOpacity = Math.random();
-
-      if (this.randomShapeOpacity < 0) {
-        this.randomShapeOpacity = 0;
-      }
-      if (this.layerCounter === (objNum - 1) && !norm) {
-        this.randomShapeOpacity = .1;
-      }
-      if (this.layerCounter === (objNum - 2) && !norm) {
-        this.randomShapeOpacity = .1;
-      }
-      var randomShape = this.shapeArr[Math.floor(Math.random() * this.shapeArr.length)];
-      // var randomAC = Math.random() * 1;
-      var stroke = this.getStroke(this.randomScheme, this.randomColor);
-      if (this.randomScheme === 'Complementary') {
-        var complStroke = this.colorArr[Math.floor(Math.random() * this.colorArr.length)];
-        this.ctx.strokeStyle = complStroke.substring(0, complStroke.length - 1) + ',' + this.randomStrokeOpacity + ")";
-      } else if (this.randomScheme !== 'Monochromatic') {
-        this.ctx.strokeStyle = 'rgb(' + stroke['r'] + ',' + stroke['g'] + ',' + stroke['b'] + ')';
-      } else {
-        this.ctx.strokeStyle = 'rgb(' + stroke['r'] + ',' + stroke['g'] + ',' + stroke['b'] + ')';
-      }
-
-      rand = Math.floor(Math.random() * 2) + 1;
-      if (rand === 1) {
-        this.ctx.strokeStyle = 'black';
-      }
-
-      if (!this.isSafari) {
-        this.randomColor = this.randomColor.substring(0, this.randomColor.length - 1) + ',' + this.randomShapeOpacity + ")";
-      } else {
-        this.ctx.globalAlpha = this.randomShapeOpacity;
-      }
-      this.ctx.fillStyle = this.randomColor;
-      // default is middle
-      let newLineWidth = Math.random() * 5;
-      this.ctx.lineWidth = newLineWidth;
-      this.drawShape(randomShape);
-      this.layerCounter++;
-    }
-  }
   getMainLayer(objNum, norm, rand) {
-    this.shapeArr = ['Rectangle', 'Triangle',  'Circle', 'Line'];
+    this.shapeArr = ['Rectangle', 'Triangle', 'Circle', 'Line'];
     if (norm === false) {
       objNum = Math.floor(Math.random() * 1) + 5;
       // this.shapeArr = ['Trapezoid', 'Circle'];
@@ -333,7 +263,6 @@ export class AppComponent {
         this.shapeArr = ['Trapezoid', 'Line'];
       }
     }
-    let lineWidthArr = [];
     while (this.layerCounter < objNum) {
 
       this.randomColor = this.colorArr[Math.floor(Math.random() * this.colorArr.length)];
@@ -361,8 +290,8 @@ export class AppComponent {
       if (rand === 1) {
         this.ctx.strokeStyle = 'black';
       }
-        this.randomColor = this.randomColor.substring(0, this.randomColor.length - 1) + ',' + this.randomShapeOpacity + ")";
 
+      this.randomColor = this.randomColor.substring(0, this.randomColor.length - 1) + ',' + this.randomShapeOpacity + ")";
       // if (!this.isSafari) {
       //   this.randomColor = this.randomColor.substring(0, this.randomColor.length - 1) + ',' + this.randomShapeOpacity + ")";
       // } else {
@@ -371,7 +300,7 @@ export class AppComponent {
       this.ctx.fillStyle = this.randomColor;
       // default is middle
       let newLineWidth = Math.random() * 5 + 1;
-      if (this.layerCounter < (objNum / 4)|| ( this.layerCounter > (objNum * .5) && this.layerCounter < (objNum * .6) )) {
+      if (this.layerCounter < (objNum / 4) || (this.layerCounter > (objNum * .5) && this.layerCounter < (objNum * .6))) {
         newLineWidth = Math.random() * 20 + 16;
       }
       // if(this.layerCounter === objNum/2) {
@@ -391,6 +320,7 @@ export class AppComponent {
       this.ctx.lineWidth = newLineWidth;
       this.drawShape(randomShape);
       this.layerCounter++;
+      this.saveCurrentArtLayer();
     }
   }
 
@@ -514,12 +444,170 @@ export class AppComponent {
     }
     this.aggrObjArea += currObjArea;
   }
-  getDistance( x1, y1, x2, y2 ) {
-    var 	xs = x2 - x1,
-      ys = y2 - y1;		
+  toggleEdit() {
+    this.edit = !this.edit;
+    if (this.edit) {
+      this.ctx.save();
+    } else {
+      this.savedImageArr[this.currImageIndex]['src'] = this.canvas.toDataURL();
+      this.savedImageArr[this.currImageIndex]['undoStack'] = this.undoListLayer;
+      this.savedImageArr[this.currImageIndex]['redoStack'] = this.redoListLayer;
+      this.savedImageArr[this.currImageIndex]['edit'] = true;
+      this.ctx.restore();
+    }
+    this.startEditing = false;
+  }
+  renderImage(index?: number) {
+    this.currImageIndex = index;
+    this.undoListLayer = this.savedImageArr[this.currImageIndex]['undoStack'];
+    console.log('this.undoListLayer', this.undoListLayer);
+    this.redoListLayer = this.savedImageArr[this.currImageIndex]['redoStack'];
+
+    var img = new Image();
+    // if (index === undefined) {
+    //   img.src = this.lastImg;
+    // } else {
+    img.src = this.savedImageArr[this.currImageIndex].src;
+    // }
+    this.ctx.clearRect(0, 0, this.canvasSize, this.canvasSize);
+    img.onload = function () {
+      this.ctx.drawImage(img, 0, 0, this.canvasSize, this.canvasSize, 0, 0, this.canvasSize, this.canvasSize);
+    }.bind(this);
+  }
+
+  saveCurrentArt(edit?: boolean, isNew?: boolean) {
+    if (edit === undefined) {
+      edit = this.edit;
+    }
+    const imgObj = { 'src': this.canvas.toDataURL(), 'edit': edit, 'redoStack': this.redoListLayer, 'undoStack': this.undoListLayer };
+    if (isNew) {
+      this.savedImageArr.push(imgObj);
+      this.currImageIndex = this.savedImageArr.length - 1;
+    } else {
+      this.savedImageArr[this.currImageIndex] = imgObj;
+    }
+
+    this.renderImage(this.currImageIndex);
+  }
+
+  // end undo redo stuff
+  // for the shapes in an individual layer
+  renderLastLayer() {
+    var img = new Image();
+    img.src = this.lastImgLayer;
+    this.saveCurrentArtLayer();
+    this.ctx.clearRect(0, 0, this.canvasSize, this.canvasSize);
+    img.onload = function () {
+      this.ctx.drawImage(img, 0, 0, this.canvasSize, this.canvasSize, 0, 0, this.canvasSize, this.canvasSize);
+    }.bind(this);
+  }
+  saveCurrentArtLayer() {
+    this.lastImgLayer = this.canvas.toDataURL();
+    this.setUndoRedoLayer();
+  }
+
+  setUndoRedoLayer() {
+    this.undoListLayer.push(this.canvas.toDataURL());
+    this.redoListLayer = [];
+  }
+  undoLayer() {
+    /// see what current index is
+    if (!this.startEditing && !this.savedImageArr[this.currImageIndex]['edit']) {
+      this.saveCurrentArt(true, true);
+      this.startEditing = true;
+    }
+    if (this.undoListLayer.length > 1) {
+      var redoState = this.undoListLayer.pop();
+      this.redoListLayer.push(redoState)
+      var restoreState = this.undoListLayer[this.undoListLayer.length - 1];
+      var img = new Image();
+      img.src = restoreState;
+      this.ctx.clearRect(0, 0, this.canvasSize, this.canvasSize);
+      img.onload = function () {
+        this.ctx.drawImage(img, 0, 0, this.canvasSize, this.canvasSize, 0, 0, this.canvasSize, this.canvasSize);
+      }.bind(this);
+    }
+  }
+  redoLayer() {
+    if (!this.startEditing && !this.savedImageArr[this.currImageIndex]['edit']) {
+      this.saveCurrentArt(true);
+      this.startEditing = true;
+    }
+    if (this.redoListLayer.length > 1) {
+      var restoreState = this.redoListLayer.pop();
+      var img = new Image();
+      img.src = restoreState;
+      this.ctx.clearRect(0, 0, this.canvasSize, this.canvasSize);
+      img.onload = function () {
+        this.ctx.drawImage(img, 0, 0, this.canvasSize, this.canvasSize, 0, 0, this.canvasSize, this.canvasSize);
+        this.undoListLayer.push(this.canvas.toDataURL());
+      }.bind(this);
+    }
+  }
+  // end for individual shapes in layer
+
+  // end layer undo redo stuff
+  setUndoRedo(clear) {
+    if (clear) {
+      this.undoList = [];
+    }
+    this.undoList.push(this.canvas.toDataURL());
+    this.redoList = [];
+    this.disableCheck();
+  }
+
+  undo() {
+    if (this.edit) {
+      this.toggleEdit();
+    }
+    if (this.undoList.length > 1) {
+      var redoState = this.undoList.pop();
+      this.redoList.push(redoState)
+      var restoreState = this.undoList[this.undoList.length - 1];
+      var img = new Image();
+      img.src = restoreState;
+      this.ctx.clearRect(0, 0, this.canvasSize, this.canvasSize);
+      img.onload = function () {
+        this.ctx.drawImage(img, 0, 0, this.canvasSize, this.canvasSize, 0, 0, this.canvasSize, this.canvasSize);
+      }.bind(this);
+    }
+    this.disableCheck();
+  }
+  disableCheck() {
+    if (this.redoList.length === 0) {
+      this.disableRedo = true;
+    } else {
+      this.disableRedo = false;
+    }
+    if (this.undoList.length <= 1) {
+      this.disableUndo = true;
+    } else {
+      this.disableUndo = false;
+    }
+  }
+  redo() {
+    if (this.redoList.length) {
+      var restoreState = this.redoList.pop();
+      var img = new Image();
+      img.src = restoreState;
+      this.ctx.clearRect(0, 0, this.canvasSize, this.canvasSize);
+      img.onload = function () {
+        this.ctx.drawImage(img, 0, 0, this.canvasSize, this.canvasSize, 0, 0, this.canvasSize, this.canvasSize);
+        this.undoList.push(this.canvas.toDataURL());
+        this.disableCheck();
+      }.bind(this);
+    }
+    this.disableCheck();
+  }
+  // end layer undo redo stuff
+  // end general undo redo stuff
+
+  getDistance(x1, y1, x2, y2) {
+    var xs = x2 - x1,
+      ys = y2 - y1;
     xs *= xs;
-    ys *= ys;  
-    return Math.sqrt( xs + ys );
+    ys *= ys;
+    return Math.sqrt(xs + ys);
   }
   calcPolygonArea(vertices) {
     var total = 0;
@@ -569,7 +657,7 @@ export class AppComponent {
   genColors(scheme) {
     switch (scheme) {
       case 'Random':
-        return this.getRandom();
+        return this.getRandomColorArr();
       case 'Monochromatic':
         return this.getMono();
 
@@ -590,26 +678,14 @@ export class AppComponent {
     }
   }
 
-  getMono() {
-    this.recursionStep = 0;
-    var tempRgb = this.getRandomRgb();
-    var tempRgbString = 'rgb(' + tempRgb.r + ',' + tempRgb.g + ',' + tempRgb.b + ')';
-    var monoColorArr = [];
-    while (this.recursionStep <= (this.objNum + 600)) {
-      monoColorArr.push(tempRgbString);
-      this.recursionStep++;
-    }
-    return monoColorArr;
-  }
-
-  getRandom() {
-    this.recursionStep = 0;
+  getRandomColorArr() {
+    let recursionStep = 0;
     var colorArr = [];
-    while (this.recursionStep <= this.objNum + 1) {
+    while (recursionStep <= this.objNum + 1) {
       var tempRgb = this.getRandomRgb();
       var tempRgbString = 'rgb(' + tempRgb.r + ',' + tempRgb.g + ',' + tempRgb.b + ')';
       colorArr.push(tempRgbString);
-      this.recursionStep++;
+      recursionStep++;
     }
     return colorArr;
   }
@@ -620,41 +696,6 @@ export class AppComponent {
     var g = num >> 8 & 255;
     var b = num & 255;
     return { 'r': r, 'g': g, 'b': b };
-  }
-
-  getComplementaryScheme() {
-    var tempRgb = this.getRandomRgb();
-    var complementaryColorArr = ['rgb(' + tempRgb.r + ',' + tempRgb.g + ',' + tempRgb.b + ')'];
-    this.recursionStep = 0;
-    var currRgb = tempRgb;
-
-    while (this.recursionStep <= (this.objNum + 200)) {
-      // recursion
-      currRgb = this.getComplementary(currRgb);
-      complementaryColorArr.push(this.convertToRgbString(currRgb));
-      this.recursionStep++;
-    }
-    return complementaryColorArr;
-  }
-
-  convertToRgbString(rgbObj) {
-    return 'rgb(' + rgbObj.r + ',' + rgbObj.g + ',' + rgbObj.b + ')';
-  }
-  convertFromRgbStringToObj(rgbString) {
-    var rgbStringArr = rgbString.split(',');
-    var r = rgbStringArr[0].substring(4);
-    r = r.substring(0, r.length - 1);
-    var g = rgbStringArr[1]
-    g = g.substring(0, g.length - 1);
-    var b = rgbStringArr[2];
-    b = b.substring(0, b.length - 1);
-    return { 'r': r, 'g': g, 'b': b };
-  }
-  getComplementary(rgb) {
-    var temphsv = this.RGB2HSV(rgb);
-    temphsv.hue = this.hueShift(temphsv.hue, 180.0);
-    var finRgb = this.HSV2RGB(temphsv);
-    return finRgb;
   }
 
   RGB2HSV(rgb) {
@@ -711,35 +752,19 @@ export class AppComponent {
     h += s; while (h >= 360.0) h -= 360.0; while (h < 0.0) h += 360.0; return h;
   }
 
-  //min max via Hairgami_Master (see comments)
-  min3(a, b, c) {
-    return (a < b) ? ((a < c) ? a : c) : ((b < c) ? b : c);
+  // utility stuff
+  convertToRgbString(rgbObj) {
+    return 'rgb(' + rgbObj.r + ',' + rgbObj.g + ',' + rgbObj.b + ')';
   }
-  max3(a, b, c) {
-    return (a > b) ? ((a > c) ? a : c) : ((b > c) ? b : c);
-  }
-  getAnalogous() {
-
-  }
-
-  getTriad() {
-  }
-  getTetrad() {
-    var scheme = new ColorScheme;
-    scheme.from_hue(21)
-      .scheme('tetrad')
-      .variation('soft');
-
-    var colors = scheme.colors();
-    return colors;
-
-  }
-  getSplitComplementary() {
-  }
-
-  download(element) {
-    element.href = this.canvas.toDataURL();
-    return;
+  convertFromRgbStringToObj(rgbString) {
+    var rgbStringArr = rgbString.split(',');
+    var r = rgbStringArr[0].substring(4);
+    r = r.substring(0, r.length - 1);
+    var g = rgbStringArr[1]
+    g = g.substring(0, g.length - 1);
+    var b = rgbStringArr[2];
+    b = b.substring(0, b.length - 1);
+    return { 'r': r, 'g': g, 'b': b };
   }
   randomlyChooseOneOrTwo() {
     const num = Math.random() + 1;
@@ -749,4 +774,124 @@ export class AppComponent {
       return 2;
     }
   }
+
+  // min max via Hairgami_Master (see comments)
+  min3(a, b, c) {
+    return (a < b) ? ((a < c) ? a : c) : ((b < c) ? b : c);
+  }
+  max3(a, b, c) {
+    return (a > b) ? ((a > c) ? a : c) : ((b > c) ? b : c);
+  }
+
+  download(element) {
+    element.href = this.canvas.toDataURL();
+    return;
+  }
+
+  // end utility
+
+  // not in use - but working code
+  getTetrad() {
+    var scheme = new ColorScheme;
+    scheme.from_hue(21)
+      .scheme('tetrad')
+      .variation('soft');
+
+    var colors = scheme.colors();
+    return colors;
+  }
+
+
+  getComplementaryScheme() {
+    var tempRgb = this.getRandomRgb();
+    var complementaryColorArr = ['rgb(' + tempRgb.r + ',' + tempRgb.g + ',' + tempRgb.b + ')'];
+    let recursionStep = 0;
+    var currRgb = tempRgb;
+
+    while (recursionStep <= (this.objNum + 200)) {
+      // recursion
+      currRgb = this.getComplementary(currRgb);
+      complementaryColorArr.push(this.convertToRgbString(currRgb));
+      recursionStep++;
+    }
+    return complementaryColorArr;
+  }
+
+  getComplementary(rgb) {
+    var temphsv = this.RGB2HSV(rgb);
+    temphsv.hue = this.hueShift(temphsv.hue, 180.0);
+    var finRgb = this.HSV2RGB(temphsv);
+    return finRgb;
+  }
+
+  getMono() {
+    let recursionStep = 0;
+    var tempRgb = this.getRandomRgb();
+    var tempRgbString = 'rgb(' + tempRgb.r + ',' + tempRgb.g + ',' + tempRgb.b + ')';
+    var monoColorArr = [];
+    while (recursionStep <= (this.objNum + 600)) {
+      monoColorArr.push(tempRgbString);
+      recursionStep++;
+    }
+    return monoColorArr;
+  }
+  //trash- work in progress
+
+  // getAnalogous() {
+
+  // }
+
+  // getTriad() {
+  // }
+  // /  getSplitComplementary() {
+  // getLineLayer(objNum, norm, rand) {
+  //   this.shapeArr = ['Line'];
+  //   while (this.layerCounter < objNum) {
+
+  //     this.randomColor = this.colorArr[Math.floor(Math.random() * this.colorArr.length)];
+  //     this.randomStrokeOpacity = Math.random();
+
+  //     // randomShapeOpacity = Math.random() * (1) - layerCounter/objNum;
+  //     this.randomShapeOpacity = Math.random();
+
+  //     if (this.randomShapeOpacity < 0) {
+  //       this.randomShapeOpacity = 0;
+  //     }
+  //     if (this.layerCounter === (objNum - 1) && !norm) {
+  //       this.randomShapeOpacity = .1;
+  //     }
+  //     if (this.layerCounter === (objNum - 2) && !norm) {
+  //       this.randomShapeOpacity = .1;
+  //     }
+  //     var randomShape = this.shapeArr[Math.floor(Math.random() * this.shapeArr.length)];
+  //     // var randomAC = Math.random() * 1;
+  //     var stroke = this.getStroke(this.randomScheme, this.randomColor);
+  //     if (this.randomScheme === 'Complementary') {
+  //       var complStroke = this.colorArr[Math.floor(Math.random() * this.colorArr.length)];
+  //       this.ctx.strokeStyle = complStroke.substring(0, complStroke.length - 1) + ',' + this.randomStrokeOpacity + ")";
+  //     } else if (this.randomScheme !== 'Monochromatic') {
+  //       this.ctx.strokeStyle = 'rgb(' + stroke['r'] + ',' + stroke['g'] + ',' + stroke['b'] + ')';
+  //     } else {
+  //       this.ctx.strokeStyle = 'rgb(' + stroke['r'] + ',' + stroke['g'] + ',' + stroke['b'] + ')';
+  //     }
+
+  //     rand = Math.floor(Math.random() * 2) + 1;
+  //     if (rand === 1) {
+  //       this.ctx.strokeStyle = 'black';
+  //     }
+
+  //     if (!this.isSafari) {
+  //       this.randomColor = this.randomColor.substring(0, this.randomColor.length - 1) + ',' + this.randomShapeOpacity + ")";
+  //     } else {
+  //       this.ctx.globalAlpha = this.randomShapeOpacity;
+  //     }
+  //     this.ctx.fillStyle = this.randomColor;
+  //     // default is middle
+  //     let newLineWidth = Math.random() * 5;
+  //     this.ctx.lineWidth = newLineWidth;
+  //     this.drawShape(randomShape);
+  //     this.layerCounter++;
+  //   }
+  // }
+
 }

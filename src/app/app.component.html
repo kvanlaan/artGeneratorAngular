@@ -1,20 +1,87 @@
+<button (click)="getRandomArt(true)" style="margin-bottom: auto" class="float-left inline" mat-button>
+  Get New Art</button>
 
-  <button (click)="getRandomArt(true)" style="margin-bottom: auto" class="float-left inline" mat-button>Get New Art</button>
+<button (click)="getRandomArt(false)" style="margin-bottom: auto" class="float-left inline" mat-button>Add New Layer</button>
 
-  <button (click)="getRandomArt(false)" style="margin-bottom: auto" class="float-left inline" mat-button>Add New Layer</button>
-  <button [disabled]="disableUndo" (click)="undo()" style="margin-bottom: auto" class="float-left inline" mat-button>Undo Layer</button>
-  <button [disabled]="disableRedo" (click)="redo()" style="margin-bottom: auto" class="float-left inline" mat-button>Redo Layer</button>
-  <button style="margin-bottom: auto" class="float-left inline" mat-button>
-    <a class="float-left inline" href="#" target="_blank" #downloadLink (click)="download(downloadLink)" download="art.jpg">
-      Save this art </a>
+
+<button [disabled]="disableUndo" (click)="undo()" style="margin-bottom: auto" class="float-left inline" mat-button>Undo Layer</button>
+<button [disabled]="disableRedo" (click)="redo()" style="margin-bottom: auto" class="float-left inline" mat-button>Redo Layer</button>
+
+<button style="margin-bottom: auto" class="float-left inline" mat-button>
+  <a class="float-left inline" href="#" target="_blank" #downloadLink (click)="download(downloadLink)" download="art.jpg">
+    Save this art </a>
+</button>
+<!-- <button (click)="toggleEdit()" style="margin-bottom: auto" class="float-left inline" mat-button>
+  Edit Layer
+</button> -->
+
+
+<br>
+<div style="position: fixed; margin-left: -200px; height: 700px; overflow: scroll;" class="inline">
+
+  <div *ngFor="let savedImg of savedImageArr; let i = index;" style="display: inline" fxFlex>
+    <div  style="display: inline">
+      <img class="on-hover-outline" [ngClass]="{
+        'selected': savedImageArr.length - (i+ 1) === currImageIndex
+      }" (click)="saveCurrentArt(true); renderImage(savedImageArr.length - (i+ 1))" style="margin-top: auto; height: 100px; width: 100px; float: left;"
+        [(src)]="savedImageArr[savedImageArr.length - (i+ 1)]['src']" />
+      <i (click)="delete(index)" class="material-icons on-hover-trash" style="margin-left: -11%; margin-top: 77px; float: left">
+        delete
+      </i>
+    </div>
+    <br *ngIf="i%2">
+  </div>
+</div>
+<canvas class="inline" id="myCanvas" width="700" height="700" style="background: white;">
+  Your browser does not support the canvas element.
+</canvas>
+<div style="position: fixed; margin-right: -200px; height: 700px;" class="inline">
+  <button (click)="toggleEdit()" style="margin-bottom: auto" class="float-left inline" mat-button>
+    <i *ngIf="!edit" class="material-icons">
+      edit
+    </i>
+    <i *ngIf="edit" class="material-icons">
+      save
+    </i>
   </button>
 
+  <span *ngIf="edit">
+    <br>
+    <button [disabled]="disableUndoLayer" (click)="undoLayer()" style="margin-bottom: auto" class="float-left inline" mat-button>
+      <i class="material-icons">
+        undo
+      </i>
+    </button>
+    <br>
+    <button [disabled]="disableRedoLayer" (click)="redoLayer()" class="float-left inline" mat-button>
+      <i class="material-icons">
+        redo
+      </i>
+    </button>
+    <br>
+    <button (click)="saveCurrentArt(true, true)" class="float-left inline" mat-button>
+      <i class="material-icons">
+        create_new_folder
+      </i>
+    </button>
+    <br>
+    <button (click)="delete()" class="float-left inline" mat-button>
+      <i class="material-icons">
+        delete
+      </i>
+    </button>
 
-  <br>
-  <div style="position: fixed; margin-left: -100px; height: 100%" class="inline">
-    <img (click)="renderLast()" style="margin-top: auto; height: 100px; width: 100px;" [(src)]="lastImg" />
-  </div>
-  <canvas class="inline" id="myCanvas" width="700" height="700" style="background: white;">
-    Your browser does not support the canvas element.
-  </canvas>
 
+    <!-- <button (click)="zoomIn()"  class="float-left inline" mat-button>
+      <i class="material-icons">
+        zoom_in
+      </i>
+    </button>
+    <br>
+    <button (click)="zoomOut()"lass="float-left inline" mat-button>
+      <i class="material-icons">
+        zoom_out
+      </i>
+    </button> -->
+  </span>
+</div>

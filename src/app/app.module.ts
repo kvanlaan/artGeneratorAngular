@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
 import {MatButtonModule, MatCheckboxModule} from '@angular/material';
+import {FlexLayoutModule} from '@angular/flex-layout';
 
 @NgModule({
   declarations: [
@@ -10,7 +11,7 @@ import {MatButtonModule, MatCheckboxModule} from '@angular/material';
   ],
 
   imports: [MatButtonModule,
-    BrowserModule
+    BrowserModule, FlexLayoutModule
   ],
   providers: [],
   bootstrap: [AppComponent]

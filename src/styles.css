@@ -10,3 +10,28 @@ a {
   .inline {
       display: inline !important;
   }
+
+  .on-hover-trash{
+      opacity: 0 !important;
+  }
+  .on-hover-trash:hover {
+      visibility: visible;
+      opacity: 1 !important;
+      color:red;
+  }
+  .material-icons {
+      cursor: pointer;
+  }
+  .selected {
+    border: 2px solid red;
+    box-sizing: border-box;
+
+  }
+  .on-hover-outline:hover {
+    border: 2px solid red;
+    box-sizing: border-box;
+  }
+  ::-webkit-scrollbar {
+    width: 0px;  /* remove scrollbar space */
+    background: transparent;  /* optional: just make scrollbar invisible */
+}

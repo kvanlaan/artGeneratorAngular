@@ -23,7 +23,7 @@
     <div  style="display: inline">
       <img class="on-hover-outline" [ngClass]="{
         'selected': savedImageArr.length - (i+ 1) === currImageIndex
-      }" (click)="saveCurrentArt(true); renderImage(savedImageArr.length - (i+ 1))" style="margin-top: auto; height: 100px; width: 100px; float: left;"
+      }" (click)="renderImage(savedImageArr.length - (i+ 1))" style="margin-top: auto; height: 100px; width: 100px; float: left;"
         [(src)]="savedImageArr[savedImageArr.length - (i+ 1)]['src']" />
       <i (click)="delete(index)" class="material-icons on-hover-trash" style="margin-left: -11%; margin-top: 77px; float: left">
         delete

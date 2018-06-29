@@ -476,17 +476,16 @@ export class AppComponent {
   }
 
   saveCurrentArt(edit?: boolean, isNew?: boolean) {
-    if (edit === undefined) {
-      edit = this.edit;
-    }
     const imgObj = { 'src': this.canvas.toDataURL(), 'edit': edit, 'redoStack': this.redoListLayer, 'undoStack': this.undoListLayer };
     if (isNew) {
       this.savedImageArr.push(imgObj);
       this.currImageIndex = this.savedImageArr.length - 1;
     } else {
-      this.savedImageArr[this.currImageIndex] = imgObj;
+      this.savedImageArr[this.currImageIndex]['src'] = this.canvas.toDataURL();
+      this.savedImageArr[this.currImageIndex]['undoStack'] = this.undoListLayer;
+      this.savedImageArr[this.currImageIndex]['redoStack'] = this.redoListLayer;
+      this.savedImageArr[this.currImageIndex]['edit'] = edit;
     }
-
     this.renderImage(this.currImageIndex);
   }
 
@@ -530,7 +529,7 @@ export class AppComponent {
   }
   redoLayer() {
     if (!this.startEditing && !this.savedImageArr[this.currImageIndex]['edit']) {
-      this.saveCurrentArt(true);
+      this.saveCurrentArt(true, true);
       this.startEditing = true;
     }
     if (this.redoListLayer.length > 1) {

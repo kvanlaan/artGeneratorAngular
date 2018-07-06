@@ -1,4 +1,4 @@
-<button (click)="getRandomArt(true)" style="margin-bottom: auto" class="float-left inline" mat-button>
+<button [disabled]="!renderDone" (click)="getRandomArt(true)" style="margin-bottom: auto" class="float-left inline" mat-button>
   Get New Art</button>
 
 <button (click)="getRandomArt(false)" style="margin-bottom: auto" class="float-left inline" mat-button>Add New Layer</button>
@@ -20,11 +20,14 @@
 <div style="position: fixed; margin-left: -200px; height: 700px; overflow: scroll;" class="inline">
 
   <div *ngFor="let savedImg of savedImageArr; let i = index;" style="display: inline" fxFlex>
-    <div  style="display: inline">
+    <div style="display: inline">
       <img class="on-hover-outline" [ngClass]="{
         'selected': savedImageArr.length - (i+ 1) === currImageIndex
       }" (click)="renderImage(savedImageArr.length - (i+ 1))" style="margin-top: auto; height: 100px; width: 100px; float: left;"
         [(src)]="savedImageArr[savedImageArr.length - (i+ 1)]['src']" />
+
+      <span *ngIf="savedImageArr.length - (i+ 1) === currImageIndex && edit" style="margin-left: -45px; float: left; color: red; font-style: italic">editing</span>
+
       <i (click)="delete(index)" class="material-icons on-hover-trash" style="margin-left: -11%; margin-top: 77px; float: left">
         delete
       </i>
@@ -32,9 +35,13 @@
     <br *ngIf="i%2">
   </div>
 </div>
-<canvas class="inline" id="myCanvas" width="700" height="700" style="background: white;">
+<div class="inline"  width="700" height="700">
+<canvas class="visible" [ngClass]=" { 'invisible': !renderDone }" id="myCanvas" width="700" height="700">
   Your browser does not support the canvas element.
 </canvas>
+<div style="z-index: 2" [fxShow]="!renderDone" class="margin-auto loader"></div>
+</div>
+
 <div style="position: fixed; margin-right: -200px; height: 700px;" class="inline">
   <button (click)="toggleEdit()" style="margin-bottom: auto" class="float-left inline" mat-button>
     <i *ngIf="!edit" class="material-icons">
@@ -47,13 +54,13 @@
 
   <span *ngIf="edit">
     <br>
-    <button [disabled]="disableUndoLayer" (click)="undoLayer()" style="margin-bottom: auto" class="float-left inline" mat-button>
+    <button [disabled]="disableUndoShape" (click)="undoShape()" style="margin-bottom: auto" class="float-left inline" mat-button>
       <i class="material-icons">
         undo
       </i>
     </button>
     <br>
-    <button [disabled]="disableRedoLayer" (click)="redoLayer()" class="float-left inline" mat-button>
+    <button [disabled]="disableRedoShape" (click)="redoShape()" class="float-left inline" mat-button>
       <i class="material-icons">
         redo
       </i>
@@ -70,7 +77,6 @@
         delete
       </i>
     </button>
-
 
     <!-- <button (click)="zoomIn()"  class="float-left inline" mat-button>
       <i class="material-icons">

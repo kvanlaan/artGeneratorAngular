@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-var tinycolor;
+
 var ColorScheme;
 @Component({
   selector: 'app-root',
@@ -8,37 +8,39 @@ var ColorScheme;
 })
 
 export class AppComponent {
-  objNum = 23;
-  canvasSize = 700;
-  maxArea = (700 * 700);
-  colorSchemes = ['Monochromatic', 'Complementary', 'Random'];
-  shapeArr = ['Rectangle', 'Triangle', 'Circle', 'Line'];
-  smallShapeArr = ['Rectangle', 'Circle'];
-  backgroundShapeArr = ['Rectangle', 'Triangle', 'Circle', 'Line'];
-  edit = false;
-  canvas;
-  ctx;
   aggrObjArea = 0;
-  redoList = [];
-  undoList = [];
-  redoListLayer = [];
-  undoListLayer = [];
+  backgroundShapeArr = ['Rectangle', 'Triangle', 'Circle', 'Line'];
+  canvas;
+  currImageIndex = 0;
+  canvasSize = 700;
+  colorArr = [];
+  colorSchemes = ['Monochromatic', 'Complementary', 'Random'];
+  ctx;
   disableRedo = true;
   disableUndo = true;
+  edit = false;
   isSafari = false;
-  lastImg = '';
-  lastImgLayer;
-  colorArr = [];
+  lastImgShape;
   layerCounter = 0;
+  maxArea = (700 * 700);
+  objNum = 23;
   randomColor;
   randomStrokeOpacity;
   randomShapeOpacity;
   randomScheme;
   randomShape;
+  redoList = [];
+  redoListShape = [];
+  shapeArr = ['Rectangle', 'Triangle', 'Circle', 'Line'];
+  smallShapeArr = ['Rectangle', 'Circle'];
   savedImageArr = [];
   startEditing = false;
-  borderColor = 'none';
-  currImageIndex;
+  undoList = [];
+  undoListShape = [];
+  undoListShapeTemp = [];
+  redoListShapeTemp = [];
+
+  renderDone = true;
   // colorSchemes = ['Monchromatic', 'Complementary', 'Analogous', 'Triad', 'Tetrad',
   //   'Split Complementary'];
   // shapeArr = ['Rectangle', 'Triangle', 'Circle', 'Trapezoid', 'Line'];
@@ -48,19 +50,10 @@ export class AppComponent {
     this.isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
     this.canvas = <HTMLCanvasElement>document.getElementById("myCanvas");
     this.ctx = this.canvas.getContext("2d");
+
     this.getRandomArt(true);
   }
-  delete(index?: number) {
-    if (index === undefined) {
-      index = this.currImageIndex;
-    }
-    this.savedImageArr.splice(index, 1);
 
-    if (index > this.savedImageArr.length - 1) {
-      index--;
-    }
-    this.renderImage(index);
-  }
   zoomIn() {
     this.ctx.scale(2, 2);
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -76,6 +69,8 @@ export class AppComponent {
     this.renderImage();
   }
   getRandomArt(clear) {
+    this.renderDone = false;
+
     if (this.edit) {
       this.toggleEdit();
     }
@@ -85,11 +80,18 @@ export class AppComponent {
       // if (this.lastImg && this.lastImg !== this.canvas.toDataURL() && this.savedImageArr.indexOf(this.canvas.toDataURL()) < 0) {
       //   this.saveCurrentArt();
       // }
-      this.undoListLayer = [];
-      this.redoListLayer = [];
+      // this.undoListShape = [];
+      // this.redoListShape = [];
       this.edit = false;
+      this.startEditing = false;
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-      this.ctx.fillStyle = "white";
+      // this.ctx.fillStyle = "#FFFFDE";
+      // this.ctx.fillStyle = "#F7D708";
+
+      this.ctx.fillStyle = 'white';
+
+
+      this.ctx.fillStyle = 'rgba(0,0,0,0)';
       this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
     }
 
@@ -154,7 +156,7 @@ export class AppComponent {
         this.ctx.lineWidth = Math.random() * 10;
         this.drawShape(randomShape);
         this.layerCounter++;
-        this.saveCurrentArtLayer();
+        this.undoListShape.push(this.canvas.toDataURL());
       }
     }
     this.resetForNewLayer();
@@ -201,12 +203,13 @@ export class AppComponent {
       this.ctx.lineWidth = newLineWidth;
       this.drawShape(randomShape, true);
       this.layerCounter++;
-      this.saveCurrentArtLayer();
+      this.undoListShape.push(this.canvas.toDataURL());
     }
     this.setUndoRedo(clear);
     this.ctx.globalAlpha = 1;
-    this.saveCurrentArt(false, true);
+    this.saveCurrentArt(clear);
   }
+
   getFirstSmallLayer() {
     while (this.layerCounter <= 25) {
       this.randomColor = this.colorArr[Math.floor(Math.random() * this.colorArr.length)];
@@ -240,7 +243,7 @@ export class AppComponent {
       this.ctx.lineWidth = Math.random() * 10;
       this.drawShape(randomShape, true);
       this.layerCounter++;
-      this.saveCurrentArtLayer();
+      this.undoListShape.push(this.canvas.toDataURL());
     }
   }
   resetForNewLayer() {
@@ -320,7 +323,7 @@ export class AppComponent {
       this.ctx.lineWidth = newLineWidth;
       this.drawShape(randomShape);
       this.layerCounter++;
-      this.saveCurrentArtLayer();
+      this.undoListShape.push(this.canvas.toDataURL());
     }
   }
 
@@ -333,6 +336,12 @@ export class AppComponent {
     }
     (widthCounter / lineWidthArr.length) > .75;
     return true;
+  }
+
+  revertChanges() {
+    this.undoListShapeTemp = [];
+    this.redoListShapeTemp = [];
+
   }
   drawShape(shape, small?) {
     var xPos = Math.random() * this.canvasSize;
@@ -449,21 +458,42 @@ export class AppComponent {
     if (this.edit) {
       this.ctx.save();
     } else {
-      this.savedImageArr[this.currImageIndex]['src'] = this.canvas.toDataURL();
-      this.savedImageArr[this.currImageIndex]['undoStack'] = this.undoListLayer;
-      this.savedImageArr[this.currImageIndex]['redoStack'] = this.redoListLayer;
-      this.savedImageArr[this.currImageIndex]['edit'] = true;
       this.ctx.restore();
     }
     this.startEditing = false;
   }
-  renderImage(index?: number) {
+  delete(index?: number) {
+    if (index === undefined) {
+      index = this.currImageIndex;
+    }
+    if (index < this.currImageIndex) {
+      this.currImageIndex--;
+    }
+
+    this.savedImageArr.splice(index, 1);
+
+    if (index > this.savedImageArr.length - 1) {
+      index--;
+    }
+    this.renderImage(index);
+  }
+  renderImage(index?: number, startEdit?: boolean) {
+    if (this.currImageIndex !== index) {
+      this.edit = false;
+      this.startEditing = false;
+    }
+    if (startEdit !== undefined) {
+      this.edit = startEdit;
+      this.startEditing = startEdit;
+    }
     this.currImageIndex = index;
-    this.undoListLayer = this.savedImageArr[this.currImageIndex]['undoStack'];
-    console.log('this.undoListLayer', this.undoListLayer);
-    this.redoListLayer = this.savedImageArr[this.currImageIndex]['redoStack'];
 
     var img = new Image();
+
+    this.undoListShape = this.savedImageArr[this.currImageIndex]['undoStackShape'].slice();
+    this.redoListShape = this.savedImageArr[this.currImageIndex]['redoStackShape'].slice();
+    this.undoList = this.savedImageArr[this.currImageIndex]['undoStack'].slice();
+    this.redoList = this.savedImageArr[this.currImageIndex]['redoStack'].slice();
     // if (index === undefined) {
     //   img.src = this.lastImg;
     // } else {
@@ -472,74 +502,85 @@ export class AppComponent {
     this.ctx.clearRect(0, 0, this.canvasSize, this.canvasSize);
     img.onload = function () {
       this.ctx.drawImage(img, 0, 0, this.canvasSize, this.canvasSize, 0, 0, this.canvasSize, this.canvasSize);
+      this.renderDone = true;
     }.bind(this);
   }
 
-  saveCurrentArt(edit?: boolean, isNew?: boolean) {
-    const imgObj = { 'src': this.canvas.toDataURL(), 'edit': edit, 'redoStack': this.redoListLayer, 'undoStack': this.undoListLayer };
+  saveCurrentArt(isNew?: boolean, startEdit?: boolean) {
+    const copyOfUndoShape = this.undoListShape.slice();
+    const copyOfRedoShape = this.redoListShape.slice();
+    const copyOfUndo = this.undoList.slice();
+    const copyOfRedo = this.redoList.slice();
+    let newIndex = this.currImageIndex;
+    // default
+    let edit = true;
+    if (isNew) {
+      edit = false;
+    }
+    const imgObj = {
+      'name': newIndex + 'index',
+      'src': this.canvas.toDataURL(),
+      'edit': edit, 'redoStack': copyOfRedo, 'undoStack': copyOfUndo, 'redoStackShape': copyOfRedoShape, 'undoStackShape': copyOfUndoShape
+    };
     if (isNew) {
       this.savedImageArr.push(imgObj);
-      this.currImageIndex = this.savedImageArr.length - 1;
+      newIndex = this.savedImageArr.length - 1;
     } else {
-      this.savedImageArr[this.currImageIndex]['src'] = this.canvas.toDataURL();
-      this.savedImageArr[this.currImageIndex]['undoStack'] = this.undoListLayer;
-      this.savedImageArr[this.currImageIndex]['redoStack'] = this.redoListLayer;
-      this.savedImageArr[this.currImageIndex]['edit'] = edit;
+      this.savedImageArr[newIndex] = imgObj;
+      // this.savedImageArr[newIndex]['src'] = this.canvas.toDataURL();
+      // this.savedImageArr[newIndex]['undoStack'] = copyOfUndo;
+      // this.savedImageArr[newIndex]['redoStack'] = copyOfRedo;
+      // this.savedImageArr[newIndex]['edit'] = edit;
     }
-    this.renderImage(this.currImageIndex);
+
+    if (startEdit !== undefined) {
+      startEdit = startEdit;
+    }
+    this.renderImage(newIndex, startEdit);
   }
 
-  // end undo redo stuff
-  // for the shapes in an individual layer
-  renderLastLayer() {
-    var img = new Image();
-    img.src = this.lastImgLayer;
-    this.saveCurrentArtLayer();
-    this.ctx.clearRect(0, 0, this.canvasSize, this.canvasSize);
-    img.onload = function () {
-      this.ctx.drawImage(img, 0, 0, this.canvasSize, this.canvasSize, 0, 0, this.canvasSize, this.canvasSize);
-    }.bind(this);
-  }
-  saveCurrentArtLayer() {
-    this.lastImgLayer = this.canvas.toDataURL();
-    this.setUndoRedoLayer();
-  }
-
-  setUndoRedoLayer() {
-    this.undoListLayer.push(this.canvas.toDataURL());
-    this.redoListLayer = [];
-  }
-  undoLayer() {
+  undoShape() {
     /// see what current index is
+
     if (!this.startEditing && !this.savedImageArr[this.currImageIndex]['edit']) {
+      this.savedImageArr[this.currImageIndex]['edit'] = true;
       this.saveCurrentArt(true, true);
-      this.startEditing = true;
+    } else {
+
+
+      if (this.undoListShape.length > 1) {
+        var redoState = this.undoListShape.pop();
+        this.redoListShape.push(redoState);
+        var restoreState = this.undoListShape[this.undoListShape.length - 1];
+        var img = new Image();
+        img.src = restoreState;
+        this.ctx.clearRect(0, 0, this.canvasSize, this.canvasSize);
+        img.onload = function () {
+          this.ctx.drawImage(img, 0, 0, this.canvasSize, this.canvasSize, 0, 0, this.canvasSize, this.canvasSize);
+          this.saveCurrentArt();
+
+        }.bind(this);
+      }
     }
-    if (this.undoListLayer.length > 1) {
-      var redoState = this.undoListLayer.pop();
-      this.redoListLayer.push(redoState)
-      var restoreState = this.undoListLayer[this.undoListLayer.length - 1];
-      var img = new Image();
-      img.src = restoreState;
-      this.ctx.clearRect(0, 0, this.canvasSize, this.canvasSize);
-      img.onload = function () {
-        this.ctx.drawImage(img, 0, 0, this.canvasSize, this.canvasSize, 0, 0, this.canvasSize, this.canvasSize);
-      }.bind(this);
-    }
+    this.startEditing = true;
   }
-  redoLayer() {
+  redoShape() {
     if (!this.startEditing && !this.savedImageArr[this.currImageIndex]['edit']) {
-      this.saveCurrentArt(true, true);
-      this.startEditing = true;
+      this.savedImageArr[this.currImageIndex]['edit'] = true;
+      this.saveCurrentArt(true);
     }
-    if (this.redoListLayer.length > 1) {
-      var restoreState = this.redoListLayer.pop();
+    this.startEditing = true;
+
+    if (this.redoListShape.length > 1) {
+      var restoreState = this.redoListShape.pop();
       var img = new Image();
       img.src = restoreState;
       this.ctx.clearRect(0, 0, this.canvasSize, this.canvasSize);
       img.onload = function () {
         this.ctx.drawImage(img, 0, 0, this.canvasSize, this.canvasSize, 0, 0, this.canvasSize, this.canvasSize);
-        this.undoListLayer.push(this.canvas.toDataURL());
+        this.undoListShape.push(this.canvas.toDataURL());
+        this.saveCurrentArt(false);
+
       }.bind(this);
     }
   }
@@ -556,21 +597,20 @@ export class AppComponent {
   }
 
   undo() {
-    if (this.edit) {
-      this.toggleEdit();
-    }
     if (this.undoList.length > 1) {
       var redoState = this.undoList.pop();
-      this.redoList.push(redoState)
-      var restoreState = this.undoList[this.undoList.length - 1];
+      this.redoList.push(redoState);
+      var restoreState = this.undoList[this.undoList.length - 1].slice();
       var img = new Image();
       img.src = restoreState;
       this.ctx.clearRect(0, 0, this.canvasSize, this.canvasSize);
       img.onload = function () {
         this.ctx.drawImage(img, 0, 0, this.canvasSize, this.canvasSize, 0, 0, this.canvasSize, this.canvasSize);
+        this.disableCheck();
+        this.saveCurrentArt(false);
       }.bind(this);
     }
-    this.disableCheck();
+
   }
   disableCheck() {
     if (this.redoList.length === 0) {
@@ -594,9 +634,10 @@ export class AppComponent {
         this.ctx.drawImage(img, 0, 0, this.canvasSize, this.canvasSize, 0, 0, this.canvasSize, this.canvasSize);
         this.undoList.push(this.canvas.toDataURL());
         this.disableCheck();
+        this.saveCurrentArt(false);
       }.bind(this);
     }
-    this.disableCheck();
+
   }
   // end layer undo redo stuff
   // end general undo redo stuff
@@ -678,13 +719,13 @@ export class AppComponent {
   }
 
   getRandomColorArr() {
-    let recursionStep = 0;
+    let counter = 0;
     var colorArr = [];
-    while (recursionStep <= this.objNum + 1) {
+    while (counter <= this.objNum + 1) {
       var tempRgb = this.getRandomRgb();
       var tempRgbString = 'rgb(' + tempRgb.r + ',' + tempRgb.g + ',' + tempRgb.b + ')';
       colorArr.push(tempRgbString);
-      recursionStep++;
+      counter++;
     }
     return colorArr;
   }
@@ -804,14 +845,14 @@ export class AppComponent {
   getComplementaryScheme() {
     var tempRgb = this.getRandomRgb();
     var complementaryColorArr = ['rgb(' + tempRgb.r + ',' + tempRgb.g + ',' + tempRgb.b + ')'];
-    let recursionStep = 0;
+    let counter = 0;
     var currRgb = tempRgb;
 
-    while (recursionStep <= (this.objNum + 200)) {
+    while (counter <= (this.objNum + 200)) {
       // recursion
       currRgb = this.getComplementary(currRgb);
       complementaryColorArr.push(this.convertToRgbString(currRgb));
-      recursionStep++;
+      counter++;
     }
     return complementaryColorArr;
   }
@@ -824,13 +865,13 @@ export class AppComponent {
   }
 
   getMono() {
-    let recursionStep = 0;
+    let counter = 0;
     var tempRgb = this.getRandomRgb();
     var tempRgbString = 'rgb(' + tempRgb.r + ',' + tempRgb.g + ',' + tempRgb.b + ')';
     var monoColorArr = [];
-    while (recursionStep <= (this.objNum + 600)) {
+    while (counter <= (this.objNum + 600)) {
       monoColorArr.push(tempRgbString);
-      recursionStep++;
+      counter++;
     }
     return monoColorArr;
   }
@@ -843,7 +884,7 @@ export class AppComponent {
   // getTriad() {
   // }
   // /  getSplitComplementary() {
-  // getLineLayer(objNum, norm, rand) {
+  // getLineShape(objNum, norm, rand) {
   //   this.shapeArr = ['Line'];
   //   while (this.layerCounter < objNum) {
 

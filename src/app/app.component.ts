@@ -1,4 +1,14 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
+import * as firebase from 'firebase';
+import * as firebaseui from 'firebaseui';
+import { MatDialog } from '@angular/material';
+@Component({
+  templateUrl: './login.component.html'
+})
+
+export class LoginDialogComponent {
+
+}
 
 var ColorScheme;
 @Component({
@@ -22,11 +32,11 @@ export class AppComponent {
   isSafari = false;
   lastImgShape;
   layerCounter = 0;
-  maxArea = (700 * 700);
-  objNum = 23;
   randomColor;
   randomStrokeOpacity;
   randomShapeOpacity;
+  maxArea = (700 * 700);
+  objNum = 23;
   randomScheme;
   randomShape;
   redoList = [];
@@ -39,17 +49,167 @@ export class AppComponent {
   undoListShape = [];
   undoListShapeTemp = [];
   redoListShapeTemp = [];
-
+  login = false;
+  displayName = '';
   renderDone = true;
+  name;
+  email;
+  user;
+  ui;
+  dialogRef;
   // colorSchemes = ['Monchromatic', 'Complementary', 'Analogous', 'Triad', 'Tetrad',
   //   'Split Complementary'];
   // shapeArr = ['Rectangle', 'Triangle', 'Circle', 'Trapezoid', 'Line'];
   // shapeArr = ['Trapezoid'];
 
+  constructor(public dialog: MatDialog) {
+
+  }
+  @HostListener('window:keydown', ['$event'])
+  handlekeydown(e) {
+    const currIndex = this.currImageIndex;
+
+    if (e.keyCode === 39) {
+      if ((currIndex - 1) >= 0) {
+
+        this.currImageIndex--;
+        this.renderImage(this.currImageIndex);
+      }
+    }
+    if (e.keyCode === 40) {
+      if ((currIndex - 2) >= 0) {
+        this.currImageIndex--;
+        this.currImageIndex--;
+        this.renderImage(this.currImageIndex);
+      }
+    }
+    if (e.keyCode === 38) {
+      if (currIndex + 2 < this.savedImageArr.length) {
+        this.currImageIndex++;
+        this.currImageIndex++;
+        this.renderImage(this.currImageIndex);
+      }
+
+    }
+    if (e.keyCode === 37) {
+      if (currIndex + 1 < this.savedImageArr.length) {
+
+        this.currImageIndex++;
+        this.renderImage(this.currImageIndex);
+
+      }
+    }
+  }
+
+  openLoginDialog() {
+    this.dialogRef = this.dialog.open(LoginDialogComponent, {
+      width: '300px'
+    });
+
+    this.dialogRef.afterClosed().subscribe(result => {
+    });
+  }
+
+  signOut() {
+    firebase.auth().signOut().then(function () {
+      // Sign-out successful.
+    }).catch(function (error) {
+      // An error happened.
+    });
+  }
+
+  handleSignedInUser(user) {
+    this.user = user;
+    this.login = true;
+    this.displayName = this.user.displayName;
+    this.email = this.user.email;
+  }
+
+  handleSignedOutUser() {
+    this.openLoginDialog();
+    this.login = false;
+
+    this.ui.start('#firebaseui-container', this.getUiConfig());
+
+  }
+
+  getUiConfig() {
+
+    var uiConfig = {
+      callbacks: {
+        signInSuccessWithAuthResult: function (this, authResult, redirectUrl) {
+          this.login = true;
+          if (authResult.user) {
+            this.handleSignedInUser(authResult.user);
+          }
+          // if (authResult.additionalUserInfo) {
+          //   document.getElementById('is-new-user').textContent =
+          //     authResult.additionalUserInfo.isNewUser ?
+          //       'New User' : 'Existing User';
+          // }
+          // Do not redirect.
+          this.dialogRef.close(LoginDialogComponent);
+          return false;
+        }.bind(this),
+        uiShown: function () {
+          // The widget is rendered.
+          // Hide the loader.
+          // document.getElementById('firebaseui-auth-container').style.display = 'none';
+
+          document.getElementById('loader').style.display = 'none';
+        }
+      },
+      signInFlow: 'popup',
+      signInSuccessUrl: 'http://localhost:4200/',
+      signInOptions: [
+        // Leave the lines as is for the providers you want to offer your users.
+        firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+        firebase.auth.FacebookAuthProvider.PROVIDER_ID,
+        firebase.auth.EmailAuthProvider.PROVIDER_ID
+      ]
+    };
+    return uiConfig;
+  }
+
   ngOnInit() {
+
+    var config = {
+      apiKey: "AIzaSyD98GbUHORmW3-C9nxvqboQLapTXxnSMM0",
+      authDomain: "artgenerator-8008a.firebaseapp.com",
+      databaseURL: "https://artgenerator-8008a.firebaseio.com",
+      projectId: "artgenerator-8008a",
+      storageBucket: "artgenerator-8008a.appspot.com",
+      messagingSenderId: "858892303412"
+    };
+    firebase.initializeApp(config);
+    this.ui = new firebaseui.auth.AuthUI(firebase.auth());
+    this.user = firebase.auth().currentUser;
+
+    if (this.user) {
+      this.login = true;
+      this.handleSignedInUser(this.user);
+    } else {
+      // User is signed out.
+      this.login = false;
+    }
+    firebase.auth().onAuthStateChanged(function (this, user) {
+      this.user = user;
+      // document.getElementById('loading').style.display = 'none';
+      // document.getElementById('loaded').style.display = 'block';
+      user ? this.handleSignedInUser(this.user) : this.handleSignedOutUser();
+    }.bind(this));
+
     this.isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
     this.canvas = <HTMLCanvasElement>document.getElementById("myCanvas");
     this.ctx = this.canvas.getContext("2d");
+
+    // this.ref = new Firebase("https://artGenerator.firebaseio.com")
+    // var auth = this.ref.getAuth()
+    // console.log(auth)
+    // if (!auth) location.hash = "splash"
+    // this.on("all",function() {
+    //   if (!this.ref.getAuth()) location.hash = "splash"
+    // }, this)
 
     this.getRandomArt(true);
   }
@@ -162,7 +322,7 @@ export class AppComponent {
     this.resetForNewLayer();
     // layer of main shapes
     let objNum = this.objNum;
-    this.getMainLayer(objNum, norm, rand);
+    this.getMainLayer(objNum, norm, rand, trapTrans);
     // this.resetForNewLayer();
     // this.getLineLayer(15, norm, rand);
     this.resetForNewLayer();
@@ -254,17 +414,17 @@ export class AppComponent {
   }
 
 
-  getMainLayer(objNum, norm, rand) {
+  getMainLayer(objNum, norm, rand, trapTrans) {
     this.shapeArr = ['Rectangle', 'Triangle', 'Circle', 'Line'];
     if (norm === false) {
       objNum = Math.floor(Math.random() * 1) + 5;
       // this.shapeArr = ['Trapezoid', 'Circle'];
-      this.shapeArr = ['Trapezoid'];
+      // this.shapeArr = ['Trapezoid'];
 
-      const rand = this.randomlyChooseOneOrTwo();
-      if (rand === 1) {
-        this.shapeArr = ['Trapezoid', 'Line'];
-      }
+      // const rand = this.randomlyChooseOneOrTwo();
+      // if (rand === 1) {
+      this.shapeArr = ['Trapezoid', 'Line'];
+      // }
     }
     while (this.layerCounter < objNum) {
 
@@ -321,6 +481,10 @@ export class AppComponent {
       //   }
       // }
       this.ctx.lineWidth = newLineWidth;
+      if (!norm) {
+        // console.log('trapnTrans', trapTrans);
+        // this.ctx.lineWidth = (Math.random() * 10) + 1;
+      }
       this.drawShape(randomShape);
       this.layerCounter++;
       this.undoListShape.push(this.canvas.toDataURL());
@@ -933,5 +1097,46 @@ export class AppComponent {
   //     this.layerCounter++;
   //   }
   // }
+  // handleLogOut = function () {
+  //   this.ref.unauth();
+  // }
 
+  // _logUserIn = function (submittedEmail, submittedPassword) {
+  //   var ref = this.ref
+  //   var handler = function (error, authData) {
+  //     if (error) {
+  //       console.log("Login Failed!", error);
+  //     } else {
+  //       console.log("Authenticated successfully with payload:");
+  //       console.log(authData)
+  //       location.hash = "dash"
+  //     }
+  //   }
+  //   ref.authWithPassword({
+  //     email: submittedEmail,
+  //     password: submittedPassword
+  //   }, handler);
+  // }
+  // _signUserUp = function (submittedEmail, submittedPassword) {
+  //   var ref = this.ref
+  //   var boundSignerUpper = this._signUserUp.bind(this);
+  //   var boundLoggerInner = this._logUserIn.bind(this);
+  //   var storeUser = function (userData) {
+  //     ref.child('users').child(userData.uid).set({ email: submittedEmail })
+  //   }
+  //   var handler = function (error, userData) {
+  //     if (error) {
+  //       console.log("Error creating user:", error);
+  //       DOM.render(<SplashPage error={ error } signerUpper = { boundSignerUpper } loggerInner = { boundLoggerInner } />, document.querySelector('.container'))
+  //     } else {
+  //       console.log("Successfully created user account with uid:", userData.uid);
+  //       storeUser(userData)
+  //       boundLoggerInner(submittedEmail, submittedPassword)
+  //     }
+  //   }
+  //   ref.createUser({
+  //     email: submittedEmail,
+  //     password: submittedPassword
+  //   }, handler);
+  // }
 }

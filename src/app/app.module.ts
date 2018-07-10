@@ -1,17 +1,20 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
-import { AppComponent } from './app.component';
-import {MatButtonModule, MatCheckboxModule} from '@angular/material';
+import { AppComponent, LoginDialogComponent } from './app.component';
+import {MatButtonModule,  MatDialog,  MatCheckboxModule, MatDialogModule} from '@angular/material';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import { BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    LoginDialogComponent
   ],
-
-  imports: [MatButtonModule,    BrowserAnimationsModule,
+  entryComponents: [
+    LoginDialogComponent
+  ],
+  imports: [MatButtonModule,     MatDialogModule,   BrowserAnimationsModule,
     BrowserModule, FlexLayoutModule
   ],
   providers: [],

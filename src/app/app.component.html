@@ -42,7 +42,7 @@
 <div  height="700" width="200" fxFlex>
 
   <div *ngFor="let savedImg of savedImageArr; let i = index;"  fxFlex>
-    <div style="display: inline">
+    <div>
       <img class="on-hover-outline" [ngClass]="{
         'selected': savedImageArr.length - (i+ 1) === currImageIndex
       }" (click)="renderImage(savedImageArr.length - (i+ 1))" style="margin-top: auto; height: 100px; width: 100px; float: left;"

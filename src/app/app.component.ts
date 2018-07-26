@@ -2,6 +2,8 @@ import { Component, HostListener } from '@angular/core';
 import * as firebase from 'firebase';
 import * as firebaseui from 'firebaseui';
 import { MatDialog } from '@angular/material';
+import {MatGridListModule} from '@angular/material/grid-list';
+import { LocationStrategy, PathLocationStrategy } from '../../node_modules/@angular/common';
 @Component({
   templateUrl: './login.component.html'
 })
@@ -57,14 +59,20 @@ export class AppComponent {
   user;
   ui;
   dialogRef;
+  library = [];
+  storageRef;
+  imagesRef;
+  database;
+  authListenerStarted = false;
+  loginStarted = false;
   // colorSchemes = ['Monchromatic', 'Complementary', 'Analogous', 'Triad', 'Tetrad',
   //   'Split Complementary'];
   // shapeArr = ['Rectangle', 'Triangle', 'Circle', 'Trapezoid', 'Line'];
   // shapeArr = ['Trapezoid'];
 
-  constructor(public dialog: MatDialog) {
 
-  }
+
+  constructor(public dialog: MatDialog) { }
   @HostListener('window:keydown', ['$event'])
   handlekeydown(e) {
     const currIndex = this.currImageIndex;
@@ -111,26 +119,49 @@ export class AppComponent {
   }
 
   signOut() {
+
+    var temp = location.href.split('#')[0];
+    // if (temp[temp.length - 1] === '#') {
+    //   temp = temp.substring(0, temp.length - 1);
+    // }
+
+    location.href = temp[0] + '#loggingOut';
+
     firebase.auth().signOut().then(function () {
-      // Sign-out successful.
+      // this.savedImageArr = [];
+      // this.getRandomArt(true);
+      // this.loginStarted = false;
+      // location.reload();
     }).catch(function (error) {
-      // An error happened.
     });
   }
 
-  handleSignedInUser(user) {
+  async handleSignedInUser(user) {
+
     this.user = user;
     this.login = true;
     this.displayName = this.user.displayName;
     this.email = this.user.email;
+
+    const trimmedName = this.displayName.replace(/\s/g, '');
+
+    await this.database.collection('users/' + trimmedName + '/images').get().then((querySnapshot) => {
+      this.savedImageArr = [];
+      querySnapshot.forEach((doc) => {
+        this.savedImageArr.push(doc.data());
+      });
+    });
+    this.renderImage(0);
+
   }
 
-  handleSignedOutUser() {
-    this.openLoginDialog();
-    this.login = false;
-
-    this.ui.start('#firebaseui-container', this.getUiConfig());
-
+  async handleSignedOutUser() {
+    if (!document.getElementById('firebaseui-container')) {
+      this.openLoginDialog();
+      this.login = false;
+      console.log('this.ui', this.ui);
+      await this.ui.start('#firebaseui-container', this.getUiConfig());
+    }
   }
 
   getUiConfig() {
@@ -159,7 +190,6 @@ export class AppComponent {
           document.getElementById('loader').style.display = 'none';
         }
       },
-      signInFlow: 'popup',
       signInSuccessUrl: 'http://localhost:4200/',
       signInOptions: [
         // Leave the lines as is for the providers you want to offer your users.
@@ -171,8 +201,10 @@ export class AppComponent {
     return uiConfig;
   }
 
-  ngOnInit() {
+  async ngOnInit() {
 
+    /// how to handle log in credentails in routing ohhhh
+    this.renderDone = false;
     var config = {
       apiKey: "AIzaSyD98GbUHORmW3-C9nxvqboQLapTXxnSMM0",
       authDomain: "artgenerator-8008a.firebaseapp.com",
@@ -182,36 +214,80 @@ export class AppComponent {
       messagingSenderId: "858892303412"
     };
     firebase.initializeApp(config);
+
+    this.database = firebase.firestore();
+    const settings = { timestampsInSnapshots: true };
+    this.database.settings(settings);
+
     this.ui = new firebaseui.auth.AuthUI(firebase.auth());
     this.user = firebase.auth().currentUser;
-
-    if (this.user) {
-      this.login = true;
-      this.handleSignedInUser(this.user);
-    } else {
-      // User is signed out.
-      this.login = false;
-    }
-    firebase.auth().onAuthStateChanged(function (this, user) {
-      this.user = user;
-      // document.getElementById('loading').style.display = 'none';
-      // document.getElementById('loaded').style.display = 'block';
-      user ? this.handleSignedInUser(this.user) : this.handleSignedOutUser();
-    }.bind(this));
-
     this.isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
     this.canvas = <HTMLCanvasElement>document.getElementById("myCanvas");
     this.ctx = this.canvas.getContext("2d");
 
-    // this.ref = new Firebase("https://artGenerator.firebaseio.com")
-    // var auth = this.ref.getAuth()
-    // console.log(auth)
-    // if (!auth) location.hash = "splash"
-    // this.on("all",function() {
-    //   if (!this.ref.getAuth()) location.hash = "splash"
-    // }, this)
+    // if () {
 
-    this.getRandomArt(true);
+    // }
+    firebase.auth().onAuthStateChanged(async function (this, user) {
+      this.renderDone = false;
+      this.user = user;
+      // if (this.loginStarted) {
+      user ? await this.handleSignedInUser(user) : await this.handleSignedOutUser();
+      // }
+
+      // && !document.getElementByClassName('firebaseui-callback-indicator-container')
+      // !!document.getElementById('firebaseui-container')
+      console.log('thisui', this.ui);
+      console.log('thisuser', this.user);
+      console.log('auth', firebase.auth());
+      if (!user && !this.loginStarted && this.ui['G'] !== "callback" || location.href.indexOf("loggin") >= 0) {
+        this.getRandomArt(true);
+      }
+    }.bind(this));
+
+
+    // User is signed out.
+    // if (this.savedImageArr.length === 0) {
+
+    //   } else {
+    //     this.renderDone = true;
+    //   }
+    // this.login = false;
+
+
+  }
+
+  saveImage(imageObj) {
+
+    const trimmedName = this.displayName.replace(/\s/g, '');
+    this.database.collection('users/' + trimmedName + '/images').doc(imageObj.name).set({
+      'src': imageObj.src, 'favorite': false
+    }
+    ).then(function (docRef) {
+      console.log('Document written with ID: ', docRef.id);
+    })
+      .catch(function (error) {
+        console.error('Error adding document: ', error);
+      });
+  }
+
+  saveToFavorites(imageObj, index) {
+    let val = true;
+    if (this.savedImageArr[index].favorite) {
+      val = false;
+    }
+
+    this.savedImageArr[index].favorite = val;
+    const trimmedName = this.displayName.replace(/\s/g, '');
+    this.database.collection('users/' + trimmedName + '/favorites').doc(imageObj.name).set({
+      'src': imageObj.src, 'favorite': val
+    }
+    ).then(function (docRef) {
+      console.log('Document written with ID: ', docRef.id);
+    })
+      .catch(function (error) {
+        console.error('Error adding document: ', error);
+      });
   }
 
   zoomIn() {
@@ -654,13 +730,11 @@ export class AppComponent {
 
     var img = new Image();
 
-    this.undoListShape = this.savedImageArr[this.currImageIndex]['undoStackShape'].slice();
-    this.redoListShape = this.savedImageArr[this.currImageIndex]['redoStackShape'].slice();
-    this.undoList = this.savedImageArr[this.currImageIndex]['undoStack'].slice();
-    this.redoList = this.savedImageArr[this.currImageIndex]['redoStack'].slice();
-    // if (index === undefined) {
-    //   img.src = this.lastImg;
-    // } else {
+    // this.undoListShape = this.savedImageArr[this.currImageIndex]['undoStackShape'].slice();
+    // this.redoListShape = this.savedImageArr[this.currImageIndex]['redoStackShape'].slice();
+    // this.undoList = this.savedImageArr[this.currImageIndex]['undoStack'].slice();
+    // this.redoList = this.savedImageArr[this.currImageIndex]['redoStack'].slice();
+
     img.src = this.savedImageArr[this.currImageIndex].src;
     // }
     this.ctx.clearRect(0, 0, this.canvasSize, this.canvasSize);
@@ -668,8 +742,17 @@ export class AppComponent {
       this.ctx.drawImage(img, 0, 0, this.canvasSize, this.canvasSize, 0, 0, this.canvasSize, this.canvasSize);
       this.renderDone = true;
     }.bind(this);
-  }
 
+    // add to user libary
+
+    // Create a root reference
+    if (this.user) {
+      this.saveImage(this.savedImageArr[this.currImageIndex]);
+    }
+  }
+  hack(val) {
+    return Array.from(val);
+  }
   saveCurrentArt(isNew?: boolean, startEdit?: boolean) {
     const copyOfUndoShape = this.undoListShape.slice();
     const copyOfRedoShape = this.redoListShape.slice();
@@ -691,10 +774,6 @@ export class AppComponent {
       newIndex = this.savedImageArr.length - 1;
     } else {
       this.savedImageArr[newIndex] = imgObj;
-      // this.savedImageArr[newIndex]['src'] = this.canvas.toDataURL();
-      // this.savedImageArr[newIndex]['undoStack'] = copyOfUndo;
-      // this.savedImageArr[newIndex]['redoStack'] = copyOfRedo;
-      // this.savedImageArr[newIndex]['edit'] = edit;
     }
 
     if (startEdit !== undefined) {

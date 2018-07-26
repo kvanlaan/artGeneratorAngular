@@ -1,110 +1,143 @@
 <div fxLayout="column" fxFlexFill>
-<div fxLayout="row" fxFlex="10">
-  <div fxFlex>
+  <div fxLayout="row" fxFlex="15" fxLayoutWrap>
+    <div fxFlex>
+      <!-- <button   mat-button> -->
+      <div class="material-text">Art Generator</div>
     </div>
-<div fxFlex="40">
-<button [disabled]="!renderDone" (click)="getRandomArt(true)"  class="float-left inline" mat-button>
-  Get New Art</button>
+    <div fxFlex="50">
+      <button [disabled]="!renderDone" (click)="getRandomArt(true)" class="float-left inline" mat-button>
+        Get New Art</button>
 
-<button (click)="getRandomArt(false)"  class="float-left inline" mat-button>Add New Layer</button>
+      <button (click)="getRandomArt(false)" class="float-left inline" mat-button>Add New Layer</button>
 
 
-<button [disabled]="disableUndo" (click)="undo()"  class="float-left inline" mat-button>Undo Layer</button>
-<button [disabled]="disableRedo" (click)="redo()"  class="float-left inline" mat-button>Redo Layer</button>
+      <button [disabled]="disableUndo" (click)="undo()" class="float-left inline" mat-button>Undo Layer</button>
+      <button [disabled]="disableRedo" (click)="redo()" class="float-left inline" mat-button>Redo Layer</button>
 
-<button  class="float-left inline" mat-button>
-  <a class="float-left inline" href="#" target="_blank" #downloadLink (click)="download(downloadLink)" download="art.jpg">
-    Save this art </a>
-</button>
-</div>
-<div fxFlex>
+      <button class="float-left inline" mat-button>
+        <a class="float-left inline" href="#" target="_blank" #downloadLink (click)="download(downloadLink)" download="art.jpg">
+          Save this art </a>
+      </button>
+    </div>
+    <div fxFlex fxLayoutAlign="end">
 
-<button (click)="handleSignedOutUser()" style="margin-right: 0% !important; margin-bottom: auto;" class="inline" mat-button>
-  <span [fxShow]="!login"> Log In  </span>
-</button>
+      <button fxFlex="10" (click)="handleSignedOutUser()" style="margin-right: 0% !important; margin-bottom: auto;" mat-button>
+        <span [fxShow]="!login"> Sign In </span>
+      </button>
 
-<span *ngIf="login">
-<button  style="margin-right: 0 !important; margin-bottom: auto;  text-align: right" class="inline" mat-button>
-  <span [fxShow]="login"> {{email}} </span>
-</button>
-<button  (click)="signOut()" style="margin-right: 0 !important; margin-bottom: auto;  text-align: right" class="inline" mat-button>
-<span [fxShow]="login"> Log Out </span>
-</button>
-</span>
-</div>
-</div>
-<!-- <button (click)="toggleEdit()" style="margin-bottom: auto" class="float-left inline" mat-button>
+      <mat-form-field *ngIf="login" fxflex="10">
+        <mat-select [(value)]="email" fxFlex>
+          <mat-option [(value)]="email">
+            {{email}}
+          </mat-option>
+          <mat-option (click)="signOut()">
+            Sign Out
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+
+    </div>
+  </div>
+  <!-- <button (click)="toggleEdit()" style="margin-bottom: auto" class="float-left inline" mat-button>
   Edit Layer
 </button> -->
 
 
-<div fxLayout="row" fxFlex>
-<div  height="700" width="200" fxFlex>
+  <div fxLayout="row" fxFlex>
+    <div style="max-width: 605px; height: 700px; overflow: scroll; padding-right: 5px">
 
-  <div *ngFor="let savedImg of savedImageArr; let i = index;"  fxFlex>
-    <div>
-      <img class="on-hover-outline" [ngClass]="{
-        'selected': savedImageArr.length - (i+ 1) === currImageIndex
-      }" (click)="renderImage(savedImageArr.length - (i+ 1))" style="margin-top: auto; height: 100px; width: 100px; float: left;"
-        [(src)]="savedImageArr[savedImageArr.length - (i+ 1)]['src']" />
+          <!-- <div *ngFor="let savedImg of savedImageArr; let i = index;"  class="inline" fxFlex>
+              <div class="inline">
+                <img class="on-hover-outline" [ngClass]="{
+                  'selected': savedImageArr.length - (i+ 1) === currImageIndex
+                }" (click)="renderImage(savedImageArr.length - (i+ 1))" style="margin-top: auto; height: 100px; width: 100px; float: left;"
+                  [(src)]="savedImageArr[savedImageArr.length - (i+ 1)]['src']" />
+          
+                <span *ngIf="savedImageArr.length - (i+ 1) === currImageIndex && edit" style="margin-left: -45px; float: left; color: red; font-style: italic">editing</span>
+          
+                <i (click)="delete(index)" class="material-icons on-hover-trash" style="margin-left: -11%; margin-top: 77px; float: left">
+                  delete
+                </i>
+                <i (click)="saveToFavorites(imageObj, i)" class="material-icons on-hover-trash heart"[ngClass]="{
+                  'show': savedImg.favorite
+                }" style="margin-left: -5%; margin-top: 77px; float: left">
+                  favorite
+                </i>
+              </div>
+              <br *ngIf="i%2">
+              <div fxFlex></div>
+            </div> -->
+            <mat-grid-list  style="width:600px; height: 700px; overflow: scroll" cols="5" rows="5" gutterSize="3px">
+              <mat-grid-tile *ngFor="let savedImg of savedImageArr; let i = index;">
 
-      <span *ngIf="savedImageArr.length - (i+ 1) === currImageIndex && edit" style="margin-left: -45px; float: left; color: red; font-style: italic">editing</span>
+                <img class="on-hover-outline" [ngClass]="{
+                  'selected': i === currImageIndex
+                }" (click)="renderImage(i)" style="height: 100px; width: 100px; float: left;"
+                  [(src)]="savedImageArr[i]['src']" />
+          
+                <!-- <span *ngIf="savedImageArr.length - (i+ 1) === currImageIndex && edit" style="margin-left: -45px; float: left; color: red; font-style: italic">editing</span>
+          
+                <i (click)="delete(index)" class="material-icons on-hover-trash" style="margin-left: -11%; margin-top: 77px; float: left">
+                  delete
+                </i>
+                <i (click)="saveToFavorites(imageObj, i)" class="material-icons on-hover-trash heart"[ngClass]="{
+                  'show': savedImg.favorite
+                }" style=" margin-top: 77px; float: left">
+                  favorite
+                </i> -->
+              </mat-grid-tile>
+            </mat-grid-list>
 
-      <i (click)="delete(index)" class="material-icons on-hover-trash" style="margin-left: -11%; margin-top: 77px; float: left">
-        delete
-      </i>
+        </div>
+
+
+    <div width="700" height="700" fxFlex>
+      <canvas class="visible" [ngClass]=" { 'invisible': !renderDone }" id="myCanvas" width="700" height="700">
+        Your browser does not support the canvas element.
+      </canvas>
+      <div style="z-index: 2" [fxShow]="!renderDone" class="margin-auto loader"></div>
     </div>
-    <br *ngIf="i%2">
 
+    <div fxFlex="10">
+
+      <button (click)="toggleEdit()" style="margin-bottom: auto" class="float-left inline" mat-button>
+        <i *ngIf="!edit" class="material-icons">
+          edit
+        </i>
+        <i *ngIf="edit" class="material-icons">
+          save
+        </i>
+      </button>
+
+      <span *ngIf="edit">
+        <br>
+        <button [disabled]="disableUndoShape" (click)="undoShape()" style="margin-bottom: auto" class="float-left inline" mat-button>
+          <i class="material-icons">
+            undo
+          </i>
+        </button>
+        <br>
+        <button [disabled]="disableRedoShape" (click)="redoShape()" class="float-left inline" mat-button>
+          <i class="material-icons">
+            redo
+          </i>
+        </button>
+        <br>
+        <button (click)="saveCurrentArt(true, true)" class="float-left inline" mat-button>
+          <i class="material-icons">
+            create_new_folder
+          </i>
+        </button>
+        <br>
+        <button (click)="delete()" class="float-left inline" mat-button>
+          <i class="material-icons">
+            delete
+          </i>
+        </button>
+
+      </span>
+    </div>
   </div>
-
-</div>
-<div width="700" height="700">
-  <canvas class="visible" [ngClass]=" { 'invisible': !renderDone }" id="myCanvas" width="700" height="700">
-    Your browser does not support the canvas element.
-  </canvas>
-  <div style="z-index: 2" [fxShow]="!renderDone" class="margin-auto loader"></div>
-</div>
-
-<div height="700" width="200" fxFlex>
-
-  <button (click)="toggleEdit()" style="margin-bottom: auto" class="float-left inline" mat-button>
-    <i *ngIf="!edit" class="material-icons">
-      edit
-    </i>
-    <i *ngIf="edit" class="material-icons">
-      save
-    </i>
-  </button>
-
-  <span *ngIf="edit">
-    <br>
-    <button [disabled]="disableUndoShape" (click)="undoShape()" style="margin-bottom: auto" class="float-left inline" mat-button>
-    <i class="material-icons">
-        undo
-      </i>
-    </button>
-    <br>
-    <button [disabled]="disableRedoShape" (click)="redoShape()" class="float-left inline" mat-button>
-      <i class="material-icons">
-        redo
-      </i>
-    </button>
-    <br>
-    <button (click)="saveCurrentArt(true, true)" class="float-left inline" mat-button>
-      <i class="material-icons">
-        create_new_folder
-      </i>
-    </button>
-    <br>
-    <button (click)="delete()" class="float-left inline" mat-button>
-      <i class="material-icons">
-        delete
-      </i>
-    </button>
-
-  </span>
-</div>
-</div>
 
 </div>

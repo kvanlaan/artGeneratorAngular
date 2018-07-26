@@ -8,6 +8,9 @@ body {
     opacity: .8; */
 }
 
+button {
+    font-size: 14px !important;
+}
 /* html, body {
     width: 100%;
     height: 100%;
@@ -19,7 +22,7 @@ body {
  html {
    text-align: center;
  }
- 
+
 .cdk-overlay-pane {
   position: relative !important;
   margin: auto;
@@ -29,7 +32,7 @@ body {
 color: rgb(0, 0, 0);
 font-family: system-ui;
 font-weight: 400;
-font-size: 18px;
+font-size: 18px !important;
 }
 /* html:before {
     position: fixed;
@@ -165,7 +168,17 @@ a {
   opacity: 1 !important;
   color: red;
 }
+.on-hover-trash .show {
+  visibility: visible;
+  opacity: 1 !important;
+  color: red;
+}
 
+.show.on-hover-trash {
+  visibility: visible;
+  opacity: 1 !important;
+  color: red;
+}
 .material-icons {
   cursor: pointer;
 }
@@ -189,4 +202,30 @@ a {
 
 .mat-button {
   background-color: transparent;
+}
+
+.cdk-overlay-connected-position-bounding-box {
+  max-width:288px !important;
+  left: 0px !important;
+  top: -20px !important;
+
+  min-width: 288px !important; 
+  transform: translateX(-16px) translateY(-40px)
+  /* pointer-events: auto !important;
+  font-size: 16px !important;
+  transform: translateX(-16px) !important;
+  top: -20px !important;
+  left: 741px !important; */
+}
+.md-button.md-focused {
+  background-color: rgba(0,0,0,0) !important;
+}
+.cdk-focused {
+  background-color: rgba(0,0,0,0) !important;
+}
+.cdk-program-focused {
+  background-color: rgba(0,0,0,0) !important;
+}
+.heart {
+  font-size: 22.5px !important;
 }

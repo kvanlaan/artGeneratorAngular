@@ -1,7 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
-import { AppComponent, LoginDialogComponent } from './app.component';
+import { AppComponent, LoginDialogComponent, DeleteDialogComponent } from './app.component';
 import {
 
   MatAutocompleteModule,
@@ -48,10 +48,12 @@ import { BrowserAnimationsModule} from '@angular/platform-browser/animations';
 @NgModule({
   declarations: [
     AppComponent,
-    LoginDialogComponent
+    LoginDialogComponent,
+    DeleteDialogComponent
   ],
   entryComponents: [
-    LoginDialogComponent
+    LoginDialogComponent,
+    DeleteDialogComponent
   ],
   imports: [
     MatButtonModule, MatFormFieldModule,  MatSelectModule, MatOptionModule,    MatDialogModule,   BrowserAnimationsModule,

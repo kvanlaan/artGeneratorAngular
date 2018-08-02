@@ -11,7 +11,12 @@ import { LocationStrategy, PathLocationStrategy } from '../../node_modules/@angu
 export class LoginDialogComponent {
 
 }
+@Component({
+  templateUrl: './delete.component.html'
+})
+export class DeleteDialogComponent {
 
+}
 var ColorScheme;
 @Component({
   selector: 'app-root',
@@ -78,33 +83,30 @@ export class AppComponent {
     const currIndex = this.currImageIndex;
 
     if (e.keyCode === 39) {
-      if ((currIndex - 1) >= 0) {
-
-        this.currImageIndex--;
-        this.renderImage(this.currImageIndex);
-      }
-    }
-    if (e.keyCode === 40) {
-      if ((currIndex - 2) >= 0) {
-        this.currImageIndex--;
-        this.currImageIndex--;
-        this.renderImage(this.currImageIndex);
-      }
-    }
-    if (e.keyCode === 38) {
-      if (currIndex + 2 < this.savedImageArr.length) {
-        this.currImageIndex++;
+      if ((currIndex + 1) <= this.savedImageArr.length) {
         this.currImageIndex++;
         this.renderImage(this.currImageIndex);
       }
-
     }
+    // if (e.keyCode === 40) {
+    //   if ((currIndex - 2) >= 0) {
+    //     this.currImageIndex--;
+    //     this.currImageIndex--;
+    //     this.renderImage(this.currImageIndex);
+    //   }
+    // }
+    // if (e.keyCode === 38) {
+    //   if (currIndex + 2 < this.savedImageArr.length) {
+    //     this.currImageIndex++;
+    //     this.currImageIndex++;
+    //     this.renderImage(this.currImageIndex);
+    //   }
+
+    // }
     if (e.keyCode === 37) {
-      if (currIndex + 1 < this.savedImageArr.length) {
-
-        this.currImageIndex++;
+      if (currIndex - 1 >= 0) {
+        this.currImageIndex--;
         this.renderImage(this.currImageIndex);
-
       }
     }
   }
@@ -117,7 +119,14 @@ export class AppComponent {
     this.dialogRef.afterClosed().subscribe(result => {
     });
   }
+  openDeleteDialog() {
+    this.dialogRef = this.dialog.open(DeleteDialogComponent, {
+      width: '300px'
+    });
 
+    this.dialogRef.afterClosed().subscribe(result => {
+    });
+  }
   signOut() {
 
     var temp = location.href.split('#')[0];
@@ -703,6 +712,7 @@ export class AppComponent {
     this.startEditing = false;
   }
   delete(index?: number) {
+    this.openDeleteDialog();
     if (index === undefined) {
       index = this.currImageIndex;
     }

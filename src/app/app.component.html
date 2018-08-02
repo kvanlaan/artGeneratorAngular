@@ -47,7 +47,7 @@
   <div fxLayout="row" fxFlex>
     <div style="max-width: 605px; height: 700px; overflow: scroll; padding-right: 5px">
 
-          <!-- <div *ngFor="let savedImg of savedImageArr; let i = index;"  class="inline" fxFlex>
+      <!-- <div *ngFor="let savedImg of savedImageArr; let i = index;"  class="inline" fxFlex>
               <div class="inline">
                 <img class="on-hover-outline" [ngClass]="{
                   'selected': savedImageArr.length - (i+ 1) === currImageIndex
@@ -68,28 +68,29 @@
               <br *ngIf="i%2">
               <div fxFlex></div>
             </div> -->
-            <mat-grid-list  style="width:600px; height: 700px; overflow: scroll" cols="5" rows="5" gutterSize="3px">
-              <mat-grid-tile *ngFor="let savedImg of savedImageArr; let i = index;">
+      <mat-grid-list style="width:600px; height: 700px; overflow: scroll" cols="5" rows="5" gutterSize="3px">
+        <mat-grid-tile fxLayout="row" *ngFor="let savedImg of savedImageArr; let i = index;">
 
-                <img class="on-hover-outline" [ngClass]="{
+          <img class="on-hover-outline" [ngClass]="{
                   'selected': i === currImageIndex
-                }" (click)="renderImage(i)" style="height: 100px; width: 100px; float: left;"
-                  [(src)]="savedImageArr[i]['src']" />
-          
-                <!-- <span *ngIf="savedImageArr.length - (i+ 1) === currImageIndex && edit" style="margin-left: -45px; float: left; color: red; font-style: italic">editing</span>
-          
-                <i (click)="delete(index)" class="material-icons on-hover-trash" style="margin-left: -11%; margin-top: 77px; float: left">
-                  delete
-                </i>
-                <i (click)="saveToFavorites(imageObj, i)" class="material-icons on-hover-trash heart"[ngClass]="{
-                  'show': savedImg.favorite
-                }" style=" margin-top: 77px; float: left">
-                  favorite
-                </i> -->
-              </mat-grid-tile>
-            </mat-grid-list>
+                }" (click)="renderImage(i)" style="height: 100px; width: 100px; float: left;" [(src)]="savedImageArr[i]['src']"
+          />
 
-        </div>
+          <!-- <span *ngIf="savedImageArr.length - (i+ 1) === currImageIndex && edit" style="margin-left: -45px; float: left; color: red; font-style: italic">editing</span> -->
+          <span style="margin-left: -40%; float: left">
+            <i (click)="delete(index)" class="material-icons on-hover-trash" style="margin-top: 77px;">
+              delete
+            </i>
+            <i (click)="saveToFavorites(imageObj, i)" class="material-icons on-hover-trash heart" [ngClass]="{
+                  'show': savedImg.favorite
+                }" style="margin-top: 77px;">
+              favorite
+            </i>
+          </span>
+        </mat-grid-tile>
+      </mat-grid-list>
+
+    </div>
 
 
     <div width="700" height="700" fxFlex>

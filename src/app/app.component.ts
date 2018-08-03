@@ -2,7 +2,7 @@ import { Component, HostListener } from '@angular/core';
 import * as firebase from 'firebase';
 import * as firebaseui from 'firebaseui';
 import { MatDialog } from '@angular/material';
-import {MatGridListModule} from '@angular/material/grid-list';
+import { MatGridListModule } from '@angular/material/grid-list';
 import { LocationStrategy, PathLocationStrategy } from '../../node_modules/@angular/common';
 @Component({
   templateUrl: './login.component.html'
@@ -70,14 +70,19 @@ export class AppComponent {
   database;
   authListenerStarted = false;
   loginStarted = false;
+  sources = [];
   // colorSchemes = ['Monchromatic', 'Complementary', 'Analogous', 'Triad', 'Tetrad',
   //   'Split Complementary'];
   // shapeArr = ['Rectangle', 'Triangle', 'Circle', 'Trapezoid', 'Line'];
   // shapeArr = ['Trapezoid'];
 
+  localStorage: any;
 
 
-  constructor(public dialog: MatDialog) { }
+  constructor(public dialog: MatDialog) {
+
+    this.localStorage = localStorage;
+  }
   @HostListener('window:keydown', ['$event'])
   handlekeydown(e) {
     const currIndex = this.currImageIndex;
@@ -130,9 +135,6 @@ export class AppComponent {
   signOut() {
 
     var temp = location.href.split('#')[0];
-    // if (temp[temp.length - 1] === '#') {
-    //   temp = temp.substring(0, temp.length - 1);
-    // }
 
     location.href = temp[0] + '#loggingOut';
 
@@ -211,7 +213,7 @@ export class AppComponent {
   }
 
   async ngOnInit() {
-
+    console.log('refresh');
     /// how to handle log in credentails in routing ohhhh
     this.renderDone = false;
     var config = {
@@ -249,22 +251,50 @@ export class AppComponent {
       console.log('thisui', this.ui);
       console.log('thisuser', this.user);
       console.log('auth', firebase.auth());
-      if (!user && !this.loginStarted && this.ui['G'] !== "callback" || location.href.indexOf("loggin") >= 0) {
+      if (!user && !this.loginStarted && location.href.indexOf("home") < 0 || location.href.indexOf("loggin") >= 0) {
         this.getRandomArt(true);
+        location.href = '#home';
+
+      }
+      if (location.href.indexOf("home") >= 0) {
+        this.savedImageArr = [];
+        const sources = this.getFromLocal('currImage');
+        this.sources = sources;
+        console.log('sources', sources);
+        if (sources) {
+          let i = 0;
+          for (let temp of sources) {
+            let img = new Image();
+            img.src = temp;
+            if (img) {
+              img.onload = function () {
+                this.savedImageArr.push(img);
+                i++;
+                if (i === (sources.length)) {
+                  if (this.savedImageArr) {
+                    this.ctx.clearRect(0, 0, this.canvasSize, this.canvasSize);
+                    const currImage = new Image();
+                    if (this.savedImageArr[this.savedImageArr.length - 1]) {
+                      currImage.src = this.savedImageArr[this.savedImageArr.length - 1].src;
+                      currImage.onload = function () {
+                        this.ctx.drawImage(currImage, 0, 0,
+                          this.canvasSize, this.canvasSize, 0, 0, this.canvasSize, this.canvasSize);
+                        this.renderDone = true;
+                      }.bind(this);
+                    }
+
+                  }
+                }
+              }.bind(this);
+            }
+          }
+
+        }
+
       }
     }.bind(this));
-
-
-    // User is signed out.
-    // if (this.savedImageArr.length === 0) {
-
-    //   } else {
-    //     this.renderDone = true;
-    //   }
-    // this.login = false;
-
-
   }
+
 
   saveImage(imageObj) {
 
@@ -313,6 +343,23 @@ export class AppComponent {
     this.ctx.scale(.5, .5);
     this.renderImage();
   }
+
+  // local storage stuff
+  getFromLocal(key: string): any {
+    let item = this.localStorage.getItem(key);
+    if (item && item !== "undefined") {
+      return JSON.parse(this.localStorage.getItem(key));
+    }
+
+    return;
+  }
+  saveToLocal(key: string, value: any) {
+    this.localStorage.setItem(key, JSON.stringify(value));
+  }
+  deleteFromLocal(key: string) {
+    this.localStorage.removeItem(key);
+  }
+
   getRandomArt(clear) {
     this.renderDone = false;
 
@@ -721,11 +768,12 @@ export class AppComponent {
     }
 
     this.savedImageArr.splice(index, 1);
-
+    this.sources.splice(index, 1);
     if (index > this.savedImageArr.length - 1) {
       index--;
     }
     this.renderImage(index);
+    this.saveToLocal('currImage', this.sources);
   }
   renderImage(index?: number, startEdit?: boolean) {
     if (this.currImageIndex !== index) {
@@ -746,11 +794,15 @@ export class AppComponent {
     // this.redoList = this.savedImageArr[this.currImageIndex]['redoStack'].slice();
 
     img.src = this.savedImageArr[this.currImageIndex].src;
+    this.sources.push(img.src);
     // }
     this.ctx.clearRect(0, 0, this.canvasSize, this.canvasSize);
     img.onload = function () {
       this.ctx.drawImage(img, 0, 0, this.canvasSize, this.canvasSize, 0, 0, this.canvasSize, this.canvasSize);
+      this.saveToLocal('currImage', this.sources);
       this.renderDone = true;
+
+
     }.bind(this);
 
     // add to user libary
@@ -759,6 +811,7 @@ export class AppComponent {
     if (this.user) {
       this.saveImage(this.savedImageArr[this.currImageIndex]);
     }
+
   }
   hack(val) {
     return Array.from(val);

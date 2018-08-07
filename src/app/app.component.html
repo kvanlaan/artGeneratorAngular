@@ -1,8 +1,11 @@
 <div fxLayout="column" fxFlexFill>
-  <div fxLayout="row" fxFlex="15" fxLayoutWrap>
-    <div fxFlex>
+  <div fxLayout="row" style="height: 6%" fxLayoutWrap>
+    <div fxFlex fxFlexOffset="5" fxLayoutAlign="start center">
       <!-- <button   mat-button> -->
       <div class="material-text">Art Generator</div>
+      <!-- <div fxLayoutAlign="start start" > -->
+          
+              <!-- </div> -->
     </div>
     <div fxFlex="50">
       <button [disabled]="!renderDone" (click)="getRandomArt(true)" class="float-left inline" mat-button>
@@ -43,42 +46,22 @@
   Edit Layer
 </button> -->
 
+<div>
 
-  <div fxLayout="row" fxFlex>
-    <div style="max-width: 605px; height: 700px; overflow: scroll; padding-right: 5px">
+    </div>
+  <div #mainContainer fxLayout="row" style="height: 94%">
+     
+    <div fxFlex="40" fxFlexOffset="5"  [style.height.px]="canvasSize"  [ngClass]="{ 'invisible': !renderDone }" style="overflow: scroll !important;">            
 
-      <!-- <div *ngFor="let savedImg of savedImageArr; let i = index;"  class="inline" fxFlex>
-              <div class="inline">
-                <img class="on-hover-outline" [ngClass]="{
-                  'selected': savedImageArr.length - (i+ 1) === currImageIndex
-                }" (click)="renderImage(savedImageArr.length - (i+ 1))" style="margin-top: auto; height: 100px; width: 100px; float: left;"
-                  [(src)]="savedImageArr[savedImageArr.length - (i+ 1)]['src']" />
-          
-                <span *ngIf="savedImageArr.length - (i+ 1) === currImageIndex && edit" style="margin-left: -45px; float: left; color: red; font-style: italic">editing</span>
-          
-                <i (click)="delete(index)" class="material-icons on-hover-trash" style="margin-left: -11%; margin-top: 77px; float: left">
-                  delete
-                </i>
-                <i (click)="saveToFavorites(imageObj, i)" class="material-icons on-hover-trash heart"[ngClass]="{
-                  'show': savedImg.favorite
-                }" style="margin-left: -5%; margin-top: 77px; float: left">
-                  favorite
-                </i>
-              </div>
-              <br *ngIf="i%2">
-              <div fxFlex></div>
-            </div> -->
-      <mat-grid-list style="width:600px; height: 700px; overflow: scroll" cols="5" rows="5" gutterSize="3px">
+      <mat-grid-list [fxShow]="!showFavorites" [style.height.px]="canvasSize" style="overflow: scroll !important" cols="5" rows="5"  gutterSize="10px">
         <mat-grid-tile fxLayout="row" *ngFor="let savedImg of savedImageArr; let i = index;">
 
           <img class="on-hover-outline" [ngClass]="{
                   'selected': i === currImageIndex
-                }" (click)="renderImage(i)" style="height: 100px; width: 100px; float: left;" [(src)]="savedImageArr[i]['src']"
+                }" (click)="renderImage(i)" style="height: 100%; width: 100%; float: left;" [(src)]="savedImageArr[i]['src']"
           />
-
-          <!-- <span *ngIf="savedImageArr.length - (i+ 1) === currImageIndex && edit" style="margin-left: -45px; float: left; color: red; font-style: italic">editing</span> -->
           <span style="margin-left: -40%; float: left">
-            <i (click)="delete(index)" class="material-icons on-hover-trash" style="margin-top: 77px;">
+            <i (click)="openDeleteDialog(imgObj, i)" class="material-icons on-hover-trash" style="margin-top: 77px;">
               delete
             </i>
             <i (click)="saveToFavorites(imageObj, i)" class="material-icons on-hover-trash heart" [ngClass]="{
@@ -89,18 +72,48 @@
           </span>
         </mat-grid-tile>
       </mat-grid-list>
+      <!-- height: 100px; width: 100px;  -->
+      <mat-grid-list [fxShow]="showFavorites" [style.height.px]="canvasSize" style="overflow: scroll !important" cols="5" rows="5"  gutterSize="10px">   
+         <mat-grid-tile fxLayout="row" *ngFor="let savedImg of favoritesArr; let i = index;">
 
+          <img class="on-hover-outline" [ngClass]="{
+                  'selected': i === currImageIndex
+                }" (click)="renderImage(i)" style="height: 100%; width: 100%; float: left;" [(src)]="savedImageArr[i]['src']"
+          />
+          <span style="margin-left: -40%; float: left">
+            <i (click)="openDeleteDialog(imgObj, i)" class="material-icons on-hover-trash" style="margin-top: 77px;">
+              delete
+            </i>
+            <i (click)="saveToFavorites(imageObj, i)" class="material-icons on-hover-trash heart" [ngClass]="{
+                  'show': savedImg.favorite
+                }" style="margin-top: 77px;">
+              favorite
+            </i>
+          </span>
+        </mat-grid-tile>
+      </mat-grid-list>
+     
     </div>
 
+    <div fxFlex="59">
+      <button [ngClass]=" { 'invisible': !renderDone }"  style="float: left; vertical-align: top;  min-width: 0px !important; padding-left: 5px !important; padding-right: 5px !important" mat-button  (click)="filterFavorites()"><i class="material-icons">
+    filter_list
+    </i> 
 
-    <div width="700" height="700" fxFlex>
-      <canvas class="visible" [ngClass]=" { 'invisible': !renderDone }" id="myCanvas" width="700" height="700">
+    <i [fxShow]="showFavorites" class="material-icons">
+      favorite
+        </i>
+        <i [fxShow]="!showFavorites" class="material-icons">
+            favorite_border
+              </i>
+      </button>
+      <canvas class="visible" [ngClass]=" { 'invisible': !renderDone }" id="myCanvas">
         Your browser does not support the canvas element.
       </canvas>
       <div style="z-index: 2" [fxShow]="!renderDone" class="margin-auto loader"></div>
     </div>
 
-    <div fxFlex="10">
+    <!-- <div fxFlex="10">
 
       <button (click)="toggleEdit()" style="margin-bottom: auto" class="float-left inline" mat-button>
         <i *ngIf="!edit" class="material-icons">
@@ -131,14 +144,14 @@
           </i>
         </button>
         <br>
-        <button (click)="delete()" class="float-left inline" mat-button>
+        <button (click)="openDeleteDialog(imgObj, currImageIndex)" class="float-left inline" mat-button>
           <i class="material-icons">
             delete
           </i>
         </button>
 
       </span>
-    </div>
+    </div> -->
   </div>
 
 </div>

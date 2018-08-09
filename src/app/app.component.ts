@@ -855,7 +855,7 @@ export class AppComponent {
     const tempSources = this.sources;
     tempSources.push(imgObj.src);
     let res = true;
-    if (!source) {
+    if (!source && !this.user) {
       res = this.saveToLocal('currImage', tempSources);
     }
     if (res) {

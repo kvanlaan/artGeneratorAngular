@@ -367,7 +367,18 @@ export class AppComponent {
     this.localStorage.removeItem(key);
   }
 
-  getRandomArt(clear) {
+  getRandomArt(clear, recurseStep) {
+    let recurse = false;
+    if (recurseStep === undefined) {
+
+      let rand = Math.floor(Math.random() * 3) + 1;
+      if (rand === 1) {
+        recurse = true;
+      }
+      recurseStep = Math.floor(Math.random() * 3) + 1;
+    } else {
+      recurse = true;
+    }
     this.renderDone = false;
 
     if (this.edit) {
@@ -398,7 +409,7 @@ export class AppComponent {
     this.randomScheme = this.colorSchemes[Math.floor(Math.random() * this.colorSchemes.length)];
     this.randomScheme = "Random";
     this.colorArr = this.genColors("Random");
-    let rand = 1;
+    rand = 1;
     // first layer of small objects;
     this.resetForNewLayer();
     this.getFirstSmallLayer();
@@ -506,6 +517,10 @@ export class AppComponent {
     }
     this.setUndoRedo(clear);
     this.ctx.globalAlpha = 1;
+    if (recurse && recurseStep > 0) {
+      recurseStep--;
+      this.getRandomArt(clear, recurseStep);
+    }
     this.saveCurrentArt(clear);
   }
 

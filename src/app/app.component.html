@@ -1,119 +1,128 @@
 <div fxLayout="column" fxFlexFill>
   <div fxLayout="row" style="height: 6%" fxLayoutWrap>
-    <div fxFlex fxFlexOffset="5" fxLayoutAlign="start center">
-      <!-- <button   mat-button> -->
-      <div class="material-text">Art Generator</div>
-      <!-- <div fxLayoutAlign="start start" > -->
-          
-              <!-- </div> -->
-    </div>
-    <div fxFlex="50">
-      <button [disabled]="!renderDone" (click)="getRandomArt(true)" class="float-left inline" mat-button>
+
+<div fxFlex fxFlexOffset="5" fxLayoutAlign="start center">
+  <!-- <button   mat-button> -->
+  <div class="material-text">Art Generator</div>
+  <!-- <div fxLayoutAlign="start start" > -->
+
+  <!-- </div> -->
+</div>
+<div fxFlex="50">
+  <button [disabled]="!renderDone" (click)="getRandomArt(true)" class="float-left inline" mat-button>
         Get New Art</button>
 
-      <button (click)="getRandomArt(false)" class="float-left inline" mat-button>Add New Layer</button>
+  <button (click)="getRandomArt(false)" class="float-left inline" mat-button>Add New Layer</button>
 
 
-      <button [disabled]="disableUndo" (click)="undo()" class="float-left inline" mat-button>Undo Layer</button>
-      <button [disabled]="disableRedo" (click)="redo()" class="float-left inline" mat-button>Redo Layer</button>
+  <button [disabled]="disableUndo" (click)="undo()" class="float-left inline" mat-button>Undo Layer</button>
+  <button [disabled]="disableRedo" (click)="redo()" class="float-left inline" mat-button>Redo Layer</button>
 
-      <button class="float-left inline" mat-button>
+  <button class="float-left inline" mat-button>
         <a class="float-left inline" href="#" target="_blank" #downloadLink (click)="download(downloadLink)" download="art.jpg">
           Save this art </a>
       </button>
-    </div>
-    <div fxFlex fxLayoutAlign="end center">
+</div>
+<div fxFlex fxLayoutAlign="end center">
 
-      <button fxFlex="10" (click)="handleSignedOutUser()" style="margin-right: 0% !important; margin-bottom: auto;" mat-button>
-        <span [fxShow]="!login"> Sign In </span>
-      </button>
+  <button fxFlex="10" (click)="handleSignedOutUser()" style="margin-right: 0% !important; margin-bottom: auto;" mat-button>
+<span [fxShow]="!login"> Sign In </span>
+</button>
 
-      <mat-form-field *ngIf="login"  fxflex="10">
-        <mat-select [(value)]="email" fxFlex>
-          <mat-option [(value)]="email">
-            {{email}}
-          </mat-option>
-          <mat-option (click)="signOut()">
-            Sign Out
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
+<mat-form-field *ngIf="login" fxflex="10">
+  <mat-select [(value)]="email" fxFlex>
+    <mat-option [(value)]="email">
+      {{email}}
+    </mat-option>
+    <mat-option (click)="signOut()">
+      Sign Out
+    </mat-option>
+  </mat-select>
+</mat-form-field>
 
 
-    </div>
-  </div>
-  <!-- <button (click)="toggleEdit()" style="margin-bottom: auto" class="float-left inline" mat-button>
+</div>
+</div>
+<!-- <button (click)="toggleEdit()" style="margin-bottom: auto" class="float-left inline" mat-button>
   Edit Layer
 </button> -->
 
 <div>
 
-    </div>
-  <div #mainContainer fxLayout="row" style="height: 94%">
-     
-    <div fxFlex="40" fxFlex.sm="100" fxFlex.md="100" fxFlexOffset="5"  [style.height.px]="canvasSize"  [ngClass]="{ 'invisible': !renderDone }" style="overflow: scroll !important;">            
-
-      <mat-grid-list [fxShow]="!showFavorites" [style.height.px]="canvasSize" style="overflow: scroll !important" cols="5" rows="5"  gutterSize="10px">
-        <mat-grid-tile fxLayout="row" *ngFor="let savedImg of savedImageArr; let i = index;">
-
-          <img class="on-hover-outline" [ngClass]="{
-                  'selected': i === currImageIndex
-                }" (click)="renderImage(i)" style="height: 100%; width: 100%; float: left;" [(src)]="savedImageArr[i]['src']"
-          />
-          <span style="position: absolute; right: 0; bottom: 0" fxLayout="row" >
-            <i (click)="openDeleteDialog(imgObj, i)" class="material-icons on-hover-trash">
-              delete
-            </i>
-            <i (click)="saveToFavorites(imageObj, i)" class="material-icons on-hover-trash heart" [ngClass]="{
-                  'show': savedImg.favorite
-                }" >
-              favorite
-            </i>
-          </span>
-        </mat-grid-tile>
-      </mat-grid-list>
-      <!-- height: 100px; width: 100px;  -->
-      <mat-grid-list [fxShow]="showFavorites" [style.height.px]="canvasSize" style="overflow: scroll !important" cols="5" rows="5"  gutterSize="10px">   
-         <mat-grid-tile  *ngFor="let savedImg of favoritesArr; let i = index;">
-
-          <img class="on-hover-outline" [ngClass]="{
-                  'selected': i === currImageIndex
-                }" (click)="renderImage(i)" style="height: 100%; width: 100%; float: left;" [(src)]="savedImageArr[i]['src']"
-          />
-          <span style="position: absolute; right: 0; bottom: 0" >
-            <i (click)="openDeleteDialog(imgObj, i)" class="material-icons on-hover-trash">
-              delete
-            </i>
-            <i (click)="saveToFavorites(imageObj, i)" class="material-icons on-hover-trash heart" [ngClass]="{
-                  'show': savedImg.favorite
-                }" >
-              favorite
-            </i>
-          </span>
-        </mat-grid-tile>
-      </mat-grid-list>
-     
-    </div>
-
-    <div  fxFlex.md="100"  fxFlex="59">
-      <button [ngClass]=" { 'invisible': !renderDone }"  style="float: left; vertical-align: top;  min-width: 0px !important; padding-left: 5px !important; padding-right: 5px !important" mat-button  (click)="filterFavorites()"><i class="material-icons">
+</div>
+<div #mainContainer fxLayout="row" fxLayout.md="column" fxLayout.sm="column" fxLayout.xs="column" style="height: 94%">
+      <button fxFlex="5" fxFlexAlign="start start" [ngClass]=" { 'invisible': !renderDone }" style="height: 5%; max-width: 25px !important;  min-width: 25px !important; float: left; padding-left: 5px !important; padding-right: 5px !important" mat-button (click)="filterFavorites()"><i class="material-icons">
     filter_list
-    </i> 
+    </i>
 
-    <i [fxShow]="showFavorites" class="material-icons">
+<i [fxShow]="showFavorites" class="material-icons">
       favorite
         </i>
-        <i [fxShow]="!showFavorites" class="material-icons">
+<i [fxShow]="!showFavorites" class="material-icons">
             favorite_border
               </i>
-      </button>
-      <canvas class="visible" [ngClass]=" { 'invisible': !renderDone }" id="myCanvas">
-        Your browser does not support the canvas element.
-      </canvas>
-      <div style="z-index: 2" [fxShow]="!renderDone" class="margin-auto loader"></div>
-    </div>
+</button>
+<div fxFlex="40" [style.height.px]="canvasSize" [ngClass]="{ 'invisible': !renderDone }"  *ngIf="renderDone" style="overflow: scroll !important;">
 
-    <!-- <div fxFlex="10">
+<mat-grid-list  [fxShow]="!showFavorites" [style.height.px]="canvasSize" style="overflow: scroll !important" cols="5" rows="5" gutterSize="10px">
+<mat-grid-tile fxLayout="row" *ngFor="let savedImg of savedImageArr; let i = index;">
+
+  <img class="on-hover-outline" [ngClass]="{
+                  'selected': i === currImageIndex
+                }" (click)="renderImage(i)" style="height: 100%; width: 100%; float: left;" [(src)]="savedImageArr[i]['src']" />
+<span style="position: absolute; right: 0; bottom: 0" fxLayout="row" >
+<i (click)="openDeleteDialog(savedImg, i)" class="material-icons on-hover-trash">
+              delete
+            </i>
+<i (click)="saveToFavorites(savedImg, i)" class="material-icons on-hover-trash heart" [ngClass]="{
+                  'show': savedImg.favorite
+                }">
+              favorite
+            </i>
+</span>
+</mat-grid-tile>
+</mat-grid-list>
+<!-- height: 100px; width: 100px;  -->
+<mat-grid-list [fxShow]="showFavorites" [style.height.px]="canvasSize" *ngIf="renderDone" style="overflow: scroll !important" cols="5" rows="5" gutterSize="10px">
+<mat-grid-tile *ngFor="let savedImg of favoritesArr; let i = index;">
+
+  <img class="on-hover-outline" [ngClass]="{
+                  'selected': i === currImageIndex
+                }" (click)="renderImage(i)" style="height: 100%; width: 100%; float: left;" [(src)]="savedImageArr[i]['src']" />
+<span style="position: absolute; right: 0; bottom: 0" >
+<i (click)="openDeleteDialog(imageObj, i)" class="material-icons on-hover-trash">
+              delete
+            </i>
+<i (click)="saveToFavorites(imageObj, i)" class="material-icons on-hover-trash heart" [ngClass]="{
+                  'show': savedImg.favorite
+                }">
+              favorite
+            </i>
+</span>
+</mat-grid-tile>
+</mat-grid-list>
+
+</div>
+
+<div fxFlex="59">
+  <button [ngClass]=" { 'invisible': !renderDone }" style="opacity: 0;  float: left; vertical-align: top;  min-width: 0px !important; padding-left: 5px !important; padding-right: 5px !important" mat-button (click)="filterFavorites()"><i class="material-icons">
+    filter_list
+    </i>
+
+<i [fxShow]="showFavorites" class="material-icons">
+      favorite
+        </i>
+<i [fxShow]="!showFavorites" class="material-icons">
+            favorite_border
+              </i>
+</button>
+<canvas class="visible" [ngClass]=" { 'invisible': !renderDone }" id="myCanvas">
+  Your browser does not support the canvas element.
+</canvas>
+<div style="z-index: 2" [fxShow]="!renderDone" class="margin-auto loader"></div>
+</div>
+
+<!-- <div fxFlex="10">
 
       <button (click)="toggleEdit()" style="margin-bottom: auto" class="float-left inline" mat-button>
         <i *ngIf="!edit" class="material-icons">
@@ -152,6 +161,6 @@
 
       </span>
     </div> -->
-  </div>
+</div>
 
 </div>

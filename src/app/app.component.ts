@@ -99,6 +99,10 @@ export class AppComponent {
     this.showFavorites = !this.showFavorites;
   }
   @ViewChild('mainContainer') mainContainer;
+//     @HostListener('window:resize', ['$event'])
+//   resize(e) {
+//     this.calculateCanvasSize();
+// }
   @HostListener('window:keydown', ['$event'])
   handlekeydown(e) {
     const currIndex = this.currImageIndex;
@@ -128,7 +132,15 @@ export class AppComponent {
       }
     }
   }
+  calculateCanvasSize() {
+    this.canvas = <HTMLCanvasElement>document.getElementById("myCanvas");
 
+    this.ctx = this.canvas.getContext("2d");
+    this.ctx.canvas.width = this.mainContainer.nativeElement.clientWidth * .5;
+    this.canvasSize = this.ctx.canvas.width;
+    console.log('canvasSize', this.canvasSize);
+    this.ctx.canvas.height = this.canvasSize;
+  }
   openLoginDialog() {
     this.dialogRef = this.dialog.open(LoginDialogComponent, {
       width: '300px'
@@ -184,12 +196,17 @@ export class AppComponent {
       this.savedImageArr = [];
       querySnapshot.forEach((doc) => {
         this.savedImageArr.push(doc.data());
+        console.log('saved image', this.savedImageArr);
       });
-    });
-    const displayName = this.displayName.replace(/\s/g, '');
-    location.href = '#user/' + displayName;
+      if (querySnapshot.docs.length) {
+        const displayName = this.displayName.replace(/\s/g, '');
+        location.href = '#user/' + displayName;
 
-    this.renderImage(0);
+        this.renderImage(0);
+      } else {
+        this.getRandomArt(true);
+      }
+    });
 
   }
 
@@ -257,14 +274,7 @@ export class AppComponent {
     this.ui = new firebaseui.auth.AuthUI(firebase.auth());
     this.user = firebase.auth().currentUser;
     this.isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-    this.canvas = <HTMLCanvasElement>document.getElementById("myCanvas");
-
-
-    this.ctx = this.canvas.getContext("2d");
-    this.ctx.canvas.width = this.mainContainer.nativeElement.clientWidth * 1 / (2);
-    this.canvasSize = this.ctx.canvas.width;
-
-    this.ctx.canvas.height =  this.canvasSize;
+    this.calculateCanvasSize();
     firebase.auth().onAuthStateChanged(async function (this, user) {
       this.renderDone = false;
       this.user = user;
@@ -287,7 +297,7 @@ export class AppComponent {
   saveImageFirebase(imageObj) {
     const trimmedName = this.displayName.replace(/\s/g, '');
     this.database.collection('users/' + trimmedName + '/images').doc(imageObj.name).set({
-      'src': imageObj.src, 'favorite': false
+      'name': imageObj.name, 'src': imageObj.src, 'favorite': false
     }
     ).then(function (docRef) {
       console.log('Document written with ID: ', docRef.id);
@@ -304,8 +314,8 @@ export class AppComponent {
 
     this.savedImageArr[index].favorite = val;
     const trimmedName = this.displayName.replace(/\s/g, '');
-    this.database.collection('users/' + trimmedName + '/favorites').doc(imageObj.name).set({
-      'src': imageObj.src, 'favorite': val
+    this.database.collection('users/' + trimmedName + '/images').doc(imageObj.name).set({
+      'name': imageObj.name, 'src': imageObj.src, 'favorite': val
     })
       .then(function () {
         console.log("Document successfully written!");
@@ -784,7 +794,8 @@ export class AppComponent {
     if (this.user) {
       this.savedImageArr[index].favorite = val;
       const trimmedName = this.displayName.replace(/\s/g, '');
-      this.database.collection('users/' + trimmedName + '/favorites').doc(imageObj.name).delete().then(function (docRef) {
+      console.log('imageobj name', imageObj.name);
+      this.database.collection('users/' + trimmedName + '/images').doc(imageObj.name).delete().then(function (docRef) {
         console.log('Successfully deleted');
       })
         .catch(function (error) {
@@ -873,7 +884,6 @@ export class AppComponent {
     } else {
       this.openStorageFullDialog();
       this.renderImage(this.currImageIndex);
-
     }
   }
 

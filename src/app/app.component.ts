@@ -367,40 +367,29 @@ export class AppComponent {
     this.localStorage.removeItem(key);
   }
 
-  getRandomArt(clear, recurseStep) {
+  getRandomArt(clear, recurseStep?) {
     let recurse = false;
+    this.renderDone = false;
     if (recurseStep === undefined) {
-
-      let rand = Math.floor(Math.random() * 3) + 1;
+      const rand = Math.floor(Math.random() * 3) + 1;
       if (rand === 1) {
         recurse = true;
+        recurseStep = Math.floor(Math.random() * 5) + 2;
       }
-      recurseStep = Math.floor(Math.random() * 3) + 1;
     } else {
       recurse = true;
     }
-    this.renderDone = false;
 
     if (this.edit) {
       this.toggleEdit();
     }
     // this.saveCurrentArt();
     this.objNum = Math.floor(Math.random() * 23) + 10;
-    if (clear) {
-      // if (this.lastImg && this.lastImg !== this.canvas.toDataURL() && this.savedImageArr.indexOf(this.canvas.toDataURL()) < 0) {
-      //   this.saveCurrentArt();
-      // }
-      // this.undoListShape = [];
-      // this.redoListShape = [];
+    if (clear && recurseStep === undefined) {
       this.edit = false;
       this.startEditing = false;
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-      // this.ctx.fillStyle = "#FFFFDE";
-      // this.ctx.fillStyle = "#F7D708";
-
       this.ctx.fillStyle = 'white';
-
-
       this.ctx.fillStyle = 'rgba(0,0,0,0)';
       this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
     }
@@ -449,7 +438,6 @@ export class AppComponent {
           this.ctx.strokeStyle = 'rgb(' + stroke['r'] + ',' + stroke['g'] + ',' + stroke['b'] + ')';
         } else {
           this.ctx.strokeStyle = 'rgb(' + stroke['r'] + ',' + stroke['g'] + ',' + stroke['b'] + ')';
-
         }
         rand = this.randomlyChooseOneOrTwo();
         if (rand === 1) {
@@ -458,7 +446,6 @@ export class AppComponent {
 
         if (!this.isSafari) {
           this.randomColor = this.randomColor.substring(0, this.randomColor.length - 1) + ',' + this.randomShapeOpacity + ")";
-
         }
         this.ctx.globalAlpha = (Math.random() * .4);
 
@@ -517,7 +504,7 @@ export class AppComponent {
     }
     this.setUndoRedo(clear);
     this.ctx.globalAlpha = 1;
-    if (recurse && recurseStep > 0) {
+    if (recurse && recurseStep && recurseStep > 1) {
       recurseStep--;
       this.getRandomArt(clear, recurseStep);
     }

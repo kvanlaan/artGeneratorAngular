@@ -368,13 +368,13 @@ export class AppComponent {
   }
 
   getRandomArt(clear, recurseStep?) {
+   let rand = Math.floor(Math.random() * 3) + 1;
     let recurse = false;
     this.renderDone = false;
     if (recurseStep === undefined) {
-      const rand = Math.floor(Math.random() * 3) + 1;
       if (rand === 1) {
         recurse = true;
-        recurseStep = Math.floor(Math.random() * 5) + 2;
+        recurseStep = Math.floor(Math.random() * 10) + 2;
       }
     } else {
       recurse = true;
@@ -507,9 +507,10 @@ export class AppComponent {
     if (recurse && recurseStep && recurseStep > 1) {
       recurseStep--;
       this.getRandomArt(clear, recurseStep);
-    }
+    } else {
     this.saveCurrentArt(clear);
   }
+}
 
   getFirstSmallLayer() {
     while (this.layerCounter <= 25) {

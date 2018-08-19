@@ -104,8 +104,8 @@
 
 </div>
 
-<div fxFlex="59">
-  <button [ngClass]=" { 'invisible': !renderDone }" style="opacity: 0;  float: left; vertical-align: top;  min-width: 0px !important; padding-left: 5px !important; padding-right: 5px !important" mat-button (click)="filterFavorites()"><i class="material-icons">
+<div fxFlex="59" style="position: relative">
+  <!-- <button [ngClass]=" { 'invisible': !renderDone }" style="opacity: 0;  float: left; vertical-align: top;  min-width: 0px !important; padding-left: 5px !important; padding-right: 5px !important" mat-button (click)="filterFavorites()"><i class="material-icons">
     filter_list
     </i>
 
@@ -115,13 +115,18 @@
 <i [fxShow]="!showFavorites" class="material-icons">
             favorite_border
               </i>
-</button>
-<canvas class="visible" [ngClass]=" { 'invisible': !renderDone }" id="myCanvas">
-  Your browser does not support the canvas element.
-</canvas>
-<div style="z-index: 2" [fxShow]="!renderDone" class="margin-auto loader"></div>
+</button> -->
+
+<div style="z-index: 10" #loaderCanvas class="margin-auto loader">
 </div>
 
+<canvas [ngClass]=" { 'invisible': !renderDone }" #myCanvas id="myCanvas">
+  Your browser does not support the canvas element.
+</canvas>
+<div style="z-index: 10" #loaderCanvas class="margin-auto loader">
+</div>
+
+</div>
 <!-- <div fxFlex="10">
 
       <button (click)="toggleEdit()" style="margin-bottom: auto" class="float-left inline" mat-button>

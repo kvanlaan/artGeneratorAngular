@@ -161,18 +161,15 @@ a {
   opacity: 1 !important;
 }
 
+
 .invisible {
-  opacity: 0;
+  opacity: 0 !important;
 }
 
-.visibile .invisible {
-  opacity: 1 !important;
-}
 
-.invisible .visibile  {
-  opacity: 1 !important;
+.invisible {
+  visibility: hidden !important;
 }
-
 .on-hover-trash:hover {
   visibility: visible;
   opacity: 1 !important;

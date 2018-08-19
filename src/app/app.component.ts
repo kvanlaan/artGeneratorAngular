@@ -84,6 +84,9 @@ export class AppComponent {
   //   'Split Complementary'];
   // shapeArr = ['Rectangle', 'Triangle', 'Circle', 'Trapezoid', 'Line'];
   // shapeArr = ['Trapezoid'];
+  @ViewChild('mainContainer') mainContainer;
+  @ViewChild('loaderCanvas') loader;
+  @ViewChild('myCanvas') styleCanvas;
 
   constructor(public dialog: MatDialog) {
     this.localStorage = localStorage;
@@ -98,11 +101,12 @@ export class AppComponent {
     });
     this.showFavorites = !this.showFavorites;
   }
-  @ViewChild('mainContainer') mainContainer;
-//     @HostListener('window:resize', ['$event'])
-//   resize(e) {
-//     this.calculateCanvasSize();
-// }
+
+
+  //     @HostListener('window:resize', ['$event'])
+  //   resize(e) {
+  //     this.calculateCanvasSize();
+  // }
   @HostListener('window:keydown', ['$event'])
   handlekeydown(e) {
     const currIndex = this.currImageIndex;
@@ -136,7 +140,10 @@ export class AppComponent {
     this.canvas = <HTMLCanvasElement>document.getElementById("myCanvas");
 
     this.ctx = this.canvas.getContext("2d");
-    this.ctx.canvas.width = this.mainContainer.nativeElement.clientWidth * .5;
+
+    // this.ctx.canvas.width = this.mainContainer.nativeElement.clientWidth * .5;
+    // add checks here for different screen sizes / orientation/ mobile
+    this.ctx.canvas.width = 720;
     this.canvasSize = this.ctx.canvas.width;
     console.log('canvasSize', this.canvasSize);
     this.ctx.canvas.height = this.canvasSize;
@@ -253,10 +260,12 @@ export class AppComponent {
     };
     return uiConfig;
   }
-
+  pattern;
   async ngOnInit() {
     // this.localStorage.setItem('currImage', null);
     this.renderDone = false;
+    this.pattern = new Image();
+    this.pattern.src = '../assets/arabesque-pattern-art.jpg';
     var config = {
       apiKey: "AIzaSyD98GbUHORmW3-C9nxvqboQLapTXxnSMM0",
       authDomain: "artgenerator-8008a.firebaseapp.com",
@@ -325,21 +334,6 @@ export class AppComponent {
       });
   }
 
-  zoomIn() {
-    this.ctx.scale(2, 2);
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    this.ctx.fillStyle = "white";
-    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-    this.renderImage();
-  }
-  zoomOut() {
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    this.ctx.fillStyle = "white";
-    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-    this.ctx.scale(.5, .5);
-    this.renderImage();
-  }
-
   // local storage stuff
   getFromLocal(key: string): any {
     let item = this.localStorage.getItem(key);
@@ -368,9 +362,28 @@ export class AppComponent {
   }
 
   getRandomArt(clear, recurseStep?) {
-   let rand = Math.floor(Math.random() * 3) + 1;
+    this.loader.nativeElement.style.visibility = "visible";
+    console.log('this.canvas', this.styleCanvas);
+    this.styleCanvas.nativeElement.style.visibility = 'hidden';
+    this.styleCanvas.nativeElement.style.display = 'none';
+
+    let rand = Math.floor(Math.random() * 3) + 1;
     let recurse = false;
     this.renderDone = false;
+
+
+    if (this.edit) {
+      this.toggleEdit();
+    }
+
+    this.objNum = Math.floor(Math.random() * 23) + 10;
+    if (clear && recurseStep === undefined) {
+      this.edit = false;
+      this.startEditing = false;
+      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      this.ctx.fillStyle = 'white';
+      this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    }
     if (recurseStep === undefined) {
       if (rand === 1) {
         recurse = true;
@@ -378,20 +391,6 @@ export class AppComponent {
       }
     } else {
       recurse = true;
-    }
-
-    if (this.edit) {
-      this.toggleEdit();
-    }
-    // this.saveCurrentArt();
-    this.objNum = Math.floor(Math.random() * 23) + 10;
-    if (clear && recurseStep === undefined) {
-      this.edit = false;
-      this.startEditing = false;
-      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-      this.ctx.fillStyle = 'white';
-      this.ctx.fillStyle = 'rgba(0,0,0,0)';
-      this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
     }
 
     this.resetForNewLayer();
@@ -450,6 +449,12 @@ export class AppComponent {
         this.ctx.globalAlpha = (Math.random() * .4);
 
         this.ctx.fillStyle = this.randomColor;
+
+        if (rand === 1) {
+
+        this.ctx.fillStyle = this.ctx.createPattern(this.pattern, 'repeat');
+
+      }
         this.ctx.lineWidth = Math.random() * 10;
         this.drawShape(randomShape);
         this.layerCounter++;
@@ -508,9 +513,12 @@ export class AppComponent {
       recurseStep--;
       this.getRandomArt(clear, recurseStep);
     } else {
-    this.saveCurrentArt(clear);
+      this.styleCanvas.nativeElement.style.visibility = 'visible';
+      this.styleCanvas.nativeElement.style.display = 'showing';
+
+      this.saveCurrentArt(clear);
+    }
   }
-}
 
   getFirstSmallLayer() {
     while (this.layerCounter <= 25) {
@@ -668,9 +676,12 @@ export class AppComponent {
 
     switch (shape) {
       case 'Rectangle':
+
         this.ctx.fillRect(xPos, yPos, width, height);
         this.ctx.strokeRect(xPos, yPos, width, height);
         break;
+
+
 
       case 'Trapezoid':
         this.ctx.beginPath();
@@ -830,19 +841,21 @@ export class AppComponent {
     this.ctx.clearRect(0, 0, this.canvasSize, this.canvasSize);
     img.onload = function () {
       this.ctx.drawImage(img, 0, 0, this.canvasSize, this.canvasSize, 0, 0, this.canvasSize, this.canvasSize);
-      this.renderDone = true;
     }.bind(this);
 
     // add to user libary
     if (this.user) {
       this.saveImageFirebase(this.savedImageArr[this.currImageIndex]);
     }
+    this.loader.nativeElement.style.visibility = "hidden";
+    this.renderDone = true;
   }
 
   hack(val) {
     return Array.from(val);
   }
   saveCurrentArt(isNew?: boolean, startEdit?: boolean, source?: string) {
+    console.log('save current inside');
     // const copyOfUndoShape = this.undoListShape.slice();
     // const copyOfRedoShape = this.redoListShape.slice();
     // const copyOfUndo = this.undoList.slice();

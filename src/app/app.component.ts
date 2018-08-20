@@ -141,9 +141,9 @@ export class AppComponent {
 
     this.ctx = this.canvas.getContext("2d");
 
-    // this.ctx.canvas.width = this.mainContainer.nativeElement.clientWidth * .5;
+    this.ctx.canvas.width = this.canvas.clientHeight;
     // add checks here for different screen sizes / orientation/ mobile
-    this.ctx.canvas.width = 720;
+    // this.ctx.canvas.width = 720;
     this.canvasSize = this.ctx.canvas.width;
     console.log('canvasSize', this.canvasSize);
     this.ctx.canvas.height = this.canvasSize;
@@ -290,15 +290,16 @@ export class AppComponent {
       user ? await this.handleSignedInUser(user) : await this.handleSignedOutUser();
 
       if (!this.user) {
-        const sources = this.getFromLocal('currImage');
-        if (sources && sources.length > 0) {
-          let i = 0;
-          for (const temp of sources) {
-            this.saveCurrentArt(true, false, temp);
-          }
-        } else {
-          this.getRandomArt(true);
-        }
+        // const sources = this.getFromLocal('currImage');
+        // if (sources && sources.length > 0) {
+        //   let i = 0;
+        //   for (const temp of sources) {
+        //     this.saveCurrentArt(true, false, temp);
+        //   }
+        //   this.renderImage(this.currImageIndex);
+        // } else {
+        this.getRandomArt(true);
+        // }
       }
     }.bind(this));
   }
@@ -323,6 +324,7 @@ export class AppComponent {
 
     this.savedImageArr[index].favorite = val;
     const trimmedName = this.displayName.replace(/\s/g, '');
+    if(this.user) {
     this.database.collection('users/' + trimmedName + '/images').doc(imageObj.name).set({
       'name': imageObj.name, 'src': imageObj.src, 'favorite': val
     })
@@ -332,6 +334,7 @@ export class AppComponent {
       .catch(function (error) {
         console.error("Error writing document: ", error);
       });
+    }
   }
 
   // local storage stuff
@@ -363,41 +366,46 @@ export class AppComponent {
 
   getRandomArt(clear, recurseStep?) {
     this.loader.nativeElement.style.visibility = "visible";
-    console.log('this.canvas', this.styleCanvas);
-    this.styleCanvas.nativeElement.style.visibility = 'hidden';
-    this.styleCanvas.nativeElement.style.display = 'none';
-
     let rand = Math.floor(Math.random() * 3) + 1;
     let recurse = false;
     this.renderDone = false;
 
-
-    if (this.edit) {
-      this.toggleEdit();
-    }
-
+    // if (this.edit) {
+    //   this.toggleEdit();
+    // }
     this.objNum = Math.floor(Math.random() * 23) + 10;
-    if (clear && recurseStep === undefined) {
-      this.edit = false;
-      this.startEditing = false;
+    this.edit = false;
+    this.startEditing = false;
+
+    if (recurseStep === undefined) {
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
       this.ctx.fillStyle = 'white';
       this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-    }
-    if (recurseStep === undefined) {
       if (rand === 1) {
         recurse = true;
-        recurseStep = Math.floor(Math.random() * 10) + 2;
       }
     } else {
       recurse = true;
     }
+    if (recurse && recurseStep === undefined) {
+      recurseStep = Math.floor(Math.random() * 10) + 2;
+      var img = new Image();
+      img.src = this.canvas.toDataURL();
+      img.onload = function () {
+        this.ctx.drawImage(img, 0, 0, this.canvasSize, this.canvasSize, 0, 0, this.canvasSize, this.canvasSize);
+        this.getRandomArtAlg(clear, recurse, recurseStep);
+      }.bind(this);
+    } else {
+      this.getRandomArtAlg(clear, recurse, recurseStep);
+    }
+  }
 
+  getRandomArtAlg(clear, recurse, recurseStep) {
     this.resetForNewLayer();
     this.randomScheme = this.colorSchemes[Math.floor(Math.random() * this.colorSchemes.length)];
     this.randomScheme = "Random";
     this.colorArr = this.genColors("Random");
-    rand = 1;
+    let rand = 1;
     // first layer of small objects;
     this.resetForNewLayer();
     this.getFirstSmallLayer();
@@ -428,7 +436,6 @@ export class AppComponent {
         this.randomStrokeOpacity = Math.random() * 1;
         this.randomShapeOpacity = Math.random() * 1;
         var randomShape = this.backgroundShapeArr[Math.floor(Math.random() * this.shapeArr.length)];
-        // var randomAC = Math.random() * 1;
         var stroke = this.getStroke(this.randomScheme, this.randomColor);
         if (this.randomScheme === 'Complementary') {
           var complStroke = this.colorArr[Math.floor(Math.random() * this.colorArr.length)];
@@ -451,14 +458,11 @@ export class AppComponent {
         this.ctx.fillStyle = this.randomColor;
 
         if (rand === 1) {
-
-        this.ctx.fillStyle = this.ctx.createPattern(this.pattern, 'repeat');
-
-      }
+          this.ctx.fillStyle = this.ctx.createPattern(this.pattern, 'repeat');
+        }
         this.ctx.lineWidth = Math.random() * 10;
         this.drawShape(randomShape);
         this.layerCounter++;
-        this.undoListShape.push(this.canvas.toDataURL());
       }
     }
     this.resetForNewLayer();
@@ -505,7 +509,6 @@ export class AppComponent {
       this.ctx.lineWidth = newLineWidth;
       this.drawShape(randomShape, true);
       this.layerCounter++;
-      this.undoListShape.push(this.canvas.toDataURL());
     }
     this.setUndoRedo(clear);
     this.ctx.globalAlpha = 1;
@@ -513,13 +516,9 @@ export class AppComponent {
       recurseStep--;
       this.getRandomArt(clear, recurseStep);
     } else {
-      this.styleCanvas.nativeElement.style.visibility = 'visible';
-      this.styleCanvas.nativeElement.style.display = 'showing';
-
       this.saveCurrentArt(clear);
     }
   }
-
   getFirstSmallLayer() {
     while (this.layerCounter <= 25) {
       this.randomColor = this.colorArr[Math.floor(Math.random() * this.colorArr.length)];
@@ -553,7 +552,6 @@ export class AppComponent {
       this.ctx.lineWidth = Math.random() * 10;
       this.drawShape(randomShape, true);
       this.layerCounter++;
-      this.undoListShape.push(this.canvas.toDataURL());
     }
   }
   resetForNewLayer() {
@@ -637,7 +635,6 @@ export class AppComponent {
       }
       this.drawShape(randomShape);
       this.layerCounter++;
-      this.undoListShape.push(this.canvas.toDataURL());
     }
   }
 
@@ -770,6 +767,7 @@ export class AppComponent {
     }
     this.aggrObjArea += currObjArea;
   }
+
   toggleEdit() {
     this.edit = !this.edit;
     if (this.edit) {
@@ -788,25 +786,7 @@ export class AppComponent {
     if (index < this.currImageIndex) {
       this.currImageIndex--;
     }
-
-    this.savedImageArr.splice(index, 1);
-    this.sources.splice(index, 1);
-    if (index > this.savedImageArr.length - 1) {
-      index--;
-      this.renderImage(index);
-    }
-
-    if (index === this.currImageIndex && index === 0) {
-      this.renderImage(index);
-    }
-    this.saveToLocal('currImage', this.sources);
-
-    let val = true;
-    if (this.savedImageArr[index].favorite) {
-      val = false;
-    }
     if (this.user) {
-      this.savedImageArr[index].favorite = val;
       const trimmedName = this.displayName.replace(/\s/g, '');
       console.log('imageobj name', imageObj.name);
       this.database.collection('users/' + trimmedName + '/images').doc(imageObj.name).delete().then(function (docRef) {
@@ -816,7 +796,20 @@ export class AppComponent {
           console.error('Error adding document: ', error);
         });
     }
+    // this.sources.splice(index, 1);
+    // this.saveToLocal('currImage', this.sources);
+
+    this.savedImageArr.splice(index, 1);
+    if (index > this.savedImageArr.length - 1) {
+      index--;
+      this.renderImage(index);
+    }
+
+    if (index === this.currImageIndex || index === 0) {
+      this.renderImage(index);
+    }
   }
+
   renderImage(index?: number, startEdit?: boolean) {
     if (this.currImageIndex !== index) {
       this.edit = false;
@@ -834,28 +827,25 @@ export class AppComponent {
     // this.redoListShape = this.savedImageArr[this.currImageIndex]['redoStackShape'].slice();
     // this.undoList = this.savedImageArr[this.currImageIndex]['undoStack'].slice();
     // this.redoList = this.savedImageArr[this.currImageIndex]['redoStack'].slice();
+    if (this.savedImageArr[this.currImageIndex]) {
+      img.src = this.savedImageArr[this.currImageIndex].src
+    } else {
+      img.src = this.canvas.toDataURL();
 
-    img.src = this.savedImageArr[this.currImageIndex].src;
-    // this.sources.push(img.src);
+    }// this.sources.push(img.src);
     // }
-    this.ctx.clearRect(0, 0, this.canvasSize, this.canvasSize);
     img.onload = function () {
       this.ctx.drawImage(img, 0, 0, this.canvasSize, this.canvasSize, 0, 0, this.canvasSize, this.canvasSize);
-    }.bind(this);
 
-    // add to user libary
-    if (this.user) {
-      this.saveImageFirebase(this.savedImageArr[this.currImageIndex]);
-    }
-    this.loader.nativeElement.style.visibility = "hidden";
-    this.renderDone = true;
+      this.renderDone = true;
+      this.loader.nativeElement.style.visibility = "hidden";
+    }.bind(this);
   }
 
   hack(val) {
     return Array.from(val);
   }
   saveCurrentArt(isNew?: boolean, startEdit?: boolean, source?: string) {
-    console.log('save current inside');
     // const copyOfUndoShape = this.undoListShape.slice();
     // const copyOfRedoShape = this.redoListShape.slice();
     // const copyOfUndo = this.undoList.slice();
@@ -876,31 +866,42 @@ export class AppComponent {
       newSource = source;
     }
     const imgObj = {
-      'name': newIndex + 'index',
+      'name': (newIndex + 1) + 'index',
       'src': newSource, 'favorite': false
     };
     const tempSources = this.sources;
     tempSources.push(imgObj.src);
     let res = true;
-    if (!source && !this.user) {
-      res = this.saveToLocal('currImage', tempSources);
+    // if (!source && !this.user) {
+    //   res = this.saveToLocal('currImage', tempSources);
+    // } else {
+    // add to user libary
+    if (this.user) {
+      this.saveImageFirebase(this.savedImageArr[this.currImageIndex]);
     }
-    if (res) {
-      if (isNew) {
-        this.savedImageArr.push(imgObj);
-        newIndex = this.savedImageArr.length - 1;
-      } else {
-        this.savedImageArr[newIndex] = imgObj;
-      }
-
-      if (startEdit !== undefined) {
-        startEdit = startEdit;
-      }
-      this.renderImage(newIndex, startEdit);
+    // }
+    // if (res) {
+    if (isNew) {
+      this.savedImageArr.push(imgObj);
+      newIndex = this.savedImageArr.length - 1;
+      this.currImageIndex = newIndex;
     } else {
-      this.openStorageFullDialog();
-      this.renderImage(this.currImageIndex);
+      this.savedImageArr[newIndex] = imgObj;
     }
+
+    if (startEdit !== undefined) {
+      startEdit = startEdit;
+    }
+
+
+
+    // } else {
+    //   this.currImageIndex = this.savedImageArr.length - 1;
+    //   this.renderImage(this.currImageIndex);
+    //   this.openStorageFullDialog();
+    // }
+    this.loader.nativeElement.style.visibility = "hidden";
+    this.renderDone = true;
   }
 
   undoShape() {

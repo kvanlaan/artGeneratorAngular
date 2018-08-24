@@ -80,6 +80,7 @@ export class AppComponent {
   loginStarted = false;
   sources = [];
   localStorage: any;
+  patternSwitch;
   // colorSchemes = ['Monchromatic', 'Complementary', 'Analogous', 'Triad', 'Tetrad',
   //   'Split Complementary'];
   // shapeArr = ['Rectangle', 'Triangle', 'Circle', 'Trapezoid', 'Line'];
@@ -324,16 +325,16 @@ export class AppComponent {
 
     this.savedImageArr[index].favorite = val;
     const trimmedName = this.displayName.replace(/\s/g, '');
-    if(this.user) {
-    this.database.collection('users/' + trimmedName + '/images').doc(imageObj.name).set({
-      'name': imageObj.name, 'src': imageObj.src, 'favorite': val
-    })
-      .then(function () {
-        console.log("Document successfully written!");
+    if (this.user) {
+      this.database.collection('users/' + trimmedName + '/images').doc(imageObj.name).set({
+        'name': imageObj.name, 'src': imageObj.src, 'favorite': val
       })
-      .catch(function (error) {
-        console.error("Error writing document: ", error);
-      });
+        .then(function () {
+          console.log("Document successfully written!");
+        })
+        .catch(function (error) {
+          console.error("Error writing document: ", error);
+        });
     }
   }
 
@@ -365,6 +366,7 @@ export class AppComponent {
   }
 
   getRandomArt(clear, recurseStep?) {
+    this.patternSwitch = Math.floor(Math.random() * 7) + 1;
     this.loader.nativeElement.style.visibility = "visible";
     let rand = Math.floor(Math.random() * 3) + 1;
     let recurse = false;
@@ -458,6 +460,7 @@ export class AppComponent {
         this.ctx.fillStyle = this.randomColor;
 
         if (rand === 1) {
+          rand = this.randomlyChooseOneOrTwo();
           this.ctx.fillStyle = this.ctx.createPattern(this.pattern, 'repeat');
         }
         this.ctx.lineWidth = Math.random() * 10;
@@ -498,6 +501,10 @@ export class AppComponent {
       //   this.ctx.globalAlpha = randomShapeOpacity;
       // }
       this.ctx.fillStyle = this.randomColor;
+      if (rand === 1) {
+        rand = this.randomlyChooseOneOrTwo();
+        this.ctx.fillStyle = this.ctx.createPattern(this.pattern, 'repeat');
+      }
       let newLineWidth = Math.random() * 10;
 
       // lineWidthArr.push(newLineWidth);
@@ -549,6 +556,10 @@ export class AppComponent {
         this.ctx.globalAlpha = this.randomShapeOpacity;
       }
       this.ctx.fillStyle = this.randomColor;
+      if (rand === 1) {
+        rand = this.randomlyChooseOneOrTwo();
+        this.ctx.fillStyle = this.ctx.createPattern(this.pattern, 'repeat');
+      }
       this.ctx.lineWidth = Math.random() * 10;
       this.drawShape(randomShape, true);
       this.layerCounter++;
@@ -609,6 +620,10 @@ export class AppComponent {
       //   this.ctx.globalAlpha = this.randomShapeOpacity;
       // }
       this.ctx.fillStyle = this.randomColor;
+      if (rand === 1) {
+        rand = this.randomlyChooseOneOrTwo();
+        this.ctx.fillStyle = this.ctx.createPattern(this.pattern, 'repeat');
+      }
       // default is middle
       let newLineWidth = Math.random() * 5 + 1;
       if (this.layerCounter < (objNum / 4) || (this.layerCounter > (objNum * .5) && this.layerCounter < (objNum * .6))) {
@@ -655,11 +670,90 @@ export class AppComponent {
 
   }
   drawShape(shape, small?) {
+    //  rand =  Math.floor(Math.random() * 3) + 1;
+    //   if (rand === 1) {
+    //     this.pattern.src = '../assets/eastern_map.jpg';
+    //   } else  if (rand === 2) {
+    //     this.pattern.src = '../assets/arabesque-pattern-art.jpg';
+    //   } else {
+    //     this.pattern.src = '../assets/kosovo_map.jpg';
+    //   }
+
+
+
+    rand = Math.floor(Math.random() * 4) + 1;
+    if (this.patternSwitch === 1) {
+      if (rand === 1) {
+        this.pattern.src = '../assets/arabesque_pattern.jpg';
+        // this.pattern.src = 'https://media.giphy.com/media/S6bB56BcgZvzO/giphy.gif';
+      } else if (rand === 2) {
+        this.pattern.src = '../assets/trunks.png';
+        this.ctx.fillStyle = this.ctx.createPattern(this.pattern, 'no-repeat');
+
+      }
+    } else if (this.patternSwitch === 2) {
+      // if (rand === 1) {
+      //   this.pattern.src = '../assets/arabesque_pattern.jpg';
+      // } else if (rand === 2) {
+      //   this.pattern.src = '../assets/trunks.png';
+      // } else
+      if (rand === 1) {
+        this.pattern.src = '../assets/kosovo_map.jpg';
+      } else if (rand === 2) {
+        this.pattern.src = '../assets/mexico_flag.jpg';
+        this.ctx.fillStyle = this.ctx.createPattern(this.pattern, 'no-repeat');
+      }
+    } else if (this.patternSwitch === 3) {
+      this.pattern.src = '../assets/trunks.png';
+      this.ctx.fillStyle = this.ctx.createPattern(this.pattern, 'no-repeat');
+
+    } else if (4) {
+      if (rand === 1) {
+        this.pattern.src = '../assets/mexico_flag.jpg';
+        this.ctx.fillStyle = this.ctx.createPattern(this.pattern, 'no-repeat');
+      } else if (rand === 2) {
+        this.pattern.src = '../assets/trunks.png';
+        this.ctx.fillStyle = this.ctx.createPattern(this.pattern, 'no-repeat');
+
+      }
+    } else if (5) {
+      if (rand === 1) {
+        this.pattern.src = '../assets/kosovo_map.jpg';
+        // this.pattern.src = 'https://media.giphy.com/media/S6bB56BcgZvzO/giphy.gif';
+      } else if (rand === 2) {
+        this.pattern.src = '../assets/trunks.png';
+        this.ctx.fillStyle = this.ctx.createPattern(this.pattern, 'no-repeat');
+      }
+    } else if (6) {
+      if (rand === 1) {
+        this.pattern.src = '../assets/arabesque_pattern.jpg';
+        // this.pattern.src = 'https://media.giphy.com/media/S6bB56BcgZvzO/giphy.gif';
+      } else if (rand === 2) {
+        this.pattern.src = '../assets/kosovo_map.jpg';
+      }
+
+    } else {
+        this.pattern.src = '../assets/mexico_flag.jpg';
+        this.ctx.fillStyle = this.ctx.createPattern(this.pattern, 'no-repeat');
+    }
+
+    rand = Math.floor(Math.random() * 100) + 1;
     var xPos = Math.random() * this.canvasSize;
     var yPos = Math.random() * this.canvasSize;
     var height = Math.random() * this.canvasSize;
     var width = Math.random() * this.canvasSize;
     let currObjArea = height * width;
+
+    // if (small && rand === 4) {
+    //   var img = new Image();
+    //   img.src = '../assets/wowlogo.png';
+    //   img.onload = function () {
+    //     currObjArea = 10;
+    //     this.ctx.drawImage(img, xPos, yPos);
+    //     return;
+    //   }.bind(this);
+
+    // }
     if (small || (this.aggrObjArea + currObjArea + 250) >= this.maxArea) {
       height = Math.random() * this.canvasSize / 25;
       width = Math.random() * this.canvasSize / 25;

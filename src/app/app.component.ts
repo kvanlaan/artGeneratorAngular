@@ -266,7 +266,7 @@ export class AppComponent {
     // this.localStorage.setItem('currImage', null);
     this.renderDone = false;
     this.pattern = new Image();
-    this.pattern.src = '../assets/arabesque-pattern-art.jpg';
+    this.pattern.src = '../assets/arabesque_pattern.jpg';
     var config = {
       apiKey: "AIzaSyD98GbUHORmW3-C9nxvqboQLapTXxnSMM0",
       authDomain: "artgenerator-8008a.firebaseapp.com",

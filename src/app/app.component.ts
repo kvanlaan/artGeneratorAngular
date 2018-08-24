@@ -266,7 +266,7 @@ export class AppComponent {
     // this.localStorage.setItem('currImage', null);
     this.renderDone = false;
     this.pattern = new Image();
-    this.pattern.src = '../assets/arabesque_pattern.jpg';
+    this.pattern.src = 'assets/arabesque_pattern.jpg';
     var config = {
       apiKey: "AIzaSyD98GbUHORmW3-C9nxvqboQLapTXxnSMM0",
       authDomain: "artgenerator-8008a.firebaseapp.com",
@@ -672,11 +672,11 @@ export class AppComponent {
   drawShape(shape, small?) {
     //  rand =  Math.floor(Math.random() * 3) + 1;
     //   if (rand === 1) {
-    //     this.pattern.src = '../assets/eastern_map.jpg';
+    //     this.pattern.src = 'assets/eastern_map.jpg';
     //   } else  if (rand === 2) {
-    //     this.pattern.src = '../assets/arabesque-pattern-art.jpg';
+    //     this.pattern.src = 'assets/arabesque-pattern-art.jpg';
     //   } else {
-    //     this.pattern.src = '../assets/kosovo_map.jpg';
+    //     this.pattern.src = 'assets/kosovo_map.jpg';
     //   }
 
 
@@ -684,10 +684,10 @@ export class AppComponent {
     rand = Math.floor(Math.random() * 4) + 1;
     if (this.patternSwitch === 1) {
       if (rand === 1) {
-        this.pattern.src = '../assets/arabesque_pattern.jpg';
+        this.pattern.src = 'assets/arabesque_pattern.jpg';
         // this.pattern.src = 'https://media.giphy.com/media/S6bB56BcgZvzO/giphy.gif';
       } else if (rand === 2) {
-        this.pattern.src = '../assets/trunks.png';
+        this.pattern.src = 'assets/trunks.png';
         this.ctx.fillStyle = this.ctx.createPattern(this.pattern, 'no-repeat');
 
       }
@@ -698,42 +698,42 @@ export class AppComponent {
       //   this.pattern.src = '../assets/trunks.png';
       // } else
       if (rand === 1) {
-        this.pattern.src = '../assets/kosovo_map.jpg';
+        this.pattern.src = 'assets/kosovo_map.jpg';
       } else if (rand === 2) {
-        this.pattern.src = '../assets/mexico_flag.jpg';
+        this.pattern.src = 'assets/mexico_flag.jpg';
         this.ctx.fillStyle = this.ctx.createPattern(this.pattern, 'no-repeat');
       }
     } else if (this.patternSwitch === 3) {
-      this.pattern.src = '../assets/trunks.png';
+      this.pattern.src = 'assets/trunks.png';
       this.ctx.fillStyle = this.ctx.createPattern(this.pattern, 'no-repeat');
 
     } else if (4) {
       if (rand === 1) {
-        this.pattern.src = '../assets/mexico_flag.jpg';
+        this.pattern.src = 'assets/mexico_flag.jpg';
         this.ctx.fillStyle = this.ctx.createPattern(this.pattern, 'no-repeat');
       } else if (rand === 2) {
-        this.pattern.src = '../assets/trunks.png';
+        this.pattern.src = 'assets/trunks.png';
         this.ctx.fillStyle = this.ctx.createPattern(this.pattern, 'no-repeat');
 
       }
     } else if (5) {
       if (rand === 1) {
-        this.pattern.src = '../assets/kosovo_map.jpg';
+        this.pattern.src = 'assets/kosovo_map.jpg';
         // this.pattern.src = 'https://media.giphy.com/media/S6bB56BcgZvzO/giphy.gif';
       } else if (rand === 2) {
-        this.pattern.src = '../assets/trunks.png';
+        this.pattern.src = 'assets/trunks.png';
         this.ctx.fillStyle = this.ctx.createPattern(this.pattern, 'no-repeat');
       }
     } else if (6) {
       if (rand === 1) {
-        this.pattern.src = '../assets/arabesque_pattern.jpg';
+        this.pattern.src = 'assets/arabesque_pattern.jpg';
         // this.pattern.src = 'https://media.giphy.com/media/S6bB56BcgZvzO/giphy.gif';
       } else if (rand === 2) {
-        this.pattern.src = '../assets/kosovo_map.jpg';
+        this.pattern.src = 'assets/kosovo_map.jpg';
       }
 
     } else {
-        this.pattern.src = '../assets/mexico_flag.jpg';
+        this.pattern.src = 'assets/mexico_flag.jpg';
         this.ctx.fillStyle = this.ctx.createPattern(this.pattern, 'no-repeat');
     }
 

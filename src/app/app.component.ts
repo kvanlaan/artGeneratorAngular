@@ -600,7 +600,7 @@ export class AppComponent {
         this.ctx.fillStyle = this.ctx.createPattern(this.pattern, 'repeat');
       } else if (rand === 2) {
         this.pattern.src = 'assets/trunks.png';
-        this.ctx.fillStyle = this.ctx.createPattern(this.pattern, 'no-repeat');
+        this.ctx.fillStyle = this.ctx.createPattern(this.pattern, 'repeat');
       }
     } else if (this.patternSwitch === 2) {
       if (rand === 1) {
@@ -612,14 +612,17 @@ export class AppComponent {
       }
     } else if (this.patternSwitch === 3) {
       this.pattern.src = 'assets/trunks.png';
-      this.ctx.fillStyle = this.ctx.createPattern(this.pattern, 'no-repeat');
+      this.ctx.fillStyle = this.ctx.createPattern(this.pattern, 'repeat');
     }  else if (this.patternSwitch === 4) {
       if (rand === 1) {
         this.pattern.src = 'assets/mexico_flag.jpg';
+      this.ctx.fillStyle = this.ctx.createPattern(this.pattern, 'no-repeat');
+
       } else if (rand === 2) {
         this.pattern.src = 'assets/trunks.png';
+      this.ctx.fillStyle = this.ctx.createPattern(this.pattern, 'repeat');
+
             }
-      this.ctx.fillStyle = this.ctx.createPattern(this.pattern, 'no-repeat');
 
     } else if (this.patternSwitch === 5) {
       this.pattern.src = 'assets/kosovo_map.jpg';

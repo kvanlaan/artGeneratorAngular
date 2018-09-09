@@ -4,6 +4,7 @@ import * as firebaseui from 'firebaseui';
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { LocationStrategy, PathLocationStrategy } from '../../node_modules/@angular/common';
+import { ifStmt } from '../../node_modules/@angular/compiler/src/output/output_ast';
 
 @Component({
   templateUrl: './login.component.html'
@@ -79,6 +80,7 @@ export class AppComponent {
   patternKosovo;
   patternMexico;
   genTypeArr = ["noPattern", "transPattern", "random", "all"];
+  isTrunks;
   // sources = [];
   // maxArea = (700 * 700);
   // redoListShape = [];
@@ -308,43 +310,60 @@ export class AppComponent {
     }.bind(this));
   }
   genType;
+  isArabesque;
+  isMexico;
+  singleLayer;
   getRandomArt(clear, recurseStep?) {
     // hiding stuff since a new image is being drawn
     this.renderDone = false;
     this.loader.nativeElement.style.visibility = "visible";
     this.edit = false;
-
+    this.singleLayer = false;
     // if (this.edit) {
     //   this.toggleEdit();
     // }
 
     //these values are related to what the art will look like 
-    let rand = Math.floor(Math.random() * 2) + 1;
     let recurse = false;
     this.objNum = Math.floor(Math.random() * 23) + 10;
     this.patternFill = this.randomlyChooseTrueOrFalse();
-    if (recurseStep === undefined) {
-      this.genType = this.genTypeArr[Math.floor(Math.random() * this.genTypeArr.length)];
-    }
+
     // if(this.genType === 'transPattern' && recurseStep === undefined) {
     //   recurseStep = 3;
     // }
+    this.isTrunks = false;
+    this.isArabesque = false;
+    this.isMexico = false;
     if (recurseStep === undefined) {
+
+      this.genType = this.genTypeArr[Math.floor(Math.random() * this.genTypeArr.length)];
+
       this.patternFill = this.randomlyChooseTrueOrFalse();
 
       // if no recurse, this means this is a new piece, not just a layer, so clear and calculate recurse chance
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
       this.ctx.fillStyle = 'white';
       this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-      if (rand !== 1) {
-        recurse = true;
-      }
+      recurse = this.randomlyChooseTrueOrFalse();
     } else {
       // if recurseStep is defined then we know
       recurse = true;
     }
 
+    if (this.genType === 'noPattern' || (this.genType === 'transPattern' && this.singleLayer)) {
+      this.isTrunks = this.randomlyChooseTrueOrFalse();
+      if (!this.isTrunks) {
+        this.isArabesque = true;
+      } else {
+        this.isArabesque = false;
+      }
+    }
+
+    console.log('metadata: genType', this.genType, 'this.isTrunks:', this.isTrunks, 'this.isArabesque', this.isArabesque);
     // because it's fast - we only care about making the load if it's new AND layers
+    if (!recurse && recurseStep === undefined) {
+      this.singleLayer = true;
+    }
     if (recurse && recurseStep === undefined) {
       recurseStep = Math.floor(Math.random() * 10) + 4;
       var img = new Image();
@@ -364,7 +383,12 @@ export class AppComponent {
     this.randomScheme = "Random";
     this.colorArr = this.getRandomColorArr();
     let rand = 1;
-    this.patternOffset = Math.floor(Math.random() * 300) - 300;
+    this.patternOffset = 0;
+    const offsetRand = this.randomlyChooseTrueOrFalse();
+      if (offsetRand) {
+        this.patternOffset = Math.floor(Math.random() * 100) - 100;
+      }
+    console.log('PATTERNoff', this.patternOffset);
     // first layer of small objects;
     this.resetForNewLayer();
     this.getFirstSmallLayer();
@@ -538,21 +562,48 @@ export class AppComponent {
       if (this.patternFill === false) {
         this.patternFill = this.randomlyChooseTrueOrFalse();
       }
-      if (this.patternFill === false) {
-        this.patternFill = this.randomlyChooseTrueOrFalse();
-      }
+      // if (this.patternFill === false) {
+      //   this.patternFill = this.randomlyChooseTrueOrFalse();
+      // }
     }
     if (this.genType === 'all') {
       this.patternFill = true;
     }
-    if (norm === false) {
+    norm = false;
+    if (!norm) {
       objNum = Math.floor(Math.random() * 1) + 5;
       // this.shapeArr = ['Trapezoid', 'Circle'];
       // this.shapeArr = ['Trapezoid'];
 
       // const rand = this.randomlyChooseOneOrTwo();
       // if (rand === 1) {
+      console.log('weird trap layer');
       this.shapeArr = ['Trapezoid', 'Line'];
+      if (this.singleLayer) {
+        this.isTrunks = this.randomlyChooseTrueOrFalse();
+        if (this.isTrunks) {
+          this.isArabesque = false;
+          this.patternFill = true;
+          this.isMexico = this.randomlyChooseTrueOrFalse();
+          if (this.isMexico) {
+            this.isTrunks = false;
+          }
+        } else {
+          this.patternFill = false;
+
+        }
+
+      }
+      // if (this.isTrunks) {
+      //   this.isTrunks = this.randomlyChooseTrueOrFalse();
+      // }
+      // if (this.isArabesque) {
+      //   this.isArabesque = this.randomlyChooseTrueOrFalse();
+      // }
+      // this.isTrunks = false;
+
+      // this.isArabesque = false;
+      // this.patternFill = false;
       // }
     }
     while (this.layerCounter < objNum) {
@@ -614,12 +665,12 @@ export class AppComponent {
         // console.log('trapnTrans', trapTrans);
         // this.ctx.lineWidth = (Math.random() * 10) + 1;
       }
-      this.drawShape(randomShape);
+      this.drawShape(randomShape, false, true);
       this.layerCounter++;
     }
   }
 
-  drawShape(shape, small?) {
+  drawShape(shape, small?, main?) {
     // this.patternFill = false;
     var offset_x = 0;
     var offset_y = 0;
@@ -633,7 +684,9 @@ export class AppComponent {
 
     this.patternSwitch = Math.floor(Math.random() * 7) + 1;
     rand = this.randomlyChooseOneOrTwo();
-
+    if (this.genType === "noPattern" && main) {
+      this.patternFill = true;
+    }
     if (this.patternFill) {
       if (this.patternSwitch === 1) {
         if (rand === 1) {
@@ -641,10 +694,8 @@ export class AppComponent {
         } else if (rand === 2) {
           this.ctx.fillStyle = this.ctx.createPattern(this.patternTrunks, 'repeat');
           isOffset = true;
-
           offset_x = this.patternOffset;
           offset_y = this.patternOffset;
-
         }
       } else if (this.patternSwitch === 2) {
         if (rand === 1) {
@@ -678,6 +729,39 @@ export class AppComponent {
         this.ctx.fillStyle = this.ctx.createPattern(this.patternArabesque, 'repeat');
       } else {
         this.ctx.fillStyle = this.ctx.createPattern(this.patternMexico, 'no-repeat');
+      }
+      if (this.isTrunks && main) {
+        // if(rand === 1) {
+        this.ctx.fillStyle = this.ctx.createPattern(this.patternTrunks, 'repeat');
+        isOffset = true;
+
+        offset_x = this.patternOffset;
+        offset_y = this.patternOffset;
+        // } else {
+        //   this.ctx.fillStyle = this.ctx.createPattern(this.patternArabesque, 'repeat');
+        // }
+      }
+      if (this.isArabesque && main) {
+        console.log('seetting to this.isarabesque')
+        // if(rand === 1) {
+        offset_x = this.patternOffset;
+        offset_y = this.patternOffset;
+        isOffset = false;
+        this.ctx.fillStyle = this.ctx.createPattern(this.patternArabesque, 'repeat');
+        // } else {
+        //   this.ctx.fillStyle = this.ctx.createPattern(this.patternArabesque, 'repeat');
+        // }
+      }
+      if (this.isMexico && main) {
+        console.log('seetting to this.isarabesque')
+        // if(rand === 1) {
+        offset_x = 0;
+        offset_y = 0;
+        isOffset = false;
+        this.ctx.fillStyle = this.ctx.createPattern(this.patternMexico, 'no-repeat');
+        // } else {
+        //   this.ctx.fillStyle = this.ctx.createPattern(this.patternArabesque, 'repeat');
+        // }
       }
       // offset_x  = (Math.random() * (this.canvasSize - xPos)) - xPos;
       // offset_y= (Math.random() *(this.canvasSize - yPos)) - yPos;

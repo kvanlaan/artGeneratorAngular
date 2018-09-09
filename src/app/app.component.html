@@ -4,14 +4,16 @@
 <div fxLayout="column" fxFlexFill>
   <div fxLayout="row" style="height: 5%" fxLayoutWrap>
 
-<div fxFlex="10" fxFlexOffset="5" fxLayoutAlign="start center">
+<div fxFlex="40" fxFlexOffset="5" fxLayoutAlign="start center">
   <!-- <button   mat-button> -->
   <div class="material-text">Art Generator</div>
+  <div fxFlex class="material-text" style="font-size: 14px !important" fxLayoutAlign="end center">Each piece is algorithmically unique.</div>
+
   <!-- <div fxLayoutAlign="start start" > -->
 
   <!-- </div> -->
 </div>
-<div fxFlex="75" fxLayoutAlign="center center">
+<div fxFlex="40" fxLayoutAlign="center center">
   <button [disabled]="!renderDone" (click)="getRandomArt(true)" class="float-left inline" mat-button>
         Get New Art</button>
 
@@ -171,9 +173,9 @@
     </div> 
 </div> -->
 </div>
-<div fxLayout="row" style="min-height: 5%; height: 5%" fxLayoutAlign="start center">
-    <div fxFlex fxFlexOffset="5" class="material-text" fxLayoutAlign="start center">
-            art and code by Katrina Van Laan
+<div fxLayout="row" style="min-height: 3%; height: 3%; margin-bottom: 2%" fxLayoutAlign="start center">
+    <div fxFlex fxFlexOffset="5" class="material-text"   fxLayoutAlign="start bottom">
+        <span style="font-size: 14px !important">art and code by <a href="https://github.com/kvanlaan" class="name" target="_blank"> Katrina Van Laan</a></span>&nbsp;
     </div>
   </div>
 </div>

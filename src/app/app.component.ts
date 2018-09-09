@@ -49,7 +49,7 @@ export class AppComponent {
   email;
   favoritesArr;
   isSafari = false;
-  isPatternFill = false;
+  patternFill = false;
   layerCounter = 0;
   localStorage: any;
   login = false;
@@ -64,6 +64,7 @@ export class AppComponent {
   renderDone = true;
   redoList = [];
   shapeArr = ['Rectangle', 'Triangle', 'Circle', 'Line'];
+  noCircleShapeArr = ['Rectangle', 'Triangle', 'Line'];
   showFavorites = false;
   savedImageArr = [];
   storageRef;
@@ -71,7 +72,13 @@ export class AppComponent {
   undoList = [];
   user;
   ui;
-
+  patternOffset;
+  pattern;
+  patternArabesque;
+  patternTrunks;
+  patternKosovo;
+  patternMexico;
+  genTypeArr = ["noPattern", "transPattern", "random", "all"];
   // sources = [];
   // maxArea = (700 * 700);
   // redoListShape = [];
@@ -122,7 +129,7 @@ export class AppComponent {
   calculateCanvasSize() {
     this.canvas = <HTMLCanvasElement>document.getElementById("myCanvas");
     this.ctx = this.canvas.getContext("2d");
-    this.canvasSize =this.canvas.clientHeight;
+    this.canvasSize = this.canvas.clientHeight;
     this.ctx.canvas.width = this.canvasSize;
     console.log('canvasSize', this.canvasSize);
     this.ctx.canvas.height = this.canvasSize;
@@ -239,11 +246,39 @@ export class AppComponent {
     };
     return uiConfig;
   }
-  pattern;
+
+
   ngOnInit() {
     this.renderDone = false;
-    this.pattern = new Image();
-    this.pattern.src = 'assets/arabesque_pattern.jpg';
+    this.patternArabesque = new Image();
+    this.patternTrunks = new Image();
+    this.patternKosovo = new Image();
+    this.patternMexico = new Image();
+
+    this.patternArabesque.src = 'assets/arabesque_pattern.jpg';
+    this.patternArabesque.onload = function () {
+      const pattern = this.ctx.createPattern(this.patternArabesque, 'repeat');
+      this.ctx.fillStyle = pattern;
+    }.bind(this);
+
+    this.patternTrunks.src = 'assets/trunks.png';
+    this.patternTrunks.onload = function () {
+      const pattern = this.ctx.createPattern(this.patternTrunks, 'repeat');
+      this.ctx.fillStyle = pattern;
+    }.bind(this);
+    this.patternKosovo.src = 'assets/kosovo_map.jpg';
+    this.patternKosovo.onload = function () {
+      const pattern = this.ctx.createPattern(this.patternKosovo, 'repeat');
+      this.ctx.fillStyle = pattern;
+    }.bind(this);
+    this.patternMexico.src = 'assets/mexico_flag.jpg';
+    this.patternMexico.onload = function () {
+      const pattern = this.ctx.createPattern(this.patternMexico, 'repeat');
+      this.ctx.fillStyle = pattern;
+    }.bind(this);
+
+    // this.pattern.src = 'assets/arabesque_pattern.jpg';
+
     this.isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
     var config = {
       apiKey: "AIzaSyD98GbUHORmW3-C9nxvqboQLapTXxnSMM0",
@@ -272,8 +307,7 @@ export class AppComponent {
       }
     }.bind(this));
   }
-
-
+  genType;
   getRandomArt(clear, recurseStep?) {
     // hiding stuff since a new image is being drawn
     this.renderDone = false;
@@ -283,28 +317,36 @@ export class AppComponent {
     // if (this.edit) {
     //   this.toggleEdit();
     // }
-  
+
     //these values are related to what the art will look like 
-    this.patternSwitch = Math.floor(Math.random() * 7) + 1;
-    let rand = Math.floor(Math.random() * 3) + 1;
+    let rand = Math.floor(Math.random() * 2) + 1;
     let recurse = false;
     this.objNum = Math.floor(Math.random() * 23) + 10;
+    this.patternFill = this.randomlyChooseTrueOrFalse();
     if (recurseStep === undefined) {
-      // if no recurse, this means not a layer, so clear and calculate recurse chance
+      this.genType = this.genTypeArr[Math.floor(Math.random() * this.genTypeArr.length)];
+    }
+    // if(this.genType === 'transPattern' && recurseStep === undefined) {
+    //   recurseStep = 3;
+    // }
+    if (recurseStep === undefined) {
+      this.patternFill = this.randomlyChooseTrueOrFalse();
+
+      // if no recurse, this means this is a new piece, not just a layer, so clear and calculate recurse chance
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
       this.ctx.fillStyle = 'white';
       this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-      if (rand === 1) {
+      if (rand !== 1) {
         recurse = true;
-      }  
+      }
     } else {
-      // if recurseStep is defined then we know 
+      // if recurseStep is defined then we know
       recurse = true;
     }
 
     // because it's fast - we only care about making the load if it's new AND layers
     if (recurse && recurseStep === undefined) {
-      recurseStep = Math.floor(Math.random() * 10) + 2;
+      recurseStep = Math.floor(Math.random() * 10) + 4;
       var img = new Image();
       img.src = this.canvas.toDataURL();
       img.onload = function () {
@@ -315,33 +357,35 @@ export class AppComponent {
       this.getRandomArtAlg(clear, recurse, recurseStep);
     }
   }
-  patternOffset;
+
   getRandomArtAlg(clear, recurse, recurseStep) {
     // setup
     // this.randomScheme = this.colorSchemes[Math.floor(Math.random() * this.colorSchemes.length)];
     this.randomScheme = "Random";
     this.colorArr = this.getRandomColorArr();
     let rand = 1;
-    this.patternOffset = Math.floor(Math.random() * 300);
+    this.patternOffset = Math.floor(Math.random() * 300) - 300;
     // first layer of small objects;
     this.resetForNewLayer();
     this.getFirstSmallLayer();
     this.resetForNewLayer();
 
-    // second layer of transparent objects
+    // layer of transparent objects
     let norm = true;
     rand = Math.floor(Math.random() * 3) + 1;
     if (rand === 2) {
       norm = false;
     }
+    // if(recurseStep === undefined) {
+    //   norm = false;
+    // }
     let trapTrans = 2;
     if (rand === 2) {
       trapTrans = this.randomlyChooseOneOrTwo();
     }
 
     let layerNum = 20;
-    if (rand !== 2 || trapTrans === 1) {
-      let layerNum = 20
+    if (norm || trapTrans === 1) {
       if (trapTrans === 1) {
         layerNum = 10;
         this.backgroundShapeArr = ['Rectangle', 'Circle', 'Line'];
@@ -367,18 +411,12 @@ export class AppComponent {
           this.ctx.strokeStyle = 'black';
         }
 
-        if (!this.isSafari) {
-          this.randomColor = this.randomColor.substring(0, this.randomColor.length - 1) + ',' + this.randomShapeOpacity + ")";
-        }
+        // if (!this.isSafari) {
+        this.randomColor = this.randomColor.substring(0, this.randomColor.length - 1) + ',' + this.randomShapeOpacity + ")";
+        // }
         this.ctx.globalAlpha = (Math.random() * .4);
-
         this.ctx.fillStyle = this.randomColor;
-
-        rand = this.randomlyChooseOneOrTwo();
-        if (rand === 1) {
-          this.isPatternFill = true;
-        }
-
+        this.patternFill = this.randomlyChooseTrueOrFalse();
         this.ctx.lineWidth = Math.random() * 10;
         this.drawShape(randomShape);
         this.layerCounter++;
@@ -387,20 +425,43 @@ export class AppComponent {
     this.resetForNewLayer();
     // layer of main shapes
     let objNum = this.objNum;
+    if (this.genType === 'transPattern') {
+      objNum = Math.floor(Math.random() * 23) + 19;
+    }
+    // if(this.genType === 'noPattern)' && norm) {
+    //   objNum =  Math.floor(Math.random() * 23) + 19;
+    // }
     this.getMainLayer(objNum, norm, rand, trapTrans);
 
     this.resetForNewLayer();
     // let lineWidthArr = [];
-    while (this.layerCounter <= 25) {
+
+    // second small layer
+    this.getSecondSmallLayer(norm);
+    this.setUndoRedo(clear);
+    // this.ctx.globalAlpha = 1;
+    if (recurse && recurseStep && recurseStep > 1) {
+      recurseStep--;
+      this.getRandomArt(clear, recurseStep);
+    } else {
+      this.saveCurrentArt(clear);
+    }
+  }
+  getSecondSmallLayer(norm) {
+    let count = 25;
+    if (norm) {
+      count = 45;
+    }
+    while (this.layerCounter <= count) {
       this.randomColor = this.colorArr[Math.floor(Math.random() * this.colorArr.length)];
       this.randomStrokeOpacity = Math.random() * 1;
       this.randomShapeOpacity = Math.random() * .5;
-      var randomShape = this.smallShapeArr[Math.floor(Math.random() * this.shapeArr.length)];
-      var stroke = this.getRandomRgb();
+      const randomShape = this.smallShapeArr[Math.floor(Math.random() * this.shapeArr.length)];
+      const stroke = this.getRandomRgb();
 
       this.ctx.strokeStyle = 'rgb(' + stroke['r'] + ',' + stroke['g'] + ',' + stroke['b'] + ', 1)';
-      rand = this.randomlyChooseOneOrTwo();
-      if (rand === 1) {
+      const blackStroke = this.randomlyChooseTrueOrFalse();
+      if (blackStroke) {
         this.ctx.strokeStyle = 'black';
       }
       this.randomColor = this.randomColor.substring(0, this.randomColor.length - 1) + ',' + this.randomShapeOpacity + ")";
@@ -408,38 +469,19 @@ export class AppComponent {
       // draft for dealing with Safari browser
       // if (!this.isSafari) {
       //   this.ctx.globalAlpha = 1;
-      //   randomColor = randomColor.substring(0, randomColor.length - 1) + ',' + randomShapeOpacity + ")";
-      //   rand = Math.floor(Math.random() * 2) + 1;
+      //  this.randomColor = this.randomColor.substring(0, this.randomColor.length - 1) + ',' + this.randomShapeOpacity + ")";
+      //   const rand = Math.floor(Math.random() * 2) + 1;
       //   if (rand === 1) {
-      //     this.ctx.globalAlpha = randomShapeOpacity;
+      //     this.ctx.globalAlpha = this.randomShapeOpacity;
       //   }
       // } else {
-      //   this.ctx.globalAlpha = randomShapeOpacity;
+      //   this.ctx.globalAlpha = this.randomShapeOpacity;
       // }
       this.ctx.fillStyle = this.randomColor;
-      rand = this.randomlyChooseOneOrTwo();
-      if (rand === 1) {
-        this.isPatternFill = true;
-      }
-      let newLineWidth = Math.random() * 10;
-      // draft for restricting line thickness 
-      // lineWidthArr.push(newLineWidth);
-      // if (!norm) {
-      //   if (this.isLineWidthArrMostlyThick(lineWidthArr)) {
-      //     newLineWidth = Math.random() * 5;
-      //   }
-      // }
-      this.ctx.lineWidth = newLineWidth;
+      this.patternFill = this.randomlyChooseTrueOrFalse();
+      this.ctx.lineWidth = Math.random() * 10;
       this.drawShape(randomShape, true);
       this.layerCounter++;
-    }
-    this.setUndoRedo(clear);
-    this.ctx.globalAlpha = 1;
-    if (recurse && recurseStep && recurseStep > 1) {
-      recurseStep--;
-      this.getRandomArt(clear, recurseStep);
-    } else {
-      this.saveCurrentArt(clear);
     }
   }
   getFirstSmallLayer() {
@@ -472,10 +514,7 @@ export class AppComponent {
         this.ctx.globalAlpha = this.randomShapeOpacity;
       }
       this.ctx.fillStyle = this.randomColor;
-      if (rand === 1) {
-        rand = this.randomlyChooseOneOrTwo();
-        this.isPatternFill = true;
-      }
+      this.patternFill = this.randomlyChooseTrueOrFalse();
       this.ctx.lineWidth = Math.random() * 10;
       this.drawShape(randomShape, true);
       this.layerCounter++;
@@ -489,11 +528,22 @@ export class AppComponent {
   }
 
   getMainLayer(objNum, norm, rand, trapTrans) {
-    this.shapeArr = ['Rectangle', 'Triangle', 'Circle', 'Line'];
-    rand = this.randomlyChooseOneOrTwo();
-    var isPatternLayer = false; 
-    if(rand === 1) {
-      isPatternLayer = true;
+    // 'Circle',
+    this.shapeArr = ['Rectangle', 'Triangle', 'Line'];
+
+    if (this.genType !== 'random') {
+      this.patternFill = false;
+    } else {
+      this.patternFill = this.randomlyChooseTrueOrFalse();
+      if (this.patternFill === false) {
+        this.patternFill = this.randomlyChooseTrueOrFalse();
+      }
+      if (this.patternFill === false) {
+        this.patternFill = this.randomlyChooseTrueOrFalse();
+      }
+    }
+    if (this.genType === 'all') {
+      this.patternFill = true;
     }
     if (norm === false) {
       objNum = Math.floor(Math.random() * 1) + 5;
@@ -511,14 +561,14 @@ export class AppComponent {
 
       // randomShapeOpacity = Math.random() * (1) - layerCounter/objNum;
       this.randomShapeOpacity = Math.random();
-
       if (this.randomShapeOpacity < 0) {
         this.randomShapeOpacity = 0;
       }
-      if (this.layerCounter === (objNum - 1)) {
-        this.randomShapeOpacity = .1;
+      if (this.layerCounter === (objNum - 1) || this.layerCounter === (objNum)) {
+        this.randomShapeOpacity = 0;
+        this.patternFill = false;
       }
-      if (this.layerCounter === (objNum - 2) && !norm) {
+      if (this.layerCounter === (objNum - 2)) {
         this.randomShapeOpacity = .1;
       }
       var randomShape = this.shapeArr[Math.floor(Math.random() * this.shapeArr.length)];
@@ -540,13 +590,6 @@ export class AppComponent {
       //   this.ctx.globalAlpha = this.randomShapeOpacity;
       // }
       this.ctx.fillStyle = this.randomColor;
-      rand = this.randomlyChooseOneOrTwo();
-      if (rand === 1 && isPatternLayer) {
-
-        this.isPatternFill = true;
-      }
-      this.isPatternFill = true;
-
       // default is middle
       let newLineWidth = Math.random() * 5 + 1;
       if (this.layerCounter < (objNum / 4) || (this.layerCounter > (objNum * .5) && this.layerCounter < (objNum * .6))) {
@@ -577,94 +620,84 @@ export class AppComponent {
   }
 
   drawShape(shape, small?) {
+    // this.patternFill = false;
     var offset_x = 0;
     var offset_y = 0;
     var isOffset = false;
-    var isOffsetRand = this.randomlyChooseOneOrTwo();
-    if(isOffsetRand === 1) {
-      isOffset = true;
-    }
+    var isOffset = this.randomlyChooseTrueOrFalse();
     var xPos = Math.random() * this.canvasSize;
     var yPos = Math.random() * this.canvasSize;
     var height = Math.random() * this.canvasSize;
     var width = Math.random() * this.canvasSize;
     let currObjArea = height * width;
 
-    this.patternSwitch = Math.floor(Math.random() * 8) + 1;
+    this.patternSwitch = Math.floor(Math.random() * 7) + 1;
     rand = this.randomlyChooseOneOrTwo();
 
-    if(this.isPatternFill) {
-    if (this.patternSwitch === 1) {
-      if (rand === 1) {
-        this.pattern.src = 'assets/arabesque_pattern.jpg';
-        this.ctx.fillStyle = this.ctx.createPattern(this.pattern, 'repeat');
-      } else if (rand === 2) {
-        this.pattern.src = 'assets/trunks.png';
-        this.ctx.fillStyle = this.ctx.createPattern(this.pattern, 'repeat');
+    if (this.patternFill) {
+      if (this.patternSwitch === 1) {
+        if (rand === 1) {
+          this.ctx.fillStyle = this.ctx.createPattern(this.patternArabesque, 'repeat');
+        } else if (rand === 2) {
+          this.ctx.fillStyle = this.ctx.createPattern(this.patternTrunks, 'repeat');
+          isOffset = true;
+
+          offset_x = this.patternOffset;
+          offset_y = this.patternOffset;
+
+        }
+      } else if (this.patternSwitch === 2) {
+        if (rand === 1) {
+          this.ctx.fillStyle = this.ctx.createPattern(this.patternKosovo, 'repeat');
+        } else if (rand === 2) {
+          this.ctx.fillStyle = this.ctx.createPattern(this.patternMexico, 'no-repeat');
+        }
+      } else if (this.patternSwitch === 3) {
+        this.ctx.fillStyle = this.ctx.createPattern(this.patternTrunks, 'repeat');
+        isOffset = true;
+
+        offset_x = this.patternOffset;
+        offset_y = this.patternOffset;
+
+      } else if (this.patternSwitch === 4) {
+        if (rand === 1) {
+
+          this.ctx.fillStyle = this.ctx.createPattern(this.patternMexico, 'no-repeat');
+
+        } else if (rand === 2) {
+          this.ctx.fillStyle = this.ctx.createPattern(this.patternTrunks, 'repeat');
+          isOffset = true;
+
+          offset_x = this.patternOffset;
+          offset_y = this.patternOffset;
+        }
+      } else if (this.patternSwitch === 5) {
+        this.ctx.fillStyle = this.ctx.createPattern(this.patternKosovo, 'repeat');
+
+      } else if (this.patternSwitch === 6) {
+        this.ctx.fillStyle = this.ctx.createPattern(this.patternArabesque, 'repeat');
+      } else {
+        this.ctx.fillStyle = this.ctx.createPattern(this.patternMexico, 'no-repeat');
       }
-    } else if (this.patternSwitch === 2) {
-      if (rand === 1) {
-        this.pattern.src = 'assets/kosovo_map.jpg';
-        this.ctx.fillStyle = this.ctx.createPattern(this.pattern, 'repeat');
-      } else if (rand === 2) {
-        this.pattern.src = 'assets/mexico_flag.jpg';
-        this.ctx.fillStyle = this.ctx.createPattern(this.pattern, 'no-repeat');
-      }
-    } else if (this.patternSwitch === 3) {
-      this.pattern.src = 'assets/trunks.png';
-      this.ctx.fillStyle = this.ctx.createPattern(this.pattern, 'repeat');
-    }  else if (this.patternSwitch === 4) {
-      if (rand === 1) {
-        this.pattern.src = 'assets/mexico_flag.jpg';
-      this.ctx.fillStyle = this.ctx.createPattern(this.pattern, 'no-repeat');
-
-      } else if (rand === 2) {
-        this.pattern.src = 'assets/trunks.png';
-      this.ctx.fillStyle = this.ctx.createPattern(this.pattern, 'repeat');
-
-            }
-
-    } else if (this.patternSwitch === 5) {
-      this.pattern.src = 'assets/kosovo_map.jpg';
-
-        this.ctx.fillStyle = this.ctx.createPattern(this.pattern, 'repeat');
-
-    } else if (this.patternSwitch === 6) {
-      if (rand === 1) {
-        this.pattern.src = 'assets/arabesque_pattern.jpg';
-
-      } else if (rand === 2) {
-        this.pattern.src = 'assets/kosovo_map.jpg';
-      }
-      this.ctx.fillStyle = this.ctx.createPattern(this.pattern, 'repeat');
-    }else if (this.patternSwitch === 7) {
-      this.pattern.src = 'assets/arabesque_pattern.jpg';
-      this.ctx.fillStyle = this.ctx.createPattern(this.pattern, 'repeat');
-  } 
-    else {
-        this.pattern.src = 'assets/mexico_flag.jpg';
-        this.ctx.fillStyle = this.ctx.createPattern(this.pattern, 'no-repeat');
-    }
       // offset_x  = (Math.random() * (this.canvasSize - xPos)) - xPos;
       // offset_y= (Math.random() *(this.canvasSize - yPos)) - yPos;
-      offset_x  = this.patternOffset;
-      offset_y= this.patternOffset;
-    //   rand = this.randomlyChooseOneOrTwo();
-    //   if(this.pattern.src === 'assets/trunks.png') {
-    //   var rand2 = this.randomlyChooseOneOrTwo();
-      
-    //   if(rand2 === 1) {
-    //   offset_x  = (Math.random() * (this.canvasSize - xPos/2)) - xPos/2;
-    //   offset_y= (Math.random() *(this.canvasSize - yPos/2)) - yPos/2;
-    //   }
-    // }
-      if(isOffset) {
+
+      //   rand = this.randomlyChooseOneOrTwo();
+      //   if(this.pattern.src === 'assets/trunks.png') {
+      //   var rand2 = this.randomlyChooseOneOrTwo();
+
+      //   if(rand2 === 1) {
+      //   offset_x  = (Math.random() * (this.canvasSize - xPos/2)) - xPos/2;
+      //   offset_y= (Math.random() *(this.canvasSize - yPos/2)) - yPos/2;
+      //   }
+      // }
+      if (isOffset) {
         this.ctx.translate(offset_x, offset_y);
       }
-  }
+    }
     rand = Math.floor(Math.random() * 100) + 1;
 
-   // this code draft for if I want to just have small symbols in outer layer
+    // this code draft for if I want to just have small symbols in outer layer
     // if (small && rand === 4) {
     //   var img = new Image();
     //   img.src = '../assets/wowlogo.png';
@@ -684,6 +717,12 @@ export class AppComponent {
       currObjArea = height * width;
     }
 
+    // if (shape === 'Circle') {
+    //   const changeShape = this.randomlyChooseTrueOrFalse();
+    //   if (changeShape && !small) {
+    //     shape = this.noCircleShapeArr[Math.floor(Math.random() * this.noCircleShapeArr.length)];
+    //   }
+    // }
     switch (shape) {
       case 'Rectangle':
         this.ctx.fillRect(xPos, yPos, width, height);
@@ -771,15 +810,12 @@ export class AppComponent {
         // get better with calculating for circles
         break;
     }
-    if(this.isPatternFill) {
-      if(isOffset) {
+    if (this.patternFill) {
+      if (isOffset) {
         this.ctx.translate(-offset_x, -offset_y);
-
       }
-      this.isPatternFill = false;
     }
     this.aggrObjArea += currObjArea;
-
   }
 
 
@@ -1079,14 +1115,23 @@ export class AppComponent {
   }
 
 
-// helpers
- 
+  // helpers
+
   randomlyChooseOneOrTwo() {
     const num = Math.random() + 1;
     if (num < 1.5) {
       return 1;
     } else {
       return 2;
+    }
+  }
+
+  randomlyChooseTrueOrFalse() {
+    const num = Math.random() + 1;
+    if (num < 1.5) {
+      return false;
+    } else {
+      return true;
     }
   }
 
@@ -1177,11 +1222,11 @@ export class AppComponent {
   //   return { 'r': r, 'g': g, 'b': b };
   // }
 
-   // utility stuff
+  // utility stuff
   // convertToRgbString(rgbObj) {
   //   return 'rgb(' + rgbObj.r + ',' + rgbObj.g + ',' + rgbObj.b + ')';
   // }
-    // isLineWidthArrMostlyThick(lineWidthArr) {
+  // isLineWidthArrMostlyThick(lineWidthArr) {
   //   let widthCounter = 0;
   //   for (let lineWidth of lineWidthArr) {
   //     if (lineWidth > 6) {
@@ -1197,7 +1242,7 @@ export class AppComponent {
   //   this.redoListShapeTemp = [];
 
   // }
-    // undoShape() {
+  // undoShape() {
 
   //   if (!this.startEditing && !this.savedImageArr[this.currImageIndex]['edit']) {
   //     this.savedImageArr[this.currImageIndex]['edit'] = true;

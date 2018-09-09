@@ -45,7 +45,7 @@
 </button> -->
 
 
-<div #mainContainer fxLayout="row" fxLayout.md="column" fxLayout.sm="column" fxLayout.xs="column" style="height: 90%; overflow: scroll !important">
+<div #mainContainer fxLayout="row" fxFlexOffset.md="2" fxFlexOffset.sm="2"  fxFlexOffset.xs="2" fxLayout.md="column" fxLayout.sm="column" fxLayout.xs="column" style="height: 90%; overflow: scroll !important">
 <div fxFlex="40" fxFlex.md="10" fxFlex.sm="10"  fxFlex.xs="10" class="canvas-height"  style="overflow: scroll !important;">
 
 <mat-grid-list fxFlex [fxShow]="!showFavorites" class="canvas-height" style="margin-left: 10%; margin-top: 0 !important; overflow: scroll !important" cols="5" rows="5" gutterSize="10px">
@@ -98,7 +98,7 @@
 </button>
 </div>
 
-<div fxFlex="49">
+<div fxFlex="49" fxFlex.md="90" fxFlex.sm="90" fxFlex.xs="90">
         <button fxFlex="5" fxShow.lg="true" fxShow.md="false"  fxShow.sm="false" fxShow.xs="false"  fxFlexAlign="start start" style="height: 5%; max-width: 25px !important;  min-width: 25px !important; float: left; padding-left: 5px !important; padding-right: 5px !important" mat-button (click)="filterFavorites()"><i class="material-icons">
     filter_list
     </i>
@@ -123,7 +123,7 @@
 
 
 </div>
- <div fxFlex="10" fxLayoutAlign="start start">
+ <!-- <div fxFlex="10" fxLayoutAlign="start start">
 <div class="edit">
       <button (click)="toggleEdit()" style="margin-bottom: auto; padding-left: 0px !important;" class="float-left inline" mat-button>
         <i *ngIf="!edit" class="material-icons">
@@ -169,7 +169,7 @@
 
       </span>
     </div> 
-</div>
+</div> -->
 </div>
 <div fxLayout="row" style="min-height: 5%; height: 5%" fxLayoutAlign="start center">
     <div fxFlex fxFlexOffset="5" class="material-text" fxLayoutAlign="start center">

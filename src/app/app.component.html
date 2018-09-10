@@ -4,7 +4,7 @@
 <div fxLayout="column" fxFlexFill>
   <div fxLayout="row" style="height: 5%" fxLayoutWrap>
 
-<div fxFlex="40" fxFlexOffset="5" fxLayoutAlign="start center">
+<div fxFlex="40" fxFlex.md="100"   fxFlex.sm="100"   fxFlex.xs="100" fxFlexOffset="5" fxLayoutAlign="start center">
   <!-- <button   mat-button> -->
   <div class="material-text">Art Generator</div>
   <div fxFlex class="material-text" style="font-size: 14px !important" fxLayoutAlign="end center">Each piece is algorithmically unique.</div>
@@ -13,7 +13,7 @@
 
   <!-- </div> -->
 </div>
-<div fxFlex="40" fxLayoutAlign="center center">
+<div fxFlex="40" fxShow="true" fxShow.md="false" fxShow.sm="false" fxShow.xs="false" fxLayoutAlign="center center">
   <button [disabled]="!renderDone" (click)="getRandomArt(true)" class="float-left inline" mat-button>
         Get New Art</button>
 
@@ -22,7 +22,7 @@
           Save this art </a>
       </button>
 </div>
-<div fxFlex="10" fxLayoutAlign="end center">
+<div fxFlex="10"  fxShow="true" fxShow.md="false" fxShow.sm="false" fxShow.xs="false"  fxLayoutAlign="end center">
 
   <button fxFlex="10" (click)="handleSignedOutUser()"  mat-button>
 <span [fxShow]="!login"> Sign In </span>
@@ -42,13 +42,41 @@
 
 </div>
 </div>
+<div fxLayout="row" fxShow="false" fxShow.md="true" fxShow.sm="true" fxShow.xs="true" style="height: 5%" fxLayoutWrap>
+    <div fxFlex fxFlexOffset="5" fxLayoutAlign="start center">
+        <button [disabled]="!renderDone" (click)="getRandomArt(true)" class="float-left inline" mat-button>
+            Get New Art</button>
+    
+      <button class="float-left inline" mat-button>
+            <a class="float-left inline" href="#" target="_blank" #downloadLink (click)="download(downloadLink)" download="art.jpg">
+              Save this art </a>
+          </button>
+      </div>
+      <div fxFlex fxLayoutAlign="end center">
+          <button fxFlex="10" (click)="handleSignedOutUser()"  mat-button>
+              <span [fxShow]="!login"> Sign In </span>
+              </button>
+              
+              <mat-form-field *ngIf="login" fxflex="10">
+                <mat-select [(value)]="email" fxFlex>
+                  <mat-option [(value)]="email">
+                    {{email}}
+                  </mat-option>
+                  <mat-option (click)="signOut()">
+                    Sign Out
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+      </div>
+
+  </div>
 <!-- <button (click)="toggleEdit()" style="margin-bottom: auto" class="float-left inline" mat-button>
   Edit Layer
 </button> -->
 
 
 <div #mainContainer fxLayout="row" fxFlexOffset.md="2" fxFlexOffset.sm="2"  fxFlexOffset.xs="2" fxLayout.md="column" fxLayout.sm="column" fxLayout.xs="column" style="height: 90%; overflow: scroll !important">
-<div fxFlex="40" fxFlex.md="10" fxFlex.sm="10"  fxFlex.xs="10" class="canvas-height"  style="overflow: scroll !important;">
+<div fxFlex="40" fxFlex.md="15" fxFlex.sm="15"  fxFlex.xs="15" class="canvas-height"  style="overflow: scroll !important;">
 
 <mat-grid-list fxFlex [fxShow]="!showFavorites" class="canvas-height" style="margin-left: 10%; margin-top: 0 !important; overflow: scroll !important" cols="5" rows="5" gutterSize="10px">
 <mat-grid-tile fxLayout="row" *ngFor="let savedImg of savedImageArr; let i = index;">
@@ -100,7 +128,7 @@
 </button>
 </div>
 
-<div fxFlex="49" fxFlex.md="90" fxFlex.sm="90" fxFlex.xs="90">
+<div fxFlex="49" fxFlex.md="85" fxFlex.sm="85" fxFlex.xs="85">
         <button fxFlex="5" fxShow.lg="true" fxShow.md="false"  fxShow.sm="false" fxShow.xs="false"  fxFlexAlign="start start" style="height: 5%; max-width: 25px !important;  min-width: 25px !important; float: left; padding-left: 5px !important; padding-right: 5px !important" mat-button (click)="filterFavorites()"><i class="material-icons">
     filter_list
     </i>

@@ -186,8 +186,10 @@ export class AppComponent {
     this.displayName = this.user.displayName;
     this.email = this.user.email;
 
-    const trimmedName = this.displayName.replace(/\s/g, '');
-
+    let trimmedName = this.displayName.replace(/\s/g, '');
+    if (this.newUser) {
+      trimmedName = 'anon';
+    }
     await this.database.collection('users/' + trimmedName + '/images').get().then((querySnapshot) => {
       this.savedImageArr = [];
       querySnapshot.forEach((doc) => {
@@ -214,11 +216,20 @@ export class AppComponent {
     }
   }
 
+  newUser = false;
+
   getUiConfig() {
     var uiConfig = {
       callbacks: {
         signInSuccessWithAuthResult: function (this, authResult, redirectUrl) {
           this.login = true;
+          console.log('authResult', authResult);
+
+          if (authResult.additionalUserInfo.isNewUser) {
+            this.newUser = true;
+          } else {
+            this.newUser = false;
+          }
           if (authResult.user) {
             this.handleSignedInUser(authResult.user);
           }
@@ -385,9 +396,9 @@ export class AppComponent {
     let rand = 1;
     this.patternOffset = 0;
     const offsetRand = this.randomlyChooseTrueOrFalse();
-      if (offsetRand) {
-        this.patternOffset = Math.floor(Math.random() * 100) - 100;
-      }
+    if (offsetRand) {
+      this.patternOffset = Math.floor(Math.random() * 100) - 100;
+    }
     console.log('PATTERNoff', this.patternOffset);
     // first layer of small objects;
     this.resetForNewLayer();
@@ -960,9 +971,8 @@ export class AppComponent {
     //   res = this.saveToLocal('currImage', tempSources);
     // } else {
     // add to user libary
-    if (this.user) {
-      this.saveImageFirebase(this.savedImageArr[this.currImageIndex]);
-    }
+    // if (this.user) {
+    // }
     // }
     // if (res) {
     if (isNew) {
@@ -972,6 +982,7 @@ export class AppComponent {
     } else {
       this.savedImageArr[newIndex] = imgObj;
     }
+    this.saveImageFirebase(this.savedImageArr[this.currImageIndex]);
 
     if (startEdit !== undefined) {
       startEdit = startEdit;
@@ -1073,12 +1084,34 @@ export class AppComponent {
     }
   }
   saveImageFirebase(imageObj) {
-    const trimmedName = this.displayName.replace(/\s/g, '');
+    let trimmedName = 'anon';
+    if (this.user) {
+      trimmedName = this.displayName.replace(/\s/g, '');
+    }
+
+      if (this.byteCount(imageObj.src) > 1048487) {
+      let tooLong = true;
+      let compSize = 1.0;
+      while (tooLong && (compSize > 0 )) {
+        if (this.byteCount(imageObj.src) > 1048487) {
+          console.log('compressing to', compSize);
+          const canvasSrc = this.canvas.toDataURL("image/jpeg", compSize);
+          if(this.byteCount(canvasSrc) <= 1048487) {
+            imageObj.src = canvasSrc;
+            tooLong = false;
+          } else {
+            imageObj.src = canvasSrc;
+            compSize = compSize - .01;
+          }
+        }
+      }
+    }
+
+
     this.database.collection('users/' + trimmedName + '/images').doc(imageObj.name).set({
       'name': imageObj.name, 'src': imageObj.src, 'favorite': false
-    }
-    ).then(function (docRef) {
-      console.log('Document written with ID: ', docRef.id);
+    } ).then(function (docRef) {
+      // console.log('Document written with ID: ', docRef.id);
     }).catch(function (error) {
       console.error('Error adding document: ', error);
     });
@@ -1197,10 +1230,10 @@ export class AppComponent {
     var b = num & 255;
     return { 'r': r, 'g': g, 'b': b };
   }
-
-
   // helpers
-
+  byteCount(s) {
+    return encodeURI(s).split(/%..|./).length - 1;
+}
   randomlyChooseOneOrTwo() {
     const num = Math.random() + 1;
     if (num < 1.5) {

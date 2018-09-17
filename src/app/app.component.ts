@@ -190,6 +190,8 @@ export class AppComponent {
     if (this.newUser) {
       trimmedName = 'anon';
     }
+
+    // query snapshot - set anon to null;
     await this.database.collection('users/' + trimmedName + '/images').get().then((querySnapshot) => {
       this.savedImageArr = [];
       querySnapshot.forEach((doc) => {
@@ -314,9 +316,35 @@ export class AppComponent {
     firebase.auth().onAuthStateChanged(async function (this, user) {
       this.user = user;
       this.user ? await this.handleSignedInUser(this.user) : await this.handleSignedOutUser();
-
       if (!this.user) {
+        let guid = '';
+
+        // create a rand guid
+        if (location.href.indexOf('loggedOut') < -1) {
+
+        guid = this.getGuid();
+        location.href = '#loggedOut/' +  guid;
         this.getRandomArt(true);
+      } else {
+        guid = location.href.split('Out/')[1];
+        await this.database.collection('users/' + guid + '/images').get().then((querySnapshot) => {
+          this.savedImageArr = [];
+          querySnapshot.forEach((doc) => {
+            this.savedImageArr.push(doc.data());
+            console.log('saved image', this.savedImageArr);
+          });
+          if (querySnapshot.docs.length) {
+            const displayName = this.displayName.replace(/\s/g, '');
+            location.href = '#user/' + displayName;
+            this.renderImage(0);
+          } else {
+            this.getRandomArt(true);
+          }
+        });
+
+      }
+        // put in href
+        // query guid on reload
       }
     }.bind(this));
   }
@@ -1231,6 +1259,14 @@ export class AppComponent {
     return { 'r': r, 'g': g, 'b': b };
   }
   // helpers
+  getGuid() {
+    function s4() {
+      return Math.floor((1 + Math.random()) * 0x10000)
+        .toString(16)
+        .substring(1);
+    }
+    return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+  }
   byteCount(s) {
     return encodeURI(s).split(/%..|./).length - 1;
 }

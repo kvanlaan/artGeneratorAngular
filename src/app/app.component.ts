@@ -218,7 +218,17 @@ export class AppComponent {
 
   }
   guid;
+  showSignOut = false;
+  toggleSignOut() {
+    this.showSignOut = !this.showSignOut;
 
+  }
+  async openLoginModal() {
+    this.openLoginDialog();
+
+    await this.ui.start('#firebaseui-container', this.getUiConfig());
+  }
+ 
   async handleSignedOutUser() {
 
     // this.savedImageArr = [];
@@ -229,10 +239,9 @@ export class AppComponent {
     }
 
     if (!document.getElementById('firebaseui-container')) {
-      this.openLoginDialog();
       this.login = false;
-      await this.ui.start('#firebaseui-container', this.getUiConfig());
 
+      await this.openLoginModal();
       if (!this.user) {
         // create a rand guid
         if (location.href.indexOf('loggedOut') < 0) {

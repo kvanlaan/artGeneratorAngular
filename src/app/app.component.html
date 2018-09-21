@@ -24,22 +24,13 @@
 </div>
 <div fxFlex="10"  fxShow="true" fxShow.md="false" fxShow.sm="false" fxShow.xs="false"  fxLayoutAlign="end center">
 
-  <button fxFlex="10" (click)="handleSignedOutUser()"  mat-button>
+  <button fxFlex="10" (click)="openLoginModal()"  mat-button>
 <span [fxShow]="!login"> Sign In </span>
 </button>
-
-<mat-form-field *ngIf="login" fxflex="10">
-  <mat-select [(value)]="email" fxFlex>
-    <mat-option [(value)]="email">
-      {{email}}
-    </mat-option>
-    <mat-option (click)="signOut()">
-      Sign Out
-    </mat-option>
-  </mat-select>
-</mat-form-field>
-
-
+<span  *ngIf="login">
+<span (click)="toggleSignOut()">{{email}}</span>
+<span [fxShow]="showSignOut"(click)="signOut()">Sign Out</span>
+</span>
 </div>
 </div>
 <div fxLayout="row" fxShow="false" fxShow.md="true" fxShow.sm="true" fxShow.xs="true" style="height: 5%" fxLayoutWrap>
@@ -53,20 +44,15 @@
           </button>
       </div>
       <div fxFlex fxLayoutAlign="end center">
-          <button fxFlex="10" (click)="handleSignedOutUser()"  mat-button>
+          <button fxFlex="10" (click)="openLoginModal()"  mat-button>
               <span [fxShow]="!login"> Sign In </span>
               </button>
               
-              <mat-form-field *ngIf="login" fxflex="10">
-                <mat-select [(value)]="email" fxFlex>
-                  <mat-option [(value)]="email">
-                    {{email}}
-                  </mat-option>
-                  <mat-option (click)="signOut()">
-                    Sign Out
-                  </mat-option>
-                </mat-select>
-              </mat-form-field>
+              <button *ngIf="login" fxFlex="10" mat-button [matMenuTriggerFor]="menu">{{email}}</button>
+<mat-menu #menu="matMenu">
+  <button (click)="signOut()" mat-menu-item>   Sign Out</button>
+</mat-menu>
+            
       </div>
 
   </div>

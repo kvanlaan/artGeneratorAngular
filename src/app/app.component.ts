@@ -1,4 +1,5 @@
 import { Component, HostListener, Input, Inject, Output, EventEmitter, ViewChild } from '@angular/core';
+import { Location } from '@angular/common';
 import * as firebase from 'firebase';
 import * as firebaseui from 'firebaseui';
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material';
@@ -30,7 +31,8 @@ var ColorScheme;
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.css'],
+  providers: [Location, { provide: LocationStrategy, useClass: PathLocationStrategy }]
 })
 
 export class AppComponent {
@@ -94,8 +96,9 @@ export class AppComponent {
   // shapeArr = ['Trapezoid'];
   @ViewChild('mainContainer') mainContainer;
   @ViewChild('loaderCanvas') loader;
-
-  constructor(public dialog: MatDialog) {
+  location;
+  constructor(public dialog: MatDialog, location: Location) {
+    this.location = location;
     this.localStorage = localStorage;
   }
 
@@ -174,34 +177,39 @@ export class AppComponent {
     }
   }
   signOut() {
-    location.href = '';
+    // location.href = '';
+
     firebase.auth().signOut().then(function () {
     }).catch(function (error) {
     });
+    if (window.history.length > 1) {
+      location.href =   '#loggedOut/' + this.guid;
+
+
+    }
   }
 
   async handleSignedInUser(user) {
     this.user = user;
     this.login = true;
-    this.displayName = this.user.displayName;
+
     this.email = this.user.email;
 
     let trimmedName = this.displayName.replace(/\s/g, '');
+
     if (this.newUser) {
-      trimmedName = 'anon';
+      trimmedName = this.guid;
     }
+    // this.savedImageArr = [];
+    location.href = '#user/' + this.displayName + '/' + this.guid,
 
     // query snapshot - set anon to null;
     await this.database.collection('users/' + trimmedName + '/images').get().then((querySnapshot) => {
-      this.savedImageArr = [];
       querySnapshot.forEach((doc) => {
         this.savedImageArr.push(doc.data());
-        console.log('saved image', this.savedImageArr);
+        this.saveImageFirebase(doc.data());
       });
       if (querySnapshot.docs.length) {
-        const displayName = this.displayName.replace(/\s/g, '');
-        location.href = '#user/' + displayName;
-
         this.renderImage(0);
       } else {
         this.getRandomArt(true);
@@ -209,26 +217,71 @@ export class AppComponent {
     });
 
   }
+  guid;
 
   async handleSignedOutUser() {
+
+    // this.savedImageArr = [];
+    let guid = '';
+    if (location.hash.split('/') && location.hash.split('/')[1]) {
+      this.guid = location.hash.split('/')[1];
+      guid = this.guid;
+    }
+
     if (!document.getElementById('firebaseui-container')) {
       this.openLoginDialog();
       this.login = false;
       await this.ui.start('#firebaseui-container', this.getUiConfig());
+
+      if (!this.user) {
+        // create a rand guid
+        if (location.href.indexOf('loggedOut') < 0) {
+
+
+          this.guid = this.getGuid();
+          location.href = '#loggedOut/' + this.guid;
+          this.getRandomArt(true);
+        } else {
+          if (guid) {
+            this.savedImageArr = [];
+            await this.database.collection('users/' + guid + '/images').get().then((querySnapshot) => {
+              querySnapshot.forEach((doc) => {
+                this.savedImageArr.push(doc.data());
+                console.log('saved image', this.savedImageArr);
+              });
+              if (querySnapshot.docs.length) {
+                // const displayName = this.displayName.replace(/\s/g, '');
+                // location.href = '#user/' + displayName;
+                this.renderImage(0);
+              } else {
+                this.getRandomArt(true);
+              }
+            });
+
+          }
+          // put in href
+          // query guid on reload
+        }
+      }
     }
   }
 
   newUser = false;
-
+  suffix = '';
   getUiConfig() {
     var uiConfig = {
       callbacks: {
         signInSuccessWithAuthResult: function (this, authResult, redirectUrl) {
           this.login = true;
           console.log('authResult', authResult);
+          this.suffix = '/' + this.guid;
+          this.displayName = authResult.additionalUserInfo.profile.name.replace(/\s/g, '');
 
           if (authResult.additionalUserInfo.isNewUser) {
             this.newUser = true;
+            console.log('suffix', this.suffix);
+            console.log('display name', this.displayName);
+            console.log('result', authResult);
           } else {
             this.newUser = false;
           }
@@ -252,7 +305,7 @@ export class AppComponent {
           document.getElementById('loader').style.display = 'none';
         }
       },
-      signInSuccessUrl: 'http://localhost:4200/',
+      signInSuccessUrl: 'http://localhost:4200/#user/' + this.displayName + this.suffix,
       signInOptions: [
         firebase.auth.GoogleAuthProvider.PROVIDER_ID,
         firebase.auth.FacebookAuthProvider.PROVIDER_ID,
@@ -316,36 +369,7 @@ export class AppComponent {
     firebase.auth().onAuthStateChanged(async function (this, user) {
       this.user = user;
       this.user ? await this.handleSignedInUser(this.user) : await this.handleSignedOutUser();
-      if (!this.user) {
-        let guid = '';
 
-        // create a rand guid
-        if (location.href.indexOf('loggedOut') < -1) {
-
-        guid = this.getGuid();
-        location.href = '#loggedOut/' +  guid;
-        this.getRandomArt(true);
-      } else {
-        guid = location.href.split('Out/')[1];
-        await this.database.collection('users/' + guid + '/images').get().then((querySnapshot) => {
-          this.savedImageArr = [];
-          querySnapshot.forEach((doc) => {
-            this.savedImageArr.push(doc.data());
-            console.log('saved image', this.savedImageArr);
-          });
-          if (querySnapshot.docs.length) {
-            const displayName = this.displayName.replace(/\s/g, '');
-            location.href = '#user/' + displayName;
-            this.renderImage(0);
-          } else {
-            this.getRandomArt(true);
-          }
-        });
-
-      }
-        // put in href
-        // query guid on reload
-      }
     }.bind(this));
   }
   genType;
@@ -973,7 +997,6 @@ export class AppComponent {
   saveCurrentArt(isNew?: boolean, startEdit?: boolean, source?: string) {
     // const copyOfUndo = this.undoList.slice();
     // const copyOfRedo = this.redoList.slice();
-    let newIndex = this.currImageIndex;
     // default
     let edit = true;
     if (isNew) {
@@ -989,7 +1012,7 @@ export class AppComponent {
       newSource = source;
     }
     const imgObj = {
-      'name': (newIndex + 1) + 'index',
+      'name': this.savedImageArr.length + 'index',
       'src': newSource, 'favorite': false
     };
     // const tempSources = this.sources;
@@ -1003,14 +1026,15 @@ export class AppComponent {
     // }
     // }
     // if (res) {
+    isNew = true;
     if (isNew) {
       this.savedImageArr.push(imgObj);
-      newIndex = this.savedImageArr.length - 1;
-      this.currImageIndex = newIndex;
     } else {
-      this.savedImageArr[newIndex] = imgObj;
+      this.savedImageArr[this.currImageIndex] = imgObj;
     }
-    this.saveImageFirebase(this.savedImageArr[this.currImageIndex]);
+
+    this.currImageIndex = this.savedImageArr.length - 1;
+    this.saveImageFirebase(imgObj);
 
     if (startEdit !== undefined) {
       startEdit = startEdit;
@@ -1112,19 +1136,19 @@ export class AppComponent {
     }
   }
   saveImageFirebase(imageObj) {
-    let trimmedName = 'anon';
+    let trimmedName = this.guid;
     if (this.user) {
-      trimmedName = this.displayName.replace(/\s/g, '');
+      trimmedName = this.displayName;
     }
 
-      if (this.byteCount(imageObj.src) > 1048487) {
+    if (this.byteCount(imageObj.src) > 1048487) {
       let tooLong = true;
       let compSize = 1.0;
-      while (tooLong && (compSize > 0 )) {
+      while (tooLong && (compSize > 0)) {
         if (this.byteCount(imageObj.src) > 1048487) {
           console.log('compressing to', compSize);
           const canvasSrc = this.canvas.toDataURL("image/jpeg", compSize);
-          if(this.byteCount(canvasSrc) <= 1048487) {
+          if (this.byteCount(canvasSrc) <= 1048487) {
             imageObj.src = canvasSrc;
             tooLong = false;
           } else {
@@ -1138,7 +1162,7 @@ export class AppComponent {
 
     this.database.collection('users/' + trimmedName + '/images').doc(imageObj.name).set({
       'name': imageObj.name, 'src': imageObj.src, 'favorite': false
-    } ).then(function (docRef) {
+    }).then(function (docRef) {
       // console.log('Document written with ID: ', docRef.id);
     }).catch(function (error) {
       console.error('Error adding document: ', error);
@@ -1152,18 +1176,20 @@ export class AppComponent {
     }
 
     this.savedImageArr[index].favorite = val;
-    const trimmedName = this.displayName.replace(/\s/g, '');
+
+    let trimmedName = this.guid;
     if (this.user) {
-      this.database.collection('users/' + trimmedName + '/images').doc(imageObj.name).set({
-        'name': imageObj.name, 'src': imageObj.src, 'favorite': val
-      })
-        .then(function () {
-          console.log("Document successfully written!");
-        })
-        .catch(function (error) {
-          console.error("Error writing document: ", error);
-        });
+      trimmedName = this.displayName.replace(/\s/g, '');
     }
+
+
+    this.database.collection('users/' + trimmedName + '/images').doc(imageObj.name).set({
+      'name': imageObj.name, 'src': imageObj.src, 'favorite': val
+    }).then(function (docRef) {
+      // console.log('Document written with ID: ', docRef.id);
+    }).catch(function (error) {
+      console.error('Error adding document: ', error);
+    });
   }
 
   // local storage stuff
@@ -1269,7 +1295,7 @@ export class AppComponent {
   }
   byteCount(s) {
     return encodeURI(s).split(/%..|./).length - 1;
-}
+  }
   randomlyChooseOneOrTwo() {
     const num = Math.random() + 1;
     if (num < 1.5) {

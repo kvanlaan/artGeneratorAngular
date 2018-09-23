@@ -44,6 +44,18 @@
           </button>
       </div>
       <div fxFlex fxLayoutAlign="end center">
+<button fxFlex="5" fxFlex.xs="20" fxShow="false" fxShow.md="false" fxShow.sm="true" fxShow.xs="true"  fxFlexAlign="start start" style="height: 5%; max-width: 25px !important;  min-width: 25px !important; padding-left: 5px !important; padding-right: 5px !important" mat-button (click)="filterFavorites()"><i class="material-icons">
+  filter_list
+  </i>
+
+<i [fxShow]="showFavorites" class="material-icons">
+    favorite
+      </i>
+<i [fxShow]="!showFavorites" class="material-icons">
+          favorite_border
+            </i>
+</button>
+
           <button fxFlex="10" (click)="openLoginModal()"  mat-button>
               <span [fxShow]="!login"> Sign In </span>
               </button>
@@ -101,7 +113,7 @@
 </span>
 </mat-grid-tile>
 </mat-grid-list>
-<button fxFlex="5" fxShow="false" fxShow.md="false" fxShow.sm="true" fxShow.xs="true"  fxFlexAlign="start start" style="height: 5%; max-width: 25px !important;  min-width: 25px !important; float: left; padding-left: 5px !important; padding-right: 5px !important" mat-button (click)="filterFavorites()"><i class="material-icons">
+<button fxFlex="5" fxFlex.xs="20" fxShow="false" fxShow.md="false" fxShow.sm="true" fxShow.xs="true"  fxFlexAlign="start start" style="height: 5%; max-width: 25px !important;  min-width: 25px !important; padding-left: 5px !important; padding-right: 5px !important" mat-button (click)="filterFavorites()"><i class="material-icons">
   filter_list
   </i>
 

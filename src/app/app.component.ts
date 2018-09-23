@@ -86,6 +86,12 @@ export class AppComponent {
   newUser = false;
   suffix = '';
   location;
+  guid;
+  showSignOut = false;
+    genType;
+  isArabesque;
+  isMexico;
+  singleLayer;
   // sources = [];
   // maxArea = (700 * 700);
   // redoListShape = [];
@@ -220,8 +226,7 @@ export class AppComponent {
     });
 
   }
-  guid;
-  showSignOut = false;
+
   toggleSignOut() {
     this.showSignOut = !this.showSignOut;
 
@@ -383,10 +388,7 @@ export class AppComponent {
 
     }.bind(this));
   }
-  genType;
-  isArabesque;
-  isMexico;
-  singleLayer;
+
   getRandomArt(clear, recurseStep?) {
     // hiding stuff since a new image is being drawn
     this.renderDone = false;

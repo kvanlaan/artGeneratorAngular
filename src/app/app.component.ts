@@ -83,6 +83,9 @@ export class AppComponent {
   patternMexico;
   genTypeArr = ["noPattern", "transPattern", "random", "all"];
   isTrunks;
+  newUser = false;
+  suffix = '';
+  location;
   // sources = [];
   // maxArea = (700 * 700);
   // redoListShape = [];
@@ -96,7 +99,7 @@ export class AppComponent {
   // shapeArr = ['Trapezoid'];
   @ViewChild('mainContainer') mainContainer;
   @ViewChild('loaderCanvas') loader;
-  location;
+
   constructor(public dialog: MatDialog, location: Location) {
     this.location = location;
     this.localStorage = localStorage;
@@ -222,7 +225,7 @@ export class AppComponent {
   toggleSignOut() {
     this.showSignOut = !this.showSignOut;
 
-  }
+}
   async openLoginModal() {
     this.openLoginDialog();
 
@@ -275,8 +278,7 @@ export class AppComponent {
     }
   }
 
-  newUser = false;
-  suffix = '';
+
   getUiConfig() {
     var uiConfig = {
       callbacks: {

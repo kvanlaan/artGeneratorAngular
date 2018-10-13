@@ -83,15 +83,6 @@ export class AppComponent {
   patternMexico;
   genTypeArr = ["noPattern", "transPattern", "random", "all"];
   isTrunks;
-  newUser = false;
-  suffix = '';
-  location;
-  guid;
-  showSignOut = false;
-    genType;
-  isArabesque;
-  isMexico;
-  singleLayer;
   // sources = [];
   // maxArea = (700 * 700);
   // redoListShape = [];
@@ -100,12 +91,12 @@ export class AppComponent {
   // redoListShapeTemp = [];
   // colorSchemes = ['Monochromatic', 'Complementary', 'Random'];
   // colorSchemes = ['Monchromatic', 'Complementary', 'Analogous', 'Triad', 'Tetrad',
-  //   'Split Complementary'];
+  // 'Split Complementary'];
   // shapeArr = ['Rectangle', 'Triangle', 'Circle', 'Trapezoid', 'Line'];
   // shapeArr = ['Trapezoid'];
   @ViewChild('mainContainer') mainContainer;
   @ViewChild('loaderCanvas') loader;
-
+  location;
   constructor(public dialog: MatDialog, location: Location) {
     this.location = location;
     this.localStorage = localStorage;
@@ -186,57 +177,69 @@ export class AppComponent {
     }
   }
   signOut() {
-    // location.href = '';
-
     firebase.auth().signOut().then(function () {
     }).catch(function (error) {
     });
     if (window.history.length > 1) {
-      location.href =   '#loggedOut/' + this.guid;
+      location.href = '#loggedOut/' + this.guid;
 
 
     }
   }
 
-  async handleSignedInUser(user) {
-    this.user = user;
+  async handleSignedInUser() {
+    console.log('handling signed in user');
+    this.displayName = this.user.displayName;
+    this.email = this.user.email;
+
     this.login = true;
 
     this.email = this.user.email;
+    if (location.hash.split('/') && location.hash.split('/')[1] && location.hash.split('/')[2]) {
+      this.guid = location.hash.split('/')[2];
+    }
 
-    let trimmedName = this.displayName.replace(/\s/g, '');
+    let trimmedName = this.email;
+    location.href = '#user/' + this.email + '/' + this.guid;
 
     if (this.newUser) {
-      trimmedName = this.guid;
-    }
-    // this.savedImageArr = [];
-    location.href = '#user/' + this.displayName + '/' + this.guid,
-
-    // query snapshot - set anon to null;
-    await this.database.collection('users/' + trimmedName + '/images').get().then((querySnapshot) => {
-      querySnapshot.forEach((doc) => {
-        this.savedImageArr.push(doc.data());
-        this.saveImageFirebase(doc.data());
-      });
-      if (querySnapshot.docs.length) {
-        this.renderImage(0);
-      } else {
-        this.getRandomArt(true);
+      if(this.savedImageArr.length) {
+        for(let img of this.savedImageArr)
+        this.saveImageFirebase(img);
       }
-    });
+    } else {
+      this.savedImageArr = [];
+  
 
+      if ((!this.newUser) || (this.newUser && this.savedImageArr.length === 0)) {
+        await this.database.collection('users/' + trimmedName + '/images').get().then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            this.savedImageArr.push(doc.data());
+          });
+          if (querySnapshot.docs.length) {
+            this.renderImage(0);
+          } else {
+            if (this.savedImageArr.length === 0) {
+              this.getRandomArt(true);
+            }
+          }
+        });
+      }
+    }
+    
   }
-
+  guid;
+  showSignOut = false;
   toggleSignOut() {
     this.showSignOut = !this.showSignOut;
 
-}
+  }
   async openLoginModal() {
     this.openLoginDialog();
 
     await this.ui.start('#firebaseui-container', this.getUiConfig());
   }
- 
+
   async handleSignedOutUser() {
 
     // this.savedImageArr = [];
@@ -244,6 +247,7 @@ export class AppComponent {
     if (location.hash.split('/') && location.hash.split('/')[1]) {
       this.guid = location.hash.split('/')[1];
       guid = this.guid;
+      guid = location.hash.split('/')[1];
     }
 
     if (!document.getElementById('firebaseui-container')) {
@@ -283,7 +287,8 @@ export class AppComponent {
     }
   }
 
-
+  newUser = false;
+  suffix = '';
   getUiConfig() {
     var uiConfig = {
       callbacks: {
@@ -302,12 +307,13 @@ export class AppComponent {
             this.newUser = false;
           }
           if (authResult.user) {
-            this.handleSignedInUser(authResult.user);
+            this.user = authResult.user;
+            // this.handleSignedInUser(authResult.user);
           }
           // if (authResult.additionalUserInfo) {
-          //   document.getElementById('is-new-user').textContent =
-          //     authResult.additionalUserInfo.isNewUser ?
-          //       'New User' : 'Existing User';
+          // document.getElementById('is-new-user').textContent =
+          // authResult.additionalUserInfo.isNewUser ?
+          // 'New User' : 'Existing User';
           // }
           // Do not redirect.
           this.dialogRef.close(LoginDialogComponent);
@@ -383,12 +389,17 @@ export class AppComponent {
     this.calculateCanvasSize();
 
     firebase.auth().onAuthStateChanged(async function (this, user) {
+      // if (user) {
       this.user = user;
-      this.user ? await this.handleSignedInUser(this.user) : await this.handleSignedOutUser();
+      // }
+      this.user ? await this.handleSignedInUser() : await this.handleSignedOutUser();
 
     }.bind(this));
   }
-
+  genType;
+  isArabesque;
+  isMexico;
+  singleLayer;
   getRandomArt(clear, recurseStep?) {
     // hiding stuff since a new image is being drawn
     this.renderDone = false;
@@ -396,7 +407,7 @@ export class AppComponent {
     this.edit = false;
     this.singleLayer = false;
     // if (this.edit) {
-    //   this.toggleEdit();
+    // this.toggleEdit();
     // }
 
     //these values are related to what the art will look like 
@@ -405,7 +416,7 @@ export class AppComponent {
     this.patternFill = this.randomlyChooseTrueOrFalse();
 
     // if(this.genType === 'transPattern' && recurseStep === undefined) {
-    //   recurseStep = 3;
+    // recurseStep = 3;
     // }
     this.isTrunks = false;
     this.isArabesque = false;
@@ -477,7 +488,7 @@ export class AppComponent {
       norm = false;
     }
     // if(recurseStep === undefined) {
-    //   norm = false;
+    // norm = false;
     // }
     let trapTrans = 2;
     if (rand === 2) {
@@ -529,7 +540,7 @@ export class AppComponent {
       objNum = Math.floor(Math.random() * 23) + 19;
     }
     // if(this.genType === 'noPattern)' && norm) {
-    //   objNum =  Math.floor(Math.random() * 23) + 19;
+    // objNum = Math.floor(Math.random() * 23) + 19;
     // }
     this.getMainLayer(objNum, norm, rand, trapTrans);
 
@@ -568,14 +579,14 @@ export class AppComponent {
 
       // draft for dealing with Safari browser
       // if (!this.isSafari) {
-      //   this.ctx.globalAlpha = 1;
-      //  this.randomColor = this.randomColor.substring(0, this.randomColor.length - 1) + ',' + this.randomShapeOpacity + ")";
-      //   const rand = Math.floor(Math.random() * 2) + 1;
-      //   if (rand === 1) {
-      //     this.ctx.globalAlpha = this.randomShapeOpacity;
-      //   }
+      // this.ctx.globalAlpha = 1;
+      // this.randomColor = this.randomColor.substring(0, this.randomColor.length - 1) + ',' + this.randomShapeOpacity + ")";
+      // const rand = Math.floor(Math.random() * 2) + 1;
+      // if (rand === 1) {
+      // this.ctx.globalAlpha = this.randomShapeOpacity;
+      // }
       // } else {
-      //   this.ctx.globalAlpha = this.randomShapeOpacity;
+      // this.ctx.globalAlpha = this.randomShapeOpacity;
       // }
       this.ctx.fillStyle = this.randomColor;
       this.patternFill = this.randomlyChooseTrueOrFalse();
@@ -639,7 +650,7 @@ export class AppComponent {
         this.patternFill = this.randomlyChooseTrueOrFalse();
       }
       // if (this.patternFill === false) {
-      //   this.patternFill = this.randomlyChooseTrueOrFalse();
+      // this.patternFill = this.randomlyChooseTrueOrFalse();
       // }
     }
     if (this.genType === 'all') {
@@ -671,10 +682,10 @@ export class AppComponent {
 
       }
       // if (this.isTrunks) {
-      //   this.isTrunks = this.randomlyChooseTrueOrFalse();
+      // this.isTrunks = this.randomlyChooseTrueOrFalse();
       // }
       // if (this.isArabesque) {
-      //   this.isArabesque = this.randomlyChooseTrueOrFalse();
+      // this.isArabesque = this.randomlyChooseTrueOrFalse();
       // }
       // this.isTrunks = false;
 
@@ -712,9 +723,9 @@ export class AppComponent {
 
       this.randomColor = this.randomColor.substring(0, this.randomColor.length - 1) + ',' + this.randomShapeOpacity + ")";
       // if (!this.isSafari) {
-      //   this.randomColor = this.randomColor.substring(0, this.randomColor.length - 1) + ',' + this.randomShapeOpacity + ")";
+      // this.randomColor = this.randomColor.substring(0, this.randomColor.length - 1) + ',' + this.randomShapeOpacity + ")";
       // } else {
-      //   this.ctx.globalAlpha = this.randomShapeOpacity;
+      // this.ctx.globalAlpha = this.randomShapeOpacity;
       // }
       this.ctx.fillStyle = this.randomColor;
       // default is middle
@@ -723,18 +734,18 @@ export class AppComponent {
         newLineWidth = Math.random() * 20 + 16;
       }
       // if(this.layerCounter === objNum/2) {
-      //   ne
+      // ne
       // }
       // if(this.layerCounter > (objNum - objNum/3)) {
-      //   newLineWidth = Math.random() * 5;
+      // newLineWidth = Math.random() * 5;
       // }
 
       // let newLineWidth = Math.random() * 10;
       // lineWidthArr.push(newLineWidth);
       // if (!norm) {
-      //   if (this.isLineWidthArrMostlyThick(lineWidthArr)) {
-      //     newLineWidth = Math.random() * 5;
-      //   }
+      // if (this.isLineWidthArrMostlyThick(lineWidthArr)) {
+      // newLineWidth = Math.random() * 5;
+      // }
       // }
       this.ctx.lineWidth = newLineWidth;
       if (!norm) {
@@ -814,7 +825,7 @@ export class AppComponent {
         offset_x = this.patternOffset;
         offset_y = this.patternOffset;
         // } else {
-        //   this.ctx.fillStyle = this.ctx.createPattern(this.patternArabesque, 'repeat');
+        // this.ctx.fillStyle = this.ctx.createPattern(this.patternArabesque, 'repeat');
         // }
       }
       if (this.isArabesque && main) {
@@ -825,7 +836,7 @@ export class AppComponent {
         isOffset = false;
         this.ctx.fillStyle = this.ctx.createPattern(this.patternArabesque, 'repeat');
         // } else {
-        //   this.ctx.fillStyle = this.ctx.createPattern(this.patternArabesque, 'repeat');
+        // this.ctx.fillStyle = this.ctx.createPattern(this.patternArabesque, 'repeat');
         // }
       }
       if (this.isMexico && main) {
@@ -836,20 +847,20 @@ export class AppComponent {
         isOffset = false;
         this.ctx.fillStyle = this.ctx.createPattern(this.patternMexico, 'no-repeat');
         // } else {
-        //   this.ctx.fillStyle = this.ctx.createPattern(this.patternArabesque, 'repeat');
+        // this.ctx.fillStyle = this.ctx.createPattern(this.patternArabesque, 'repeat');
         // }
       }
-      // offset_x  = (Math.random() * (this.canvasSize - xPos)) - xPos;
+      // offset_x = (Math.random() * (this.canvasSize - xPos)) - xPos;
       // offset_y= (Math.random() *(this.canvasSize - yPos)) - yPos;
 
-      //   rand = this.randomlyChooseOneOrTwo();
-      //   if(this.pattern.src === 'assets/trunks.png') {
-      //   var rand2 = this.randomlyChooseOneOrTwo();
+      // rand = this.randomlyChooseOneOrTwo();
+      // if(this.pattern.src === 'assets/trunks.png') {
+      // var rand2 = this.randomlyChooseOneOrTwo();
 
-      //   if(rand2 === 1) {
-      //   offset_x  = (Math.random() * (this.canvasSize - xPos/2)) - xPos/2;
-      //   offset_y= (Math.random() *(this.canvasSize - yPos/2)) - yPos/2;
-      //   }
+      // if(rand2 === 1) {
+      // offset_x = (Math.random() * (this.canvasSize - xPos/2)) - xPos/2;
+      // offset_y= (Math.random() *(this.canvasSize - yPos/2)) - yPos/2;
+      // }
       // }
       if (isOffset) {
         this.ctx.translate(offset_x, offset_y);
@@ -859,13 +870,13 @@ export class AppComponent {
 
     // this code draft for if I want to just have small symbols in outer layer
     // if (small && rand === 4) {
-    //   var img = new Image();
-    //   img.src = '../assets/wowlogo.png';
-    //   img.onload = function () {
-    //     currObjArea = 10;
-    //     this.ctx.drawImage(img, xPos, yPos);
-    //     return;
-    //   }.bind(this);
+    // var img = new Image();
+    // img.src = '../assets/wowlogo.png';
+    // img.onload = function () {
+    // currObjArea = 10;
+    // this.ctx.drawImage(img, xPos, yPos);
+    // return;
+    // }.bind(this);
 
     // }
 
@@ -878,10 +889,10 @@ export class AppComponent {
     }
 
     // if (shape === 'Circle') {
-    //   const changeShape = this.randomlyChooseTrueOrFalse();
-    //   if (changeShape && !small) {
-    //     shape = this.noCircleShapeArr[Math.floor(Math.random() * this.noCircleShapeArr.length)];
-    //   }
+    // const changeShape = this.randomlyChooseTrueOrFalse();
+    // if (changeShape && !small) {
+    // shape = this.noCircleShapeArr[Math.floor(Math.random() * this.noCircleShapeArr.length)];
+    // }
     // }
     switch (shape) {
       case 'Rectangle':
@@ -1016,9 +1027,9 @@ export class AppComponent {
       edit = false;
     }
     // const imgObj = {
-    //   'name': newIndex + 'index',
-    //   'src': this.canvas.toDataURL(),
-    //   'edit': edit, 'redoStack': copyOfRedo, 'undoStack': copyOfUndo, 'redoStackShape': copyOfRedoShape, 'undoStackShape': copyOfUndoShape
+    // 'name': newIndex + 'index',
+    // 'src': this.canvas.toDataURL(),
+    // 'edit': edit, 'redoStack': copyOfRedo, 'undoStack': copyOfUndo, 'redoStackShape': copyOfRedoShape, 'undoStackShape': copyOfUndoShape
     // };
     let newSource = this.canvas.toDataURL();
     if (source) {
@@ -1032,7 +1043,7 @@ export class AppComponent {
     // tempSources.push(imgObj.src);
     let res = true;
     // if (!source && !this.user) {
-    //   res = this.saveToLocal('currImage', tempSources);
+    // res = this.saveToLocal('currImage', tempSources);
     // } else {
     // add to user libary
     // if (this.user) {
@@ -1054,9 +1065,9 @@ export class AppComponent {
     }
 
     // } else {
-    //   this.currImageIndex = this.savedImageArr.length - 1;
-    //   this.renderImage(this.currImageIndex);
-    //   this.openStorageFullDialog();
+    // this.currImageIndex = this.savedImageArr.length - 1;
+    // this.renderImage(this.currImageIndex);
+    // this.openStorageFullDialog();
     // }
     this.loader.nativeElement.style.visibility = "hidden";
     this.renderDone = true;
@@ -1087,7 +1098,7 @@ export class AppComponent {
       this.currImageIndex--;
     }
     if (this.user) {
-      const trimmedName = this.displayName.replace(/\s/g, '');
+      const trimmedName = this.email;
       console.log('imageobj name', imageObj.name);
       this.database.collection('users/' + trimmedName + '/images').doc(imageObj.name).delete().then(function (docRef) {
         console.log('Successfully deleted');
@@ -1151,7 +1162,10 @@ export class AppComponent {
   saveImageFirebase(imageObj) {
     let trimmedName = this.guid;
     if (this.user) {
-      trimmedName = this.displayName;
+      console.log('yes is user so putting trimmed name to that');
+      console.log('this.user', this.user);
+      this.email = this.user.email;
+      trimmedName = this.email;
     }
 
     if (this.byteCount(imageObj.src) > 1048487) {
@@ -1192,7 +1206,7 @@ export class AppComponent {
 
     let trimmedName = this.guid;
     if (this.user) {
-      trimmedName = this.displayName.replace(/\s/g, '');
+      trimmedName = this.email;
     }
 
 
@@ -1216,7 +1230,7 @@ export class AppComponent {
   }
   saveToLocal(key: string, value: any) {
     try {
-      //  this.localStorage.setItem(key, null);
+      // this.localStorage.setItem(key, null);
       this.localStorage.setItem(key, JSON.stringify(value));
       return true;
     } catch (e) {
@@ -1333,195 +1347,195 @@ export class AppComponent {
   // not in use - but working code
 
   // RGB2HSV(rgb) {
-  //   var hsv;
-  //   hsv = new Object();
-  //   var max = Math.max(rgb.r, rgb.g, rgb.b);
-  //   var dif = max - Math.min(rgb.r, rgb.g, rgb.b);
-  //   hsv.saturation = (max == 0.0) ? 0 : (100 * dif / max);
-  //   if (hsv.saturation == 0) hsv.hue = 0;
-  //   else if (rgb.r == max) hsv.hue = 60.0 * (rgb.g - rgb.b) / dif;
-  //   else if (rgb.g == max) hsv.hue = 120.0 + 60.0 * (rgb.b - rgb.r) / dif;
-  //   else if (rgb.b == max) hsv.hue = 240.0 + 60.0 * (rgb.r - rgb.g) / dif;
-  //   if (hsv.hue < 0.0) hsv.hue += 360.0;
-  //   hsv.value = Math.round(max * 100 / 255);
-  //   hsv.hue = Math.round(hsv.hue);
-  //   hsv.saturation = Math.round(hsv.saturation);
-  //   return hsv;
+  // var hsv;
+  // hsv = new Object();
+  // var max = Math.max(rgb.r, rgb.g, rgb.b);
+  // var dif = max - Math.min(rgb.r, rgb.g, rgb.b);
+  // hsv.saturation = (max == 0.0) ? 0 : (100 * dif / max);
+  // if (hsv.saturation == 0) hsv.hue = 0;
+  // else if (rgb.r == max) hsv.hue = 60.0 * (rgb.g - rgb.b) / dif;
+  // else if (rgb.g == max) hsv.hue = 120.0 + 60.0 * (rgb.b - rgb.r) / dif;
+  // else if (rgb.b == max) hsv.hue = 240.0 + 60.0 * (rgb.r - rgb.g) / dif;
+  // if (hsv.hue < 0.0) hsv.hue += 360.0;
+  // hsv.value = Math.round(max * 100 / 255);
+  // hsv.hue = Math.round(hsv.hue);
+  // hsv.saturation = Math.round(hsv.saturation);
+  // return hsv;
   // }
 
   // RGB2HSV and HSV2RGB are based on Color Match Remix [http://color.twysted.net/]
   // which is based on or copied from ColorMatch 5K [http://colormatch.dk/]
   // HSV2RGB(hsv) {
-  //   var rgb = { 'r': null, 'g': null, 'b': null }
-  //   if (hsv.saturation == 0) {
-  //     rgb['r'] = Math.round(hsv.value * 2.55);
-  //     rgb['g'] = Math.round(hsv.value * 2.55);
-  //     rgb['b'] = Math.round(hsv.value * 2.55);
-  //   } else {
-  //     hsv.hue /= 60;
-  //     hsv.saturation /= 100;
-  //     hsv.value /= 100;
-  //     var i = Math.floor(hsv.hue);
-  //     var f = hsv.hue - i;
-  //     var p = hsv.value * (1 - hsv.saturation);
-  //     var q = hsv.value * (1 - hsv.saturation * f);
-  //     var t = hsv.value * (1 - hsv.saturation * (1 - f));
-  //     switch (i) {
-  //       case 0: rgb.r = hsv.value; rgb.g = t; rgb.b = p; break;
-  //       case 1: rgb.r = q; rgb.g = hsv.value; rgb.b = p; break;
-  //       case 2: rgb.r = p; rgb.g = hsv.value; rgb.b = t; break;
-  //       case 3: rgb.r = p; rgb.g = q; rgb.b = hsv.value; break;
-  //       case 4: rgb.r = t; rgb.g = p; rgb.b = hsv.value; break;
-  //       default: rgb.r = hsv.value; rgb.g = p; rgb.b = q;
-  //     }
-  //     rgb.r = Math.round(rgb.r * 255);
-  //     rgb.g = Math.round(rgb.g * 255);
-  //     rgb.b = Math.round(rgb.b * 255);
-  //   }
-  //   return rgb;
+  // var rgb = { 'r': null, 'g': null, 'b': null }
+  // if (hsv.saturation == 0) {
+  // rgb['r'] = Math.round(hsv.value * 2.55);
+  // rgb['g'] = Math.round(hsv.value * 2.55);
+  // rgb['b'] = Math.round(hsv.value * 2.55);
+  // } else {
+  // hsv.hue /= 60;
+  // hsv.saturation /= 100;
+  // hsv.value /= 100;
+  // var i = Math.floor(hsv.hue);
+  // var f = hsv.hue - i;
+  // var p = hsv.value * (1 - hsv.saturation);
+  // var q = hsv.value * (1 - hsv.saturation * f);
+  // var t = hsv.value * (1 - hsv.saturation * (1 - f));
+  // switch (i) {
+  // case 0: rgb.r = hsv.value; rgb.g = t; rgb.b = p; break;
+  // case 1: rgb.r = q; rgb.g = hsv.value; rgb.b = p; break;
+  // case 2: rgb.r = p; rgb.g = hsv.value; rgb.b = t; break;
+  // case 3: rgb.r = p; rgb.g = q; rgb.b = hsv.value; break;
+  // case 4: rgb.r = t; rgb.g = p; rgb.b = hsv.value; break;
+  // default: rgb.r = hsv.value; rgb.g = p; rgb.b = q;
+  // }
+  // rgb.r = Math.round(rgb.r * 255);
+  // rgb.g = Math.round(rgb.g * 255);
+  // rgb.b = Math.round(rgb.b * 255);
+  // }
+  // return rgb;
   // }
   // getStroke(scheme, color): any {
-  //   switch (scheme) {
-  //     case 'Random':
-  //       return this.getRandomRgb();
-  //   }
+  // switch (scheme) {
+  // case 'Random':
+  // return this.getRandomRgb();
+  // }
   // }
   // hueShift(h, s) {
-  //   h += s; while (h >= 360.0) h -= 360.0; while (h < 0.0) h += 360.0; return h;
+  // h += s; while (h >= 360.0) h -= 360.0; while (h < 0.0) h += 360.0; return h;
   // }
   // min3(a, b, c) {
-  //   return (a < b) ? ((a < c) ? a : c) : ((b < c) ? b : c);
+  // return (a < b) ? ((a < c) ? a : c) : ((b < c) ? b : c);
   // }
   // max3(a, b, c) {
-  //   return (a > b) ? ((a > c) ? a : c) : ((b > c) ? b : c);
+  // return (a > b) ? ((a > c) ? a : c) : ((b > c) ? b : c);
   // }
   // componentToHex(c) {
-  //   var hex = c.toString(16);
-  //   return hex.length == 1 ? "0" + hex : hex;
+  // var hex = c.toString(16);
+  // return hex.length == 1 ? "0" + hex : hex;
   // }
   // rgbToHex(r, g, b) {
-  //   return "#" + this.componentToHex(r) + this.componentToHex(g) + this.componentToHex(b);
+  // return "#" + this.componentToHex(r) + this.componentToHex(g) + this.componentToHex(b);
   // }
 
   // convertFromRgbStringToObj(rgbString) {
-  //   var rgbStringArr = rgbString.split(',');
-  //   var r = rgbStringArr[0].substring(4);
-  //   r = r.substring(0, r.length - 1);
-  //   var g = rgbStringArr[1]
-  //   g = g.substring(0, g.length - 1);
-  //   var b = rgbStringArr[2];
-  //   b = b.substring(0, b.length - 1);
-  //   return { 'r': r, 'g': g, 'b': b };
+  // var rgbStringArr = rgbString.split(',');
+  // var r = rgbStringArr[0].substring(4);
+  // r = r.substring(0, r.length - 1);
+  // var g = rgbStringArr[1]
+  // g = g.substring(0, g.length - 1);
+  // var b = rgbStringArr[2];
+  // b = b.substring(0, b.length - 1);
+  // return { 'r': r, 'g': g, 'b': b };
   // }
 
   // utility stuff
   // convertToRgbString(rgbObj) {
-  //   return 'rgb(' + rgbObj.r + ',' + rgbObj.g + ',' + rgbObj.b + ')';
+  // return 'rgb(' + rgbObj.r + ',' + rgbObj.g + ',' + rgbObj.b + ')';
   // }
   // isLineWidthArrMostlyThick(lineWidthArr) {
-  //   let widthCounter = 0;
-  //   for (let lineWidth of lineWidthArr) {
-  //     if (lineWidth > 6) {
-  //       widthCounter++;
-  //     }
-  //   }
-  //   (widthCounter / lineWidthArr.length) > .75;
-  //   return true;
+  // let widthCounter = 0;
+  // for (let lineWidth of lineWidthArr) {
+  // if (lineWidth > 6) {
+  // widthCounter++;
+  // }
+  // }
+  // (widthCounter / lineWidthArr.length) > .75;
+  // return true;
   // }
 
   // revertChanges() {
-  //   this.undoListShapeTemp = [];
-  //   this.redoListShapeTemp = [];
+  // this.undoListShapeTemp = [];
+  // this.redoListShapeTemp = [];
 
   // }
   // undoShape() {
 
-  //   if (!this.startEditing && !this.savedImageArr[this.currImageIndex]['edit']) {
-  //     this.savedImageArr[this.currImageIndex]['edit'] = true;
-  //     this.saveCurrentArt(true, true);
-  //   } else {
+  // if (!this.startEditing && !this.savedImageArr[this.currImageIndex]['edit']) {
+  // this.savedImageArr[this.currImageIndex]['edit'] = true;
+  // this.saveCurrentArt(true, true);
+  // } else {
 
 
-  //     if (this.undoListShape.length > 1) {
-  //       var redoState = this.undoListShape.pop();
-  //       this.redoListShape.push(redoState);
-  //       var restoreState = this.undoListShape[this.undoListShape.length - 1];
-  //       var img = new Image();
-  //       img.src = restoreState;
-  //       this.ctx.clearRect(0, 0, this.canvasSize, this.canvasSize);
-  //       img.onload = function () {
-  //         this.ctx.drawImage(img, 0, 0, this.canvasSize, this.canvasSize, 0, 0, this.canvasSize, this.canvasSize);
-  //         this.saveCurrentArt();
+  // if (this.undoListShape.length > 1) {
+  // var redoState = this.undoListShape.pop();
+  // this.redoListShape.push(redoState);
+  // var restoreState = this.undoListShape[this.undoListShape.length - 1];
+  // var img = new Image();
+  // img.src = restoreState;
+  // this.ctx.clearRect(0, 0, this.canvasSize, this.canvasSize);
+  // img.onload = function () {
+  // this.ctx.drawImage(img, 0, 0, this.canvasSize, this.canvasSize, 0, 0, this.canvasSize, this.canvasSize);
+  // this.saveCurrentArt();
 
-  //       }.bind(this);
-  //     }
-  //   }
-  //   this.startEditing = true;
+  // }.bind(this);
+  // }
+  // }
+  // this.startEditing = true;
   // }
   // redoShape() {
-  //   if (!this.startEditing && !this.savedImageArr[this.currImageIndex]['edit']) {
-  //     this.savedImageArr[this.currImageIndex]['edit'] = true;
-  //     this.saveCurrentArt(true);
-  //   }
-  //   this.startEditing = true;
+  // if (!this.startEditing && !this.savedImageArr[this.currImageIndex]['edit']) {
+  // this.savedImageArr[this.currImageIndex]['edit'] = true;
+  // this.saveCurrentArt(true);
+  // }
+  // this.startEditing = true;
 
-  //   if (this.redoListShape.length > 1) {
-  //     var restoreState = this.redoListShape.pop();
-  //     var img = new Image();
-  //     img.src = restoreState;
-  //     this.ctx.clearRect(0, 0, this.canvasSize, this.canvasSize);
-  //     img.onload = function () {
-  //       this.ctx.drawImage(img, 0, 0, this.canvasSize, this.canvasSize, 0, 0, this.canvasSize, this.canvasSize);
-  //       this.undoListShape.push(this.canvas.toDataURL());
-  //       this.saveCurrentArt(false);
+  // if (this.redoListShape.length > 1) {
+  // var restoreState = this.redoListShape.pop();
+  // var img = new Image();
+  // img.src = restoreState;
+  // this.ctx.clearRect(0, 0, this.canvasSize, this.canvasSize);
+  // img.onload = function () {
+  // this.ctx.drawImage(img, 0, 0, this.canvasSize, this.canvasSize, 0, 0, this.canvasSize, this.canvasSize);
+  // this.undoListShape.push(this.canvas.toDataURL());
+  // this.saveCurrentArt(false);
 
-  //     }.bind(this);
-  //   }
+  // }.bind(this);
+  // }
   // }
   // end for individual shapes in layer
   // getTetrad() {
-  //   var scheme = new ColorScheme;
-  //   scheme.from_hue(21)
-  //     .scheme('tetrad')
-  //     .variation('soft');
+  // var scheme = new ColorScheme;
+  // scheme.from_hue(21)
+  // .scheme('tetrad')
+  // .variation('soft');
 
-  //   var colors = scheme.colors();
-  //   return colors;
+  // var colors = scheme.colors();
+  // return colors;
   // }
 
 
   // getComplementaryScheme() {
-  //   var tempRgb = this.getRandomRgb();
-  //   var complementaryColorArr = ['rgb(' + tempRgb.r + ',' + tempRgb.g + ',' + tempRgb.b + ')'];
-  //   let counter = 0;
-  //   var currRgb = tempRgb;
+  // var tempRgb = this.getRandomRgb();
+  // var complementaryColorArr = ['rgb(' + tempRgb.r + ',' + tempRgb.g + ',' + tempRgb.b + ')'];
+  // let counter = 0;
+  // var currRgb = tempRgb;
 
-  //   while (counter <= (this.objNum + 200)) {
-  //     // recursion
-  //     currRgb = this.getComplementary(currRgb);
-  //     complementaryColorArr.push(this.convertToRgbString(currRgb));
-  //     counter++;
-  //   }
-  //   return complementaryColorArr;
+  // while (counter <= (this.objNum + 200)) {
+  // // recursion
+  // currRgb = this.getComplementary(currRgb);
+  // complementaryColorArr.push(this.convertToRgbString(currRgb));
+  // counter++;
+  // }
+  // return complementaryColorArr;
   // }
 
   // getComplementary(rgb) {
-  //   var temphsv = this.RGB2HSV(rgb);
-  //   temphsv.hue = this.hueShift(temphsv.hue, 180.0);
-  //   var finRgb = this.HSV2RGB(temphsv);
-  //   return finRgb;
+  // var temphsv = this.RGB2HSV(rgb);
+  // temphsv.hue = this.hueShift(temphsv.hue, 180.0);
+  // var finRgb = this.HSV2RGB(temphsv);
+  // return finRgb;
   // }
 
   // getMono() {
-  //   let counter = 0;
-  //   var tempRgb = this.getRandomRgb();
-  //   var tempRgbString = 'rgb(' + tempRgb.r + ',' + tempRgb.g + ',' + tempRgb.b + ')';
-  //   var monoColorArr = [];
-  //   while (counter <= (this.objNum + 600)) {
-  //     monoColorArr.push(tempRgbString);
-  //     counter++;
-  //   }
-  //   return monoColorArr;
+  // let counter = 0;
+  // var tempRgb = this.getRandomRgb();
+  // var tempRgbString = 'rgb(' + tempRgb.r + ',' + tempRgb.g + ',' + tempRgb.b + ')';
+  // var monoColorArr = [];
+  // while (counter <= (this.objNum + 600)) {
+  // monoColorArr.push(tempRgbString);
+  // counter++;
+  // }
+  // return monoColorArr;
   // }
   //trash- work in progress
 
@@ -1531,96 +1545,97 @@ export class AppComponent {
 
   // getTriad() {
   // }
-  // /  getSplitComplementary() {
+  // / getSplitComplementary() {
   // getLineShape(objNum, norm, rand) {
-  //   this.shapeArr = ['Line'];
-  //   while (this.layerCounter < objNum) {
+  // this.shapeArr = ['Line'];
+  // while (this.layerCounter < objNum) {
 
-  //     this.randomColor = this.colorArr[Math.floor(Math.random() * this.colorArr.length)];
-  //     this.randomStrokeOpacity = Math.random();
+  // this.randomColor = this.colorArr[Math.floor(Math.random() * this.colorArr.length)];
+  // this.randomStrokeOpacity = Math.random();
 
-  //     // randomShapeOpacity = Math.random() * (1) - layerCounter/objNum;
-  //     this.randomShapeOpacity = Math.random();
+  // // randomShapeOpacity = Math.random() * (1) - layerCounter/objNum;
+  // this.randomShapeOpacity = Math.random();
 
-  //     if (this.randomShapeOpacity < 0) {
-  //       this.randomShapeOpacity = 0;
-  //     }
-  //     if (this.layerCounter === (objNum - 1) && !norm) {
-  //       this.randomShapeOpacity = .1;
-  //     }
-  //     if (this.layerCounter === (objNum - 2) && !norm) {
-  //       this.randomShapeOpacity = .1;
-  //     }
-  //     var randomShape = this.shapeArr[Math.floor(Math.random() * this.shapeArr.length)];
-  //     // var randomAC = Math.random() * 1;
-  //     var stroke = this.getStroke(this.randomScheme, this.randomColor);
-  //     if (this.randomScheme === 'Complementary') {
-  //       var complStroke = this.colorArr[Math.floor(Math.random() * this.colorArr.length)];
-  //       this.ctx.strokeStyle = complStroke.substring(0, complStroke.length - 1) + ',' + this.randomStrokeOpacity + ")";
-  //     } else if (this.randomScheme !== 'Monochromatic') {
-  //       this.ctx.strokeStyle = 'rgb(' + stroke['r'] + ',' + stroke['g'] + ',' + stroke['b'] + ')';
-  //     } else {
-  //       this.ctx.strokeStyle = 'rgb(' + stroke['r'] + ',' + stroke['g'] + ',' + stroke['b'] + ')';
-  //     }
+  // if (this.randomShapeOpacity < 0) {
+  // this.randomShapeOpacity = 0;
+  // }
+  // if (this.layerCounter === (objNum - 1) && !norm) {
+  // this.randomShapeOpacity = .1;
+  // }
+  // if (this.layerCounter === (objNum - 2) && !norm) {
+  // this.randomShapeOpacity = .1;
+  // }
+  // var randomShape = this.shapeArr[Math.floor(Math.random() * this.shapeArr.length)];
+  // // var randomAC = Math.random() * 1;
+  // var stroke = this.getStroke(this.randomScheme, this.randomColor);
+  // if (this.randomScheme === 'Complementary') {
+  // var complStroke = this.colorArr[Math.floor(Math.random() * this.colorArr.length)];
+  // this.ctx.strokeStyle = complStroke.substring(0, complStroke.length - 1) + ',' + this.randomStrokeOpacity + ")";
+  // } else if (this.randomScheme !== 'Monochromatic') {
+  // this.ctx.strokeStyle = 'rgb(' + stroke['r'] + ',' + stroke['g'] + ',' + stroke['b'] + ')';
+  // } else {
+  // this.ctx.strokeStyle = 'rgb(' + stroke['r'] + ',' + stroke['g'] + ',' + stroke['b'] + ')';
+  // }
 
-  //     rand = Math.floor(Math.random() * 2) + 1;
-  //     if (rand === 1) {
-  //       this.ctx.strokeStyle = 'black';
-  //     }
+  // rand = Math.floor(Math.random() * 2) + 1;
+  // if (rand === 1) {
+  // this.ctx.strokeStyle = 'black';
+  // }
 
-  //     if (!this.isSafari) {
-  //       this.randomColor = this.randomColor.substring(0, this.randomColor.length - 1) + ',' + this.randomShapeOpacity + ")";
-  //     } else {
-  //       this.ctx.globalAlpha = this.randomShapeOpacity;
-  //     }
-  //     this.ctx.fillStyle = this.randomColor;
-  //     // default is middle
-  //     let newLineWidth = Math.random() * 5;
-  //     this.ctx.lineWidth = newLineWidth;
-  //     this.drawShape(randomShape);
-  //     this.layerCounter++;
-  //   }
+  // if (!this.isSafari) {
+  // this.randomColor = this.randomColor.substring(0, this.randomColor.length - 1) + ',' + this.randomShapeOpacity + ")";
+  // } else {
+  // this.ctx.globalAlpha = this.randomShapeOpacity;
+  // }
+  // this.ctx.fillStyle = this.randomColor;
+  // // default is middle
+  // let newLineWidth = Math.random() * 5;
+  // this.ctx.lineWidth = newLineWidth;
+  // this.drawShape(randomShape);
+  // this.layerCounter++;
+  // }
   // }
   // handleLogOut = function () {
-  //   this.ref.unauth();
+  // this.ref.unauth();
   // }
 
   // _logUserIn = function (submittedEmail, submittedPassword) {
-  //   var ref = this.ref
-  //   var handler = function (error, authData) {
-  //     if (error) {
-  //       console.log("Login Failed!", error);
-  //     } else {
-  //       console.log("Authenticated successfully with payload:");
-  //       console.log(authData)
-  //       location.hash = "dash"
-  //     }
-  //   }
-  //   ref.authWithPassword({
-  //     email: submittedEmail,
-  //     password: submittedPassword
-  //   }, handler);
+  // var ref = this.ref
+  // var handler = function (error, authData) {
+  // if (error) {
+  // console.log("Login Failed!", error);
+  // } else {
+  // console.log("Authenticated successfully with payload:");
+  // console.log(authData)
+  // location.hash = "dash"
+  // }
+  // }
+  // ref.authWithPassword({
+  // email: submittedEmail,
+  // password: submittedPassword
+  // }, handler);
   // }
   // _signUserUp = function (submittedEmail, submittedPassword) {
-  //   var ref = this.ref
-  //   var boundSignerUpper = this._signUserUp.bind(this);
-  //   var boundLoggerInner = this._logUserIn.bind(this);
-  //   var storeUser = function (userData) {
-  //     ref.child('users').child(userData.uid).set({ email: submittedEmail })
-  //   }
-  //   var handler = function (error, userData) {
-  //     if (error) {
-  //       console.log("Error creating user:", error);
-  //       DOM.render(<SplashPage error={ error } signerUpper = { boundSignerUpper } loggerInner = { boundLoggerInner } />, document.querySelector('.container'))
-  //     } else {
-  //       console.log("Successfully created user account with uid:", userData.uid);
-  //       storeUser(userData)
-  //       boundLoggerInner(submittedEmail, submittedPassword)
-  //     }
-  //   }
-  //   ref.createUser({
-  //     email: submittedEmail,
-  //     password: submittedPassword
-  //   }, handler);
+  // var ref = this.ref
+  // var boundSignerUpper = this._signUserUp.bind(this);
+  // var boundLoggerInner = this._logUserIn.bind(this);
+  // var storeUser = function (userData) {
+  // ref.child('users').child(userData.uid).set({ email: submittedEmail })
+  // }
+  // var handler = function (error, userData) {
+  // if (error) {
+  // console.log("Error creating user:", error);
+  // DOM.render(<SplashPage error={ error } signerUpper = { boundSignerUpper } loggerInner = { boundLoggerInner } />, document.querySelector('.container'))
+  // } else {
+  // console.log("Successfully created user account with uid:", userData.uid);
+  // storeUser(userData)
+  // boundLoggerInner(submittedEmail, submittedPassword)
+  // }
+  // }
+  // ref.createUser({
+  // email: submittedEmail,
+  // password: submittedPassword
+  // }, handler);
   // }
 }
+

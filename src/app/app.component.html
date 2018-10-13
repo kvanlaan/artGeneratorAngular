@@ -7,12 +7,18 @@
 <div fxFlex="40" fxFlex.md="100"   fxFlex.sm="100"   fxFlex.xs="100" fxFlexOffset="5" fxLayoutAlign="start center">
   <!-- <button   mat-button> -->
   <div class="material-text">Art Generator</div>
-  <div fxFlex class="material-text" style="font-size: 14px !important" fxLayoutAlign="end center">Each piece is algorithmically unique.</div>
+  <div fxFlex class="material-text" style="font-size: 14px !important"  *ngIf="!login" fxLayoutAlign="end center">Each piece is algorithmically unique.</div>
+  
+  <div fxFlex class="material-text" style="font-size: 14px !important"   fxLayoutAlign="end center" *ngIf="login"  fxLayout="row" fxShow="false" fxShow.md="true" fxShow.sm="true" fxShow.xs="true">{{email}}</div>
 
-  <!-- <div fxLayoutAlign="start start" > -->
+  <div fxFlex="5"></div>
 
-  <!-- </div> -->
+
+ 
 </div>
+
+
+
 <div fxFlex="40" fxShow="true" fxShow.md="false" fxShow.sm="false" fxShow.xs="false" fxLayoutAlign="center center">
   <button [disabled]="!renderDone" (click)="getRandomArt(true)" class="float-left inline" mat-button>
         Get New Art</button>
@@ -27,14 +33,16 @@
   <button fxFlex="10" (click)="openLoginModal()"  mat-button>
 <span [fxShow]="!login"> Sign In </span>
 </button>
-<span  *ngIf="login">
-<span (click)="toggleSignOut()">{{email}}</span>
-<span [fxShow]="showSignOut"(click)="signOut()">Sign Out</span>
+<span *ngIf="login">
+<span fxFlexAlign="center">{{email}}</span>
+<button fxFlex="5" (click)="signOut()" mat-button>
+  <span> Sign Out </span>
+  </button>
 </span>
 </div>
 </div>
-<div fxLayout="row" fxShow="false" fxShow.md="true" fxShow.sm="true" fxShow.xs="true" style="height: 5%" fxLayoutWrap>
-    <div fxFlex fxFlexOffset="5" fxLayoutAlign="start center">
+<div fxFlex fxFlexOffset="1" fxLayout="row" fxShow="false" fxShow.md="true" fxShow.sm="true" fxShow.xs="true" style="height: 5%" fxLayoutWrap>
+    <div fxFlexOffset="4" fxFlex="45" fxLayoutAlign="start center"  fxLayoutGap="5">
         <button [disabled]="!renderDone" (click)="getRandomArt(true)" class="float-left inline" mat-button>
             Get New Art</button>
     
@@ -43,35 +51,24 @@
               Save this art </a>
           </button>
       </div>
-      <div fxFlex fxLayoutAlign="end center">
-        <!--fxShow="false" fxShow.md="false" fxShow.sm="true" fxShow.xs="true"-->
-<!--<button fxFlex   fxFlexAlign="start start" style="height: 5%; max-width: 25px !important;  min-width: 25px !important; padding-left: 5px !important; padding-right: 5px !important" mat-button (click)="filterFavorites()"><i class="material-icons">
-  filter_list
-  </i>-->
-<!--
-<i [fxShow]="showFavorites" class="material-icons">
-    favorite
-      </i>
-<i [fxShow]="!showFavorites" class="material-icons">
-          favorite_border
-            </i>
-</button>-->
+      <div fxFlex="50" fxLayoutAlign="end center">
 
-          <button fxFlex="10" (click)="openLoginModal()"  mat-button>
+          <button *ngIf="!login"  fxFlex (click)="openLoginModal()"  mat-button>
               <span [fxShow]="!login"> Sign In </span>
               </button>
-              
-              <button *ngIf="login" fxFlex="10" mat-button [matMenuTriggerFor]="menu">{{email}}</button>
-<mat-menu #menu="matMenu">
-  <button (click)="signOut()" mat-menu-item>   Sign Out</button>
-</mat-menu>
+         
+          
+<button *ngIf="login"  fxFlex="5" (click)="signOut()" mat-button>
+  <span> Sign Out </span>
+  </button>
             
       </div>
+      <div fxFlex="5"></div>
 
   </div>
-<!-- <button (click)="toggleEdit()" style="margin-bottom: auto" class="float-left inline" mat-button>
-  Edit Layer
-</button> -->
+  <div fxFlexOffset="1" fxLayout="row" fxShow="false" fxShow.md="true" fxShow.sm="true" fxShow.xs="true">
+</div>
+
 
 
 <div #mainContainer fxLayout="row" fxFlexOffset.md="2" fxFlexOffset.sm="2"  fxFlexOffset.xs="2" fxLayout.md="column" fxLayout.sm="column" fxLayout.xs="column" style="height: 92%; overflow: scroll !important">

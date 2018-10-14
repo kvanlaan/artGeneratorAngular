@@ -188,6 +188,8 @@ export class AppComponent {
   }
 
   async handleSignedInUser() {
+    console.log('this.location', location);
+
     console.log('handling signed in user');
     this.displayName = this.user.displayName;
     this.email = this.user.email;
@@ -327,7 +329,7 @@ export class AppComponent {
           document.getElementById('loader').style.display = 'none';
         }
       },
-      signInSuccessUrl: 'http://localhost:4200/#user/' + this.displayName + this.suffix,
+      signInSuccessUrl: '' + location.host + '/#user/' + this.displayName + this.suffix,
       signInOptions: [
         firebase.auth.GoogleAuthProvider.PROVIDER_ID,
         firebase.auth.FacebookAuthProvider.PROVIDER_ID,

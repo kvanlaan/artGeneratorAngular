@@ -64,8 +64,9 @@ export class AppComponent {
   randomColor;
   randomStrokeOpacity;
   randomShapeOpacity;
-  renderDone = true;
+  ready = false;
   redoList = [];
+  renderDone = true;
   shapeArr = ['Rectangle', 'Triangle', 'Circle', 'Line'];
   noCircleShapeArr = ['Rectangle', 'Triangle', 'Line'];
   showFavorites = false;
@@ -177,19 +178,21 @@ export class AppComponent {
     }
   }
   signOut() {
+          this.ready = false;
+
     firebase.auth().signOut().then(function () {
+      console.log('signout about to do ready = false');
+      this.ready = false;
     }).catch(function (error) {
     });
     if (window.history.length > 1) {
       location.href = '#loggedOut/' + this.guid;
-
-
     }
   }
 
   async handleSignedInUser() {
+    this.ready = false;
     console.log('this.location', location);
-
     console.log('handling signed in user');
     this.displayName = this.user.displayName;
     this.email = this.user.email;
@@ -228,7 +231,7 @@ export class AppComponent {
         });
       }
     }
-    
+    this.ready =true;
   }
   guid;
   showSignOut = false;
@@ -254,8 +257,7 @@ export class AppComponent {
 
     if (!document.getElementById('firebaseui-container')) {
       this.login = false;
-
-      await this.openLoginModal();
+  
       if (!this.user) {
         // create a rand guid
         if (location.href.indexOf('loggedOut') < 0) {
@@ -285,6 +287,7 @@ export class AppComponent {
           // put in href
           // query guid on reload
         }
+           await this.openLoginModal();
       }
     }
   }
@@ -302,11 +305,11 @@ export class AppComponent {
 
           if (authResult.additionalUserInfo.isNewUser) {
             this.newUser = true;
-            console.log('suffix', this.suffix);
-            console.log('display name', this.displayName);
-            console.log('result', authResult);
           } else {
             this.newUser = false;
+      //           this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      // this.ctx.fillStyle = 'white';
+      // this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
           }
           if (authResult.user) {
             this.user = authResult.user;
@@ -319,7 +322,7 @@ export class AppComponent {
           // }
           // Do not redirect.
           this.dialogRef.close(LoginDialogComponent);
-          return false;
+        return false;
         }.bind(this),
         uiShown: function () {
           // The widget is rendered.
@@ -341,6 +344,8 @@ export class AppComponent {
 
 
   ngOnInit() {
+    console.log('init');
+    this.ready = false;
     this.renderDone = false;
     this.patternArabesque = new Image();
     this.patternTrunks = new Image();
@@ -395,8 +400,9 @@ export class AppComponent {
       this.user = user;
       // }
       this.user ? await this.handleSignedInUser() : await this.handleSignedOutUser();
-
+    this.ready=true;
     }.bind(this));
+
   }
   genType;
   isArabesque;
@@ -1014,9 +1020,10 @@ export class AppComponent {
     // }
     img.onload = function () {
       this.ctx.drawImage(img, 0, 0, this.canvasSize, this.canvasSize, 0, 0, this.canvasSize, this.canvasSize);
-
       this.renderDone = true;
       this.loader.nativeElement.style.visibility = "hidden";
+      console.log('ready istrue after render');
+      this.ready = true;
     }.bind(this);
   }
 

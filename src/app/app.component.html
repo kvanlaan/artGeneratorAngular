@@ -7,9 +7,9 @@
 <div fxFlex="40" fxFlex.md="100"   fxFlex.sm="100"   fxFlex.xs="100" fxFlexOffset="5" fxLayoutAlign="start center">
   <!-- <button   mat-button> -->
   <div class="material-text">Art Generator</div>
-  <div fxFlex class="material-text" style="font-size: 14px !important"  fxShow="true" fxShow.md="false" fxShow.sm="false" fxShow.xs="false" *ngIf="!login" fxLayoutAlign="end center">Each piece is algorithmically unique.</div>
+  <div fxFlex class="material-text" style="font-size: 14px !important" fxShow="true" fxShow.md="false" fxShow.sm="false" fxShow.xs="false" *ngIf="!login" fxLayoutAlign="end center">Each piece is algorithmically unique.</div>
   
-  <div fxFlex class="material-text" style="font-size: 14px !important"   fxLayoutAlign="end center" *ngIf="login"  fxLayout="row" fxShow="false" fxShow.md="true" fxShow.sm="true" fxShow.xs="true">{{email}}</div>
+  <div fxFlex class="material-text" style="font-size: 14px !important" fxLayoutAlign="end center" *ngIf="login"  fxLayout="row" fxShow="false" fxShow.md="true" fxShow.sm="true" fxShow.xs="true">{{email}}</div>
 
   <div fxFlex="5"></div>
 
@@ -23,11 +23,8 @@
   <button [disabled]="!renderDone" (click)="getRandomArt(true)" class="float-left inline" mat-button>
         Get New Art</button>
 
-
-
-
             <a href="#" target="_blank" class="float-left inline" #downloadLink (click)="download(downloadLink)" download="art.jpg">
-                <button  mat-button>
+                <button [disabled]="!renderDone" mat-button>
                 Save this art 
               </button>
               </a>
@@ -64,7 +61,7 @@
             Get New Art</button>
             <a href="#" target="_blank" class="inline" #downloadLinkTwo (click)="download(downloadLinkTwo)" download="art.jpg">
 
-      <button  mat-button>
+      <button  [disabled]="!renderDone" mat-button>
               Save this art 
           </button>
         </a>
@@ -140,25 +137,26 @@
 </div>
 
 <div fxFlex="49" fxFlex.md="85" fxFlex.sm="85" fxFlex.xs="85">
-        <button fxFlex="5" fxShow.lg="true" fxShow.md="false"  fxShow.sm="false" fxShow.xs="false"  fxFlexAlign="start start" style="height: 5%; max-width: 25px !important;  min-width: 25px !important; float: left; padding-left: 5px !important; padding-right: 5px !important" mat-button (click)="filterFavorites()"><i class="material-icons">
+  <span fxFlex="5">
+        <button  [fxShow]="savedImageArr.length" fxFlex="5" fxShow.lg="true" fxShow.md="false"  fxShow.sm="false" fxShow.xs="false"  fxFlexAlign="start start" style="height: 5%; max-width: 25px !important;  min-width: 25px !important; float: left; padding-left: 5px !important; padding-right: 5px !important" mat-button (click)="filterFavorites()"><i class="material-icons">
     filter_list
     </i>
 
-<i [fxShow]="showFavorites" class="material-icons">
+<i [fxShow]="showFavorites && savedImageArr" class="material-icons">
       favorite
         </i>
 <i [fxShow]="!showFavorites" class="material-icons">
             favorite_border
               </i>
 </button>
-
+</span>
 
 
 <div fxFlexOffset.xl="5"  fxFlexOffset.md="5"  fxFlexOffset.lg="5" style="position: relative"> 
-<canvas #myCanvas id="myCanvas" class="canvas-height">
+<canvas [ngClass]="{'hidden': !ready}" #myCanvas id="myCanvas" class="canvas-height">
   Your browser does not support the canvas element.
 </canvas>
-<div style="position: absolute" #loaderCanvas  class="margin-auto loader">
+<div [fxShow]="ready" style="position: absolute" #loaderCanvas  class="margin-auto loader">
 </div>
 </div>
 
@@ -215,4 +213,6 @@
 <div  fxLayout="row" fxLayoutAlign="start start">
         <span class="material-text" fxFlexOffset="5" style="font-size: 14px !important">art and code by <a href="https://github.com/kvanlaan" class="name" target="_blank"> Katrina Van Laan</a></span>
   </div>
+</div>
+<div [fxShow]="!ready" style="position: absolute"  class="margin-auto loader">
 </div>

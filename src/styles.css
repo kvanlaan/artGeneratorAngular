@@ -20,6 +20,9 @@ button {
  html {
    text-align: center;
  }
+ .hidden {
+   opacity: 0;
+ }
 
 .cdk-overlay-pane {
   position: fixed !important;

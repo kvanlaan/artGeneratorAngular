@@ -137,8 +137,8 @@
 </div>
 
 <div fxFlex="49" fxFlex.md="85" fxFlex.sm="85" fxFlex.xs="85">
-  <span fxFlex="5">
-        <button  [fxShow]="savedImageArr.length" fxFlex="5" fxShow.lg="true" fxShow.md="false"  fxShow.sm="false" fxShow.xs="false"  fxFlexAlign="start start" style="height: 5%; max-width: 25px !important;  min-width: 25px !important; float: left; padding-left: 5px !important; padding-right: 5px !important" mat-button (click)="filterFavorites()"><i class="material-icons">
+  <span fxFlex="7"  [fxShow]="ready">
+        <button  fxFlex fxShow.lg="true" fxShow.md="false"  fxShow.sm="false" fxShow.xs="false"  fxFlexAlign="start start" style="height: 5%; max-width: 25px !important;  min-width: 25px !important; float: left; padding-left: 5px !important; padding-right: 5px !important" mat-button (click)="filterFavorites()"><i class="material-icons">
     filter_list
     </i>
 

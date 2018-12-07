@@ -2,23 +2,18 @@
 
 
 <div fxLayout="column" fxFlexFill>
-  <div fxLayout="row" style="height: 4%" fxLayoutWrap>
+  <div fxLayout="row"  fxLayoutWrap>
 
 <div fxFlex="40" fxFlex.md="100"   fxFlex.sm="100"   fxFlex.xs="100" fxFlexOffset="5" fxLayoutAlign="start center">
   <!-- <button   mat-button> -->
   <div class="material-text">Art Generator</div>
   <div fxFlex class="material-text" style="font-size: 14px !important" fxShow="true" fxShow.md="false" fxShow.sm="false" fxShow.xs="false" *ngIf="!login" fxLayoutAlign="end center">Each piece is algorithmically unique.</div>
   
-  <div fxFlex class="material-text" style="font-size: 14px !important" fxLayoutAlign="end center" *ngIf="login"  fxLayout="row" fxShow="false" fxShow.md="true" fxShow.sm="true" fxShow.xs="true">{{email}}</div>
+  <!-- <div fxFlex class="material-text" style="font-size: 14px !important" fxLayoutAlign="end center" *ngIf="login"  fxLayout="row" fxShow="false" fxShow.md="true" fxShow.sm="true" fxShow.xs="true">{{email}}</div> -->
 
   <div fxFlex="5"></div>
-
-
  
 </div>
-
-
-
 <div fxFlex="40" fxShow="true" fxShow.md="false" fxShow.sm="false" fxShow.xs="false" fxLayoutAlign="center center">
   <button [disabled]="!renderDone" (click)="getRandomArt(true)" class="float-left inline" mat-button>
         Get New Art</button>
@@ -28,23 +23,21 @@
                 Save this art 
               </button>
               </a>
-      
-          
 </div>
-<div fxFlex="10"  fxShow="true" fxShow.md="false" fxShow.sm="false" fxShow.xs="false"  fxLayoutAlign="end center">
-
+<!-- fxShow.md="false" fxShow.sm="false" fxShow.xs="false"  -->
+<div fxFlex="10"  fxShow="true"  fxLayoutAlign="end center">
   <button fxFlex="10" (click)="openLoginModal()"  mat-button>
-<span [fxShow]="!login"> Sign In </span>
-</button>
+    <span [fxShow]="!login"> Sign In </span>
+    </button>
 <span *ngIf="login">
-<span fxFlexAlign="center">{{email}}</span>
-<button fxFlex="5" (click)="signOut()" mat-button>
+<span fxFlexAlign="center"  >{{email}}</span>
+<button fxFlex="5" (click)="signOut()" fxShow.md="false" fxShow.sm="false" fxShow.xs="false"  mat-button>
   <span> Sign Out </span>
   </button>
 </span>
 </div>
 </div>
-<div fxFlex fxFlexOffset="1" fxLayout="row" fxShow="false" fxShow.md="true" fxShow.sm="true" fxShow.xs="true" style="height: 5%" fxLayoutWrap>
+<div  fxFlexOffset="2" fxLayout="row" fxShow="false" fxShow.md="true" fxShow.sm="true" fxShow.xs="true"  fxLayoutWrap>
   <div fxFlex fxFlexOffset="5" fxLayoutAlign="start center"> Each piece is algorithmically unique.</div>
   <div fxFlex="20" fxLayoutAlign="end center">
 
@@ -55,8 +48,8 @@
       
 </div>
 </div>
-<div fxFlex fxFlexOffset="5" fxLayout="row" fxShow="false" fxShow.md="true" fxShow.sm="true" fxShow.xs="true" style="height: 5%" fxLayoutWrap>
-    <div fxFlexOffset="4" fxFlex="60" fxLayoutAlign="start center"  fxLayoutGap="5">
+<div  fxFlexOffset="0" fxLayout="row" fxShow="false" fxShow.md="true" fxShow.sm="true" fxShow.xs="true"  fxLayoutWrap>
+    <div fxFlexOffset="4" fxFlex="55" fxLayoutAlign="start center"  fxLayoutGap="5">
         <button [disabled]="!renderDone" (click)="getRandomArt(true)" class="float-left inline" mat-button>
             Get New Art</button>
             <a href="#" target="_blank" class="inline" #downloadLinkTwo (click)="download(downloadLinkTwo)" download="art.jpg">
@@ -66,27 +59,42 @@
           </button>
         </a>
       </div>
-      <div fxFlex="35" fxLayoutAlign="end center">
 
-          <button *ngIf="!login"  fxFlex="5" (click)="openLoginModal()"  mat-button>
+      <!-- <div fxFlex="5">
+        </div > -->
+      <div fxFlex="45" fxLayoutAlign="end center">
+        <button fxFlex="5" style="max-width: 20px !important;  text-align: right; width: 20px !important; padding-left: 2px !important;" mat-button (click)="filterFavorites()">
+          <i class="material-icons">
+          filter_list
+          </i>
+      
+      <i [fxShow]="showFavorites" class="material-icons">
+            favorite
+              </i>
+      <i [fxShow]="!showFavorites" class="material-icons">
+                  favorite_border
+                    </i>
+      </button>
+          <!-- <button *ngIf="!login"  fxFlex="5" (click)="openLoginModal()"  mat-button>
               <span [fxShow]="!login"> Sign In </span>
               </button>
-         
+          -->
           
             
       </div>
-      <div fxFlex="5"></div>
+      <!-- <div fxFlex="5"></div> -->
 
   </div>
-  <div fxFlexOffset="2" fxLayout="row" fxShow="false" fxShow.md="true" fxShow.sm="true" fxShow.xs="true">
-</div>
+  <!-- <div fxFlexOffset="2" fxLayout="row" fxShow="false" fxShow.md="true" fxShow.sm="true" fxShow.xs="true">
+</div> -->
 
 
+<!-- fxFlex="40" fxFlex.md="30" fxFlex.sm="30"  fxFlex.xs="30" -->
+<div #mainContainer fxLayout="row" fxFlexOffset.md="0" fxFlexOffset.sm="0"  fxFlexOffset.xs="0" fxLayout.md="column" fxLayout.sm="column" fxLayout.xs="column" style="height: 90%;">
+<div  fxFlexOffset.xl="5"  fxFlexOffset.md="5"  fxFlexOffset.lg="5"   fxFlexOffset.md="0" fxFlexOffset.sm="0" 
+   fxFlex="40" fxFlex.md="25" fxFlex.sm="20"  fxFlex.xs="20" class="canvas-height"  style="position: relative; overflow: scroll !important;">
 
-<div #mainContainer fxLayout="row" fxFlexOffset.md="2" fxFlexOffset.sm="2"  fxFlexOffset.xs="2" fxLayout.md="column" fxLayout.sm="column" fxLayout.xs="column" style="height: 92%; overflow: scroll !important">
-<div fxFlex="40" fxFlex.md="15" fxFlex.sm="15"  fxFlex.xs="15" class="canvas-height"  style="overflow: scroll !important;">
-
-<mat-grid-list fxFlex [fxShow]="!showFavorites" class="canvas-height" style="margin-left: 10%; margin-top: 0 !important; overflow: scroll !important" cols="5" rows="5" gutterSize="10px">
+<mat-grid-list [fxShow]="!showFavorites" class="canvas-height" style="margin-top: 0 !important; overflow: scroll !important" cols="5" rows="5" gutterSize="5px">
 <mat-grid-tile fxLayout="row" *ngFor="let savedImg of savedImageArr; let i = index;">
 
   <img class="on-hover-outline" [ngClass]="{
@@ -101,11 +109,21 @@
                 }">
               favorite
             </i>
+
+            <!-- <i (click)="saveToFavorites(savedImg, i)" class="material-icons  heart" fxShow.lg="false" [ngClass]="{
+              'display-none': savedImg.favorite
+            }"
+            >
+          favorite_border
+        </i> -->
 </span>
 </mat-grid-tile>
+
 </mat-grid-list>
+
+
 <!-- height: 100px; width: 100px;  -->
-<mat-grid-list  fxFlex [fxShow]="showFavorites" class="canvas-height"  style="margin-left: 5%; overflow: scroll !important" cols="5" rows="5" gutterSize="10px">
+<mat-grid-list [fxShow]="showFavorites" class="canvas-height"  style="overflow: scroll !important" cols="5" rows="5" gutterSize="5px">
 <mat-grid-tile *ngFor="let savedImg of favoritesArr; let i = index;">
 
   <img class="on-hover-outline" [ngClass]="{
@@ -122,7 +140,9 @@
             </i>
 </span>
 </mat-grid-tile>
+
 </mat-grid-list>
+
 <!--<button fxFlex="5" fxFlex.xs="20" fxShow="false" fxShow.md="false" fxShow.sm="true" fxShow.xs="true"  fxFlexAlign="start start" style="height: 5%; max-width: 25px !important;  min-width: 25px !important; padding-left: 5px !important; padding-right: 5px !important" mat-button (click)="filterFavorites()"><i class="material-icons">
   filter_list
   </i>
@@ -135,14 +155,14 @@
             </i>
 </button>-->
 </div>
-
-<div fxFlex="49" fxFlex.md="85" fxFlex.sm="85" fxFlex.xs="85">
-  <span fxFlex="7"  [fxShow]="ready">
-        <button  fxFlex fxShow.lg="true" fxShow.md="false"  fxShow.sm="false" fxShow.xs="false"  fxFlexAlign="start start" style="height: 5%; max-width: 25px !important;  min-width: 25px !important; float: left; padding-left: 5px !important; padding-right: 5px !important" mat-button (click)="filterFavorites()"><i class="material-icons">
+<!-- fxFlex.md="85" fxFlex.sm="85" fxFlex.xs="85" -->
+<div fxFlex>
+  <span fxFlex="7" style="text-align: left" fxShow.md="false"  fxShow.sm="false" fxShow.xs="false"   [fxShow]="ready">
+        <button  fxFlex fxShow.lg="true" fxShow.md="false"  fxShow.sm="false" fxShow.xs="false"  fxFlexAlign="start start" style="height: 5%; text-align: left;  max-width: 20px !important;  width: 20px !important; float: left; padding-left: 2px !important; padding-right: 2px !important" mat-button (click)="filterFavorites()"><i class="material-icons">
     filter_list
     </i>
 
-<i [fxShow]="showFavorites && savedImageArr" class="material-icons">
+<i [fxShow]="showFavorites" class="material-icons">
       favorite
         </i>
 <i [fxShow]="!showFavorites" class="material-icons">
@@ -151,11 +171,17 @@
 </button>
 </span>
 
+<div style="position: relative;" fxLayout="start start"> 
 
-<div fxFlexOffset.xl="5"  fxFlexOffset.md="5"  fxFlexOffset.lg="5" style="position: relative"> 
-<canvas [ngClass]="{'hidden': !ready}" #myCanvas id="myCanvas" class="canvas-height">
-  Your browser does not support the canvas element.
-</canvas>
+  
+  <canvas  #myCanvasTwo id="myCanvasTwo" class="canvas-height">
+    Your browser does not support the canvas element.
+  </canvas>
+
+  <canvas  fxShow="false" #myCanvas id="myCanvas" class="hidden full-height">
+    Your browser does not support the canvas element.
+  </canvas>
+
 <div [fxShow]="ready" style="position: absolute" #loaderCanvas  class="margin-auto loader">
 </div>
 </div>
@@ -171,7 +197,7 @@
         <i *ngIf="edit" class="material-icons">
           save
         </i>
-      </button>
+      </button>x
 
 
       <span *ngIf="edit">
@@ -209,8 +235,10 @@
       </span>
     </div> 
 </div> -->
+<!-- fxShow="false" fxShow.md="true" fxShow.sm="true" fxShow.xs="true"  -->
+
 </div>
-<div  fxLayout="row" fxLayoutAlign="start start">
+<div fxLayout="row" fxShow="true" fxShow.md="false" fxShow.sm="false" fxShow.xs="false" fxLayoutAlign="start start">
         <span class="material-text" fxFlexOffset="5" style="font-size: 14px !important">art and code by <a href="https://github.com/kvanlaan" class="name" target="_blank"> Katrina Van Laan</a></span>
   </div>
 </div>

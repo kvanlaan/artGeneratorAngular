@@ -40,8 +40,11 @@ export class AppComponent {
   backgroundShapeArr = ['Rectangle', 'Triangle', 'Circle', 'Line'];
   canvas;
   canvasSize = 700;
+  canvasTwo;
+  canvasSizeTwo = 700;
   colorArr = [];
   ctx;
+  ctxTwo;
   currImageIndex = 0;
   database;
   dialogRef;
@@ -49,7 +52,7 @@ export class AppComponent {
   disableUndo = true;
   displayName = '';
   edit = false;
-  email;
+  email = 'kdavnlaan@gmail.com'
   favoritesArr;
   isSafari = false;
   patternFill = false;
@@ -139,6 +142,13 @@ export class AppComponent {
     this.ctx.canvas.width = this.canvasSize;
     console.log('canvasSize', this.canvasSize);
     this.ctx.canvas.height = this.canvasSize;
+
+    this.canvasTwo = <HTMLCanvasElement>document.getElementById("myCanvasTwo");
+    this.ctxTwo = this.canvasTwo.getContext("2d");
+    this.canvasSizeTwo = this.canvasTwo.clientHeight;
+    this.ctxTwo.canvas.width = this.canvasSizeTwo;
+    console.log('canvasSizeTwo', this.canvasSizeTwo);
+    this.ctxTwo.canvas.height = this.canvasSizeTwo;
   }
 
   openLoginDialog() {
@@ -290,6 +300,7 @@ export class AppComponent {
            await this.openLoginModal();
       }
     }
+
   }
 
   newUser = false;
@@ -402,7 +413,6 @@ export class AppComponent {
       this.user ? await this.handleSignedInUser() : await this.handleSignedOutUser();
     this.ready=true;
     }.bind(this));
-
   }
   genType;
   isArabesque;
@@ -438,6 +448,9 @@ export class AppComponent {
       // if no recurse, this means this is a new piece, not just a layer, so clear and calculate recurse chance
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
       this.ctx.fillStyle = 'white';
+      console.log('canvas.width', this.canvas.width);
+
+      console.log('canvas.height', this.canvas.height);
       this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
       recurse = this.randomlyChooseTrueOrFalse();
     } else {
@@ -1020,13 +1033,32 @@ export class AppComponent {
     // }
     img.onload = function () {
       this.ctx.drawImage(img, 0, 0, this.canvasSize, this.canvasSize, 0, 0, this.canvasSize, this.canvasSize);
+      this.drawImageScaled(img, this.ctxTwo)
+      // this.ctxTwo.drawImage(img, 0, 0, img.width,    img.height, 0, 0, this.canvasSizeTwo, this.canvasSizeTwo);
       this.renderDone = true;
       this.loader.nativeElement.style.visibility = "hidden";
-      console.log('ready istrue after render');
       this.ready = true;
     }.bind(this);
-  }
 
+  }
+  drawImageScaled(img, ctx) {
+    var canvas = ctx.canvas ;
+    var hRatio = canvas.width  / img.width    ;
+    var vRatio =  canvas.height / img.height  ;
+    console.log('canvas width', canvas.width);
+
+    console.log('canvas height', canvas.height);
+
+    var ratio  = Math.min ( hRatio, vRatio );
+    console.log('ratio width', img.width*ratio);
+    console.log('ratio height', img.height*ratio);
+    // centerShift_x,centerShift_y
+    var centerShift_x = ( canvas.width - img.width*ratio ) / 2;
+    var centerShift_y = ( canvas.height - img.height*ratio ) / 2;  
+    ctx.clearRect(0,0,canvas.width, canvas.height);
+    ctx.drawImage(img, 0,0, img.width, img.height,
+                       centerShift_x,centerShift_y,img.width*ratio, img.height*ratio);  
+ }
   saveCurrentArt(isNew?: boolean, startEdit?: boolean, source?: string) {
     // const copyOfUndo = this.undoList.slice();
     // const copyOfRedo = this.redoList.slice();
@@ -1080,6 +1112,7 @@ export class AppComponent {
     // }
     this.loader.nativeElement.style.visibility = "hidden";
     this.renderDone = true;
+   this.renderImage();
   }
   toggleEdit() {
     this.edit = !this.edit;

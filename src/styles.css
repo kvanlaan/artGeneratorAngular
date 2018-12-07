@@ -21,7 +21,7 @@ button {
    text-align: center;
  }
  .hidden {
-   opacity: 0;
+   opacity: 0 !important;
  }
 
 .cdk-overlay-pane {
@@ -176,7 +176,9 @@ button.edit.mat-button {
   opacity: 0 !important;
 }
 
-
+.display-none {
+  display: none !important;
+}
 .invisible {
   visibility: hidden !important;
 }
@@ -196,6 +198,9 @@ button.edit.mat-button {
   opacity: 1 !important;
   color: red;
 }
+
+
+
 .material-icons {
   cursor: pointer;
 }
@@ -245,6 +250,7 @@ button.edit.mat-button {
 }
 .heart {
   font-size: 22.5px !important;
+  color: red;
 }
 .name:hover {
   color: red !important;
@@ -255,6 +261,10 @@ button.edit.mat-button {
   .canvas-height {
     height: 704.680851px;
   }
+  .mat-grid-list {
+    margin-left: 5%;
+  }
+  
   }
    /* Smartphones (landscape) ----------- */
   @media only screen and (min-width : 321px) {
@@ -262,12 +272,19 @@ button.edit.mat-button {
   .canvas-height {
     height: 704.680851px;
   }
+  .mat-grid-list {
+    margin-left: 5%;
+  }
+  
   }
    /* Smartphones (portrait) ----------- */
   @media only screen and (max-width : 320px) {
   /* Styles */
   .canvas-height {
     height: 704.680851px;
+  }
+  .mat-grid-list {
+    margin-left: 5%;
   }
   }
    /* iPads (portrait and landscape) ----------- */
@@ -276,6 +293,9 @@ button.edit.mat-button {
   .canvas-height {
     height: 704.680851px;
   }
+  .mat-grid-list {
+    margin-left: 5%;
+  }
   }
    /* iPads (landscape) ----------- */
   @media only screen and (min-device-width : 768px) and (max-device-width : 1024px) and (orientation : landscape) {
@@ -283,12 +303,16 @@ button.edit.mat-button {
   .canvas-height {
     height: 704.680851px;
   }
+
   }
    /* iPads (portrait) ----------- */
   @media only screen and (min-device-width : 768px) and (max-device-width : 1024px) and (orientation : portrait) {
   /* Styles */
   .canvas-height {
     height: 704.680851px;
+  }
+  .mat-grid-list {
+    margin-left: 5%;
   }
   }
   /**********
@@ -299,11 +323,17 @@ button.edit.mat-button {
   .canvas-height {
     height: 704.680851px;
   }
+  .mat-grid-list {
+    margin-left: 5%;
+  }
   }
    @media only screen and (min-device-width : 768px) and (max-device-width : 1024px) and (orientation : portrait) and (-webkit-min-device-pixel-ratio : 2) {
   /* Styles */
   .canvas-height {
     height: 704.680851px;
+  }
+  .mat-grid-list {
+    margin-left: 5%;
   }
   }
   /* Desktops and laptops ----------- */
@@ -313,6 +343,18 @@ button.edit.mat-button {
     height: 704.680851px;
   }
 
+  }
+
+    /* Desktops and laptops ----------- */
+    @media only screen  and (min-width : 1224px) and (max-width :1700px) {
+      /* Styles */
+      .canvas-height {
+        height: 804.680851px;
+      }
+    
+      }
+  .full-height {
+    height: 900.425532px;
   }
    /* Large screens ----------- */
   @media only screen  and (min-width : 1824px) {
@@ -330,6 +372,9 @@ button.edit.mat-button {
   }
   .cdk-overlay-pane {
     left:5% !important;
+  }
+  .mat-grid-list {
+    margin-left: 5%;
   }
   }
    @media only screen and (min-device-width : 320px) and (max-device-width : 480px) and (orientation : portrait) and (-webkit-min-device-pixel-ratio : 2) {
@@ -350,6 +395,9 @@ button.edit.mat-button {
   .cdk-overlay-pane {
     left:5% !important;
   }
+  .mat-grid-list {
+    margin-left: 5%;
+  }
   }
    @media only screen and (min-device-width: 320px) and (max-device-height: 568px) and (orientation : portrait) and (-webkit-device-pixel-ratio: 2){
   /* Styles */
@@ -358,6 +406,9 @@ button.edit.mat-button {
   }
   .cdk-overlay-pane {
     left:5% !important;
+  }
+  .mat-grid-list {
+    margin-left: 5%;
   }
   }
    /* iPhone 6 ----------- */
@@ -368,6 +419,9 @@ button.edit.mat-button {
   }
   .cdk-overlay-pane {
     left:5% !important;
+  }
+  .mat-grid-list {
+    margin-left: 5%;
   }
   }
    @media only screen and (min-device-width: 375px) and (max-device-height: 667px) and (orientation : portrait) and (-webkit-device-pixel-ratio: 2){
@@ -388,6 +442,9 @@ button.edit.mat-button {
   .cdk-overlay-pane {
     left:5% !important;
   }
+  .mat-grid-list {
+    margin-left: 5%;
+  }
   }
    @media only screen and (min-device-width: 414px) and (max-device-height: 736px) and (orientation : portrait) and (-webkit-device-pixel-ratio: 2){
   /* Styles */
@@ -396,6 +453,9 @@ button.edit.mat-button {
   }
   .cdk-overlay-pane {
     left:5% !important;
+  }
+  .mat-grid-list {
+    margin-left: 5%;
   }
   }
    /* Samsung Galaxy S3 ----------- */
@@ -407,6 +467,9 @@ button.edit.mat-button {
   .cdk-overlay-pane {
     left:5% !important;
   }
+  .mat-grid-list {
+    margin-left: 5%;
+  }
   }
    @media only screen and (min-device-width: 320px) and (max-device-height: 640px) and (orientation : portrait) and (-webkit-device-pixel-ratio: 2){
   /* Styles */
@@ -415,6 +478,9 @@ button.edit.mat-button {
   }
   .cdk-overlay-pane {
     left:5% !important;
+  }
+  .mat-grid-list {
+    margin-left: 5%;
   }
   }
    /* Samsung Galaxy S4 ----------- */
@@ -425,6 +491,9 @@ button.edit.mat-button {
   }
   .cdk-overlay-pane {
     left:5% !important;
+  }
+  .mat-grid-list {
+    margin-left: 5%;
   }
   }
    @media only screen and (min-device-width: 320px) and (max-device-height: 640px) and (orientation : portrait) and (-webkit-device-pixel-ratio: 3){
@@ -445,6 +514,9 @@ button.edit.mat-button {
   .cdk-overlay-pane {
     left:5% !important;
   }
+  .mat-grid-list {
+    margin-left: 5%;
+  }
   }
    @media only screen and (min-device-width: 360px) and (max-device-height: 640px) and (orientation : portrait) and (-webkit-device-pixel-ratio: 3){
   /* Styles */
@@ -454,5 +526,14 @@ button.edit.mat-button {
   .cdk-overlay-pane {
     left:5% !important;
   }
+  .mat-grid-list {
+    margin-left: 5%;
+  }
 }
+  @media only screen and (min-device-width: 1336px) {
+    /* Styles */
 
+    .mat-grid-list {
+      margin-left: 0%;
+    }
+}

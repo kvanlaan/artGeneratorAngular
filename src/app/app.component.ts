@@ -1,11 +1,9 @@
-import { Component, HostListener, Input, Inject, Output, EventEmitter, ViewChild } from '@angular/core';
+import { Component, HostListener, ViewChild } from '@angular/core';
 import { Location } from '@angular/common';
 import * as firebase from 'firebase';
 import * as firebaseui from 'firebaseui';
-import { MatDialog, MAT_DIALOG_DATA } from '@angular/material';
-import { MatGridListModule } from '@angular/material/grid-list';
+import { MatDialog } from '@angular/material';
 import { LocationStrategy, PathLocationStrategy } from '../../node_modules/@angular/common';
-import { ifStmt } from '../../node_modules/@angular/compiler/src/output/output_ast';
 
 @Component({
   templateUrl: './login.component.html'
@@ -20,14 +18,7 @@ export class DeleteDialogComponent {
   constructor() {
   }
 }
-@Component({
-  templateUrl: './storage-full.component.html'
-})
-export class StorageFullDialogComponent {
-  constructor() {
-  }
-}
-var ColorScheme;
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -48,16 +39,12 @@ export class AppComponent {
   currImageIndex = 0;
   database;
   dialogRef;
-  disableRedo = true;
-  disableUndo = true;
   displayName = '';
-  edit = false;
   email = 'kdavnlaan@gmail.com'
   favoritesArr;
   isSafari = false;
   patternFill = false;
   layerCounter = 0;
-  localStorage: any;
   login = false;
   maxArea = (700 * 700);
   objNum = 23;
@@ -68,15 +55,12 @@ export class AppComponent {
   randomStrokeOpacity;
   randomShapeOpacity;
   ready = false;
-  redoList = [];
   renderDone = true;
   shapeArr = ['Rectangle', 'Triangle', 'Circle', 'Line'];
   noCircleShapeArr = ['Rectangle', 'Triangle', 'Line'];
   showFavorites = false;
   savedImageArr = [];
-  storageRef;
   smallShapeArr = ['Rectangle', 'Circle'];
-  undoList = [];
   user;
   ui;
   patternOffset;
@@ -87,23 +71,23 @@ export class AppComponent {
   patternMexico;
   genTypeArr = ["noPattern", "transPattern", "random", "all"];
   isTrunks;
-  // sources = [];
-  // maxArea = (700 * 700);
-  // redoListShape = [];
-  // undoListShape = [];
-  // undoListShapeTemp = [];
-  // redoListShapeTemp = [];
-  // colorSchemes = ['Monochromatic', 'Complementary', 'Random'];
-  // colorSchemes = ['Monchromatic', 'Complementary', 'Analogous', 'Triad', 'Tetrad',
-  // 'Split Complementary'];
-  // shapeArr = ['Rectangle', 'Triangle', 'Circle', 'Trapezoid', 'Line'];
-  // shapeArr = ['Trapezoid'];
+  genType;
+  isArabesque;
+  isMexico;
+  singleLayer;
+
+  // removed undo remove features
+  undoList = [];
+  redoList = [];
+  disableRedo = true;
+  disableUndo = true;
+  edit = false;
+
   @ViewChild('mainContainer') mainContainer;
   @ViewChild('loaderCanvas') loader;
   location;
   constructor(public dialog: MatDialog, location: Location) {
     this.location = location;
-    this.localStorage = localStorage;
   }
 
   @HostListener('window:keydown', ['$event'])
@@ -174,22 +158,9 @@ export class AppComponent {
       });
     }
   }
-  openStorageFullDialog() {
-    if (!document.getElementById('storage')) {
 
-      this.dialogRef = this.dialog.open(StorageFullDialogComponent, {
-        width: '300px'
-      });
-      this.dialogRef.afterClosed().subscribe(result => {
-        if (result) {
-          this.handleSignedOutUser();
-        }
-      });
-    }
-  }
   signOut() {
-          this.ready = false;
-
+    this.ready = false;
     firebase.auth().signOut().then(function () {
       console.log('signout about to do ready = false');
       this.ready = false;
@@ -218,13 +189,13 @@ export class AppComponent {
     location.href = '#user/' + this.email + '/' + this.guid;
 
     if (this.newUser) {
-      if(this.savedImageArr.length) {
-        for(let img of this.savedImageArr)
-        this.saveImageFirebase(img);
+      if (this.savedImageArr.length) {
+        for (let img of this.savedImageArr)
+          this.saveImageFirebase(img);
       }
     } else {
       this.savedImageArr = [];
-  
+
 
       if ((!this.newUser) || (this.newUser && this.savedImageArr.length === 0)) {
         await this.database.collection('users/' + trimmedName + '/images').get().then((querySnapshot) => {
@@ -241,7 +212,7 @@ export class AppComponent {
         });
       }
     }
-    this.ready =true;
+    this.ready = true;
   }
   guid;
   showSignOut = false;
@@ -267,7 +238,7 @@ export class AppComponent {
 
     if (!document.getElementById('firebaseui-container')) {
       this.login = false;
-  
+
       if (!this.user) {
         // create a rand guid
         if (location.href.indexOf('loggedOut') < 0) {
@@ -297,7 +268,7 @@ export class AppComponent {
           // put in href
           // query guid on reload
         }
-           await this.openLoginModal();
+        await this.openLoginModal();
       }
     }
 
@@ -318,9 +289,9 @@ export class AppComponent {
             this.newUser = true;
           } else {
             this.newUser = false;
-      //           this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-      // this.ctx.fillStyle = 'white';
-      // this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+            //           this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            // this.ctx.fillStyle = 'white';
+            // this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
           }
           if (authResult.user) {
             this.user = authResult.user;
@@ -333,7 +304,7 @@ export class AppComponent {
           // }
           // Do not redirect.
           this.dialogRef.close(LoginDialogComponent);
-        return false;
+          return false;
         }.bind(this),
         uiShown: function () {
           // The widget is rendered.
@@ -411,14 +382,12 @@ export class AppComponent {
       this.user = user;
       // }
       this.user ? await this.handleSignedInUser() : await this.handleSignedOutUser();
-    this.ready=true;
+      this.ready = true;
     }.bind(this));
   }
-  genType;
-  isArabesque;
-  isMexico;
-  singleLayer;
+
   getRandomArt(clear, recurseStep?) {
+    this.showFavorites = false;
     // hiding stuff since a new image is being drawn
     this.renderDone = false;
     this.loader.nativeElement.style.visibility = "visible";
@@ -1012,13 +981,17 @@ export class AppComponent {
 
 
   renderImage(index?: number, startEdit?: boolean) {
+    debugger;
     if (this.currImageIndex !== index) {
       this.edit = false;
     }
     if (startEdit !== undefined) {
       this.edit = startEdit;
     }
+
+    if(index !== undefined) {
     this.currImageIndex = index;
+    }
 
     var img = new Image();
 
@@ -1038,27 +1011,28 @@ export class AppComponent {
       this.renderDone = true;
       this.loader.nativeElement.style.visibility = "hidden";
       this.ready = true;
-    }.bind(this);
+    }.bind(this);   
+
 
   }
   drawImageScaled(img, ctx) {
-    var canvas = ctx.canvas ;
-    var hRatio = canvas.width  / img.width    ;
-    var vRatio =  canvas.height / img.height  ;
+    var canvas = ctx.canvas;
+    var hRatio = canvas.width / img.width;
+    var vRatio = canvas.height / img.height;
     console.log('canvas width', canvas.width);
 
     console.log('canvas height', canvas.height);
 
-    var ratio  = Math.min ( hRatio, vRatio );
-    console.log('ratio width', img.width*ratio);
-    console.log('ratio height', img.height*ratio);
+    var ratio = Math.min(hRatio, vRatio);
+    console.log('ratio width', img.width * ratio);
+    console.log('ratio height', img.height * ratio);
     // centerShift_x,centerShift_y
-    var centerShift_x = ( canvas.width - img.width*ratio ) / 2;
-    var centerShift_y = ( canvas.height - img.height*ratio ) / 2;  
-    ctx.clearRect(0,0,canvas.width, canvas.height);
-    ctx.drawImage(img, 0,0, img.width, img.height,
-                       centerShift_x,centerShift_y,img.width*ratio, img.height*ratio);  
- }
+    var centerShift_x = (canvas.width - img.width * ratio) / 2;
+    var centerShift_y = (canvas.height - img.height * ratio) / 2;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(img, 0, 0, img.width, img.height,
+      centerShift_x, centerShift_y, img.width * ratio, img.height * ratio);
+  }
   saveCurrentArt(isNew?: boolean, startEdit?: boolean, source?: string) {
     // const copyOfUndo = this.undoList.slice();
     // const copyOfRedo = this.redoList.slice();
@@ -1112,7 +1086,7 @@ export class AppComponent {
     // }
     this.loader.nativeElement.style.visibility = "hidden";
     this.renderDone = true;
-   this.renderImage();
+    this.renderImage();
   }
   toggleEdit() {
     this.edit = !this.edit;
@@ -1261,32 +1235,6 @@ export class AppComponent {
     });
   }
 
-  // local storage stuff
-  getFromLocal(key: string): any {
-    let item = this.localStorage.getItem(key);
-    if (item && item !== "undefined") {
-      return JSON.parse(this.localStorage.getItem(key));
-    }
-
-    return;
-  }
-  saveToLocal(key: string, value: any) {
-    try {
-      // this.localStorage.setItem(key, null);
-      this.localStorage.setItem(key, JSON.stringify(value));
-      return true;
-    } catch (e) {
-      if (e.code === 22) {
-        console.log('storage full');
-      }
-      // this.localStorage.setItem(key, null);
-      return false;
-    }
-
-  }
-  deleteFromLocal(key: string) {
-    this.localStorage.removeItem(key);
-  }
 
   download(element) {
     element.href = this.canvas.toDataURL();
@@ -1383,11 +1331,72 @@ export class AppComponent {
     }
   }
 
-
   // end utility
+  // old local storage stuff *could come in handy*
+  // @Component({
+  //   templateUrl: './storage-full.component.html'
+  // })
+  // export class StorageFullDialogComponent {
+  //   constructor() {
+  //   }
+  // }
+  // getFromLocal(key: string): any {
+  //   let item = this.localStorage.getItem(key);
+  //   if (item && item !== "undefined") {
+  //     return JSON.parse(this.localStorage.getItem(key));
+  //   }
+
+  //   return;
+  // }
+  // saveToLocal(key: string, value: any) {
+  //   try {
+  //     // this.localStorage.setItem(key, null);
+  //     this.localStorage.setItem(key, JSON.stringify(value));
+  //     return true;
+  //   } catch (e) {
+  //     if (e.code === 22) {
+  //       console.log('storage full');
+  //     }
+  //     // this.localStorage.setItem(key, null);
+  //     return false;
+  //   }
+
+  // }
+  // deleteFromLocal(key: string) {
+  //   this.localStorage.removeItem(key);
+  // }
+
+  // openStorageFullDialog() {
+  //   if (!document.getElementById('storage')) {
+
+  //     this.dialogRef = this.dialog.open(StorageFullDialogComponent, {
+  //       width: '300px'
+  //     });
+  //     this.dialogRef.afterClosed().subscribe(result => {
+  //       if (result) {
+  //         this.handleSignedOutUser();
+  //       }
+  //     });
+  //   }
+  // }
+  
+  // old fields
+  // sources = [];
+  // maxArea = (700 * 700);
+  // redoListShape = [];
+  // undoListShape = [];
+  // undoListShapeTemp = [];
+  // redoListShapeTemp = [];
+  // colorSchemes = ['Monochromatic', 'Complementary', 'Random'];
+  // colorSchemes = ['Monchromatic', 'Complementary', 'Analogous', 'Triad', 'Tetrad',
+  // 'Split Complementary'];
+  // shapeArr = ['Rectangle', 'Triangle', 'Circle', 'Trapezoid', 'Line'];
+  // shapeArr = ['Trapezoid'];
+  // end old fields
+
+
 
   // not in use - but working code
-
   // RGB2HSV(rgb) {
   // var hsv;
   // hsv = new Object();
@@ -1679,5 +1688,23 @@ export class AppComponent {
   // password: submittedPassword
   // }, handler);
   // }
+  // old htmal
+//   <div #storage style="margin: auto; z-index: 100">
+
+//   <button class="material-text float-right hover" style="min-width: 0px !important; margin-right: -20px !important; margin-top: -20px !important; opacity: .5"
+//     mat-icon-button [mat-dialog-close]="false">X</button>
+//   <span>
+//     <h2 class="material-text" mat-dialog-title>  Your library is full!
+
+//     </h2>
+//     <mat-dialog-content>
+//  Sign In To Save More Images
+//  <button [mat-dialog-close]="true" mat-button>
+//    Sign In 
+// </button>
+
+//     </mat-dialog-content>
+//   </span>
+// </div>
 }
 

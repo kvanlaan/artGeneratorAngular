@@ -67,10 +67,17 @@ export class AppComponent {
   pattern;
   patternArabesque;
   patternTrunks;
+  patternFrieze;
+  patternBuddhist;
+  patternFriezeTwo;
+  patternBedroom;
   patternKosovo;
   patternMexico;
-  genTypeArr = ["noPattern", "transPattern", "random", "all"];
+  genTypeArr = ["noPattern", "transPattern", "random"];
   isTrunks;
+  isFrieze;
+  isBuddhist;
+  isFriezeTwo;
   genType;
   isArabesque;
   isMexico;
@@ -82,6 +89,7 @@ export class AppComponent {
   disableRedo = true;
   disableUndo = true;
   edit = false;
+  
 
   @ViewChild('mainContainer') mainContainer;
   @ViewChild('loaderCanvas') loader;
@@ -326,14 +334,42 @@ export class AppComponent {
 
 
   ngOnInit() {
-    console.log('init');
     this.ready = false;
     this.renderDone = false;
+
+    // creating the pattern images for image patterns
     this.patternArabesque = new Image();
     this.patternTrunks = new Image();
     this.patternKosovo = new Image();
     this.patternMexico = new Image();
+    this.patternBuddhist = new Image();
+    this.patternBedroom = new Image();
 
+    this.patternFrieze = new Image();
+    this.patternFriezeTwo = new Image();
+
+    this.patternBedroom.src = 'assets/haystacks.jpg';
+    this.patternBedroom.onload = function () {
+      const pattern = this.ctx.createPattern(this.patternBedroom, 'repeat');
+      this.ctx.fillStyle = pattern;
+    }.bind(this); 
+
+    this.patternBuddhist.src = 'assets/buddhist.png';
+    this.patternBuddhist.onload = function () {
+      const pattern = this.ctx.createPattern(this.patternBuddhist, 'repeat');
+      this.ctx.fillStyle = pattern;
+    }.bind(this); 
+
+    this.patternFrieze.src = 'assets/van.jpg';
+    this.patternFrieze.onload = function () {
+      const pattern = this.ctx.createPattern(this.patternFrieze, 'repeat');
+      this.ctx.fillStyle = pattern;
+    }.bind(this);
+    this.patternFriezeTwo.src = 'assets/frieze.jpg';
+    this.patternFriezeTwo.onload = function () {
+      const pattern = this.ctx.createPattern(this.patternFriezeTwo, 'repeat');
+      this.ctx.fillStyle = pattern;
+    }.bind(this);
     this.patternArabesque.src = 'assets/arabesque_pattern.jpg';
     this.patternArabesque.onload = function () {
       const pattern = this.ctx.createPattern(this.patternArabesque, 'repeat');
@@ -345,6 +381,7 @@ export class AppComponent {
       const pattern = this.ctx.createPattern(this.patternTrunks, 'repeat');
       this.ctx.fillStyle = pattern;
     }.bind(this);
+
     this.patternKosovo.src = 'assets/kosovo_map.jpg';
     this.patternKosovo.onload = function () {
       const pattern = this.ctx.createPattern(this.patternKosovo, 'repeat');
@@ -359,6 +396,8 @@ export class AppComponent {
     // this.pattern.src = 'assets/arabesque_pattern.jpg';
 
     this.isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
+    // setting up firebase
     var config = {
       apiKey: "AIzaSyD98GbUHORmW3-C9nxvqboQLapTXxnSMM0",
       authDomain: "artgenerator-8008a.firebaseapp.com",
@@ -378,15 +417,15 @@ export class AppComponent {
     this.calculateCanvasSize();
 
     firebase.auth().onAuthStateChanged(async function (this, user) {
-      // if (user) {
       this.user = user;
-      // }
       this.user ? await this.handleSignedInUser() : await this.handleSignedOutUser();
       this.ready = true;
     }.bind(this));
   }
-
+  isBedroom = false;
+  
   getRandomArt(clear, recurseStep?) {
+    // hide favorites because we're about to switch to savedimagearr
     this.showFavorites = false;
     // hiding stuff since a new image is being drawn
     this.renderDone = false;
@@ -402,12 +441,14 @@ export class AppComponent {
     this.objNum = Math.floor(Math.random() * 23) + 10;
     this.patternFill = this.randomlyChooseTrueOrFalse();
 
-    // if(this.genType === 'transPattern' && recurseStep === undefined) {
-    // recurseStep = 3;
-    // }
     this.isTrunks = false;
     this.isArabesque = false;
     this.isMexico = false;
+    this.isFrieze = false;
+    this.isBedroom = false;
+
+    this.isFriezeTwo = false;
+    this.isBuddhist = false;
     if (recurseStep === undefined) {
 
       this.genType = this.genTypeArr[Math.floor(Math.random() * this.genTypeArr.length)];
@@ -417,9 +458,6 @@ export class AppComponent {
       // if no recurse, this means this is a new piece, not just a layer, so clear and calculate recurse chance
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
       this.ctx.fillStyle = 'white';
-      console.log('canvas.width', this.canvas.width);
-
-      console.log('canvas.height', this.canvas.height);
       this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
       recurse = this.randomlyChooseTrueOrFalse();
     } else {
@@ -428,11 +466,65 @@ export class AppComponent {
     }
 
     if (this.genType === 'noPattern' || (this.genType === 'transPattern' && this.singleLayer)) {
-      this.isTrunks = this.randomlyChooseTrueOrFalse();
+      // this.isTrunks = this.randomlyChooseTrueOrFalse();
+      this.isTrunks = this.randomlyChooseTrueOrFalseThird();
       if (!this.isTrunks) {
-        this.isArabesque = true;
+        if (this.randomlyChooseTrueOrFalseThird) {
+          this.isArabesque = false;
+          this.isFrieze = true;
+          this.isFriezeTwo = false;
+          this.isMexico = false;
+          if (this.randomlyChooseTrueOrFalseThird) {
+            this.isFriezeTwo = true;
+            this.isFrieze = false;
+          }
+
+        } else {
+          this.isFrieze = false;
+          this.isFriezeTwo = false;
+          this.isArabesque = true;
+          this.isMexico = false;
+          if (this.randomlyChooseTrueOrFalseThird) {
+            this.isFriezeTwo = true;
+            this.isArabesque = false;
+          }
+        }
       } else {
         this.isArabesque = false;
+        this.isFrieze = false;
+        this.isFriezeTwo = false;
+        this.isMexico = false;
+      }
+      this.isArabesque = false;
+      this.isFrieze = false;
+      this.isFriezeTwo = false;
+      this.isMexico = false;
+      this.isTrunks = false;
+      this.isBuddhist = false;
+      const solidSwitch = Math.floor(Math.random() * 7) + 1;
+      if (solidSwitch === 1) {
+        this.isArabesque = true;
+      } else if (solidSwitch === 2) {
+        this.isArabesque = true;
+      } else if (solidSwitch === 3) {
+        this.isTrunks = false;
+      } else if (solidSwitch === 4) {
+        this.isFrieze = true;
+      }  else if (solidSwitch === 5) {
+        this.isFrieze = true;
+      }  else if (solidSwitch === 6) {
+        this.isFriezeTwo = true;
+      }  
+      //  else if (solidSwitch === 7) {
+      //   this.isBedroom = true;   
+      // }
+      // else if (solidSwitch === 8) {
+      
+      //   this.isBuddhist = true;
+      // } 
+      
+      else  {
+        this.isMexico = true;
       }
     }
 
@@ -442,7 +534,8 @@ export class AppComponent {
       this.singleLayer = true;
     }
     if (recurse && recurseStep === undefined) {
-      recurseStep = Math.floor(Math.random() * 10) + 4;
+      // recurseStep = Math.floor(Math.random() * 10) + 4;
+      recurseStep = Math.floor(Math.random() * 9) + 4;
       var img = new Image();
       img.src = this.canvas.toDataURL();
       img.onload = function () {
@@ -465,7 +558,7 @@ export class AppComponent {
     if (offsetRand) {
       this.patternOffset = Math.floor(Math.random() * 100) - 100;
     }
-    console.log('PATTERNoff', this.patternOffset);
+
     // first layer of small objects;
     this.resetForNewLayer();
     this.getFirstSmallLayer();
@@ -660,6 +753,8 @@ export class AppComponent {
         this.isTrunks = this.randomlyChooseTrueOrFalse();
         if (this.isTrunks) {
           this.isArabesque = false;
+          this.isFrieze = false;
+          this.isFriezeTwo = false;
           this.patternFill = true;
           this.isMexico = this.randomlyChooseTrueOrFalse();
           if (this.isMexico) {
@@ -667,7 +762,6 @@ export class AppComponent {
           }
         } else {
           this.patternFill = false;
-
         }
 
       }
@@ -759,21 +853,26 @@ export class AppComponent {
     var width = Math.random() * this.canvasSize;
     let currObjArea = height * width;
 
-    this.patternSwitch = Math.floor(Math.random() * 7) + 1;
+    this.patternSwitch = Math.floor(Math.random() * 8) + 1;
     rand = this.randomlyChooseOneOrTwo();
     if (this.genType === "noPattern" && main) {
       this.patternFill = true;
     }
     if (this.patternFill) {
       if (this.patternSwitch === 1) {
-        if (rand === 1) {
-          this.ctx.fillStyle = this.ctx.createPattern(this.patternArabesque, 'repeat');
-        } else if (rand === 2) {
-          this.ctx.fillStyle = this.ctx.createPattern(this.patternTrunks, 'repeat');
-          isOffset = true;
-          offset_x = this.patternOffset;
-          offset_y = this.patternOffset;
-        }
+        //   if (rand === 1) {
+        //     this.ctx.fillStyle = this.ctx.createPattern(this.patternArabesque, 'repeat');
+        //   } else if (rand === 2) {
+        //     this.ctx.fillStyle = this.ctx.createPattern(this.patternTrunks, 'repeat');
+        //     isOffset = true;
+        //     offset_x = this.patternOffset;
+        //     offset_y = this.patternOffset;
+        //   }
+        this.ctx.fillStyle = this.ctx.createPattern(this.patternFrieze, 'repeat');
+        isOffset = true;
+
+        offset_x = this.patternOffset;
+        offset_y = this.patternOffset;
       } else if (this.patternSwitch === 2) {
         if (rand === 1) {
           this.ctx.fillStyle = this.ctx.createPattern(this.patternKosovo, 'repeat');
@@ -801,15 +900,37 @@ export class AppComponent {
         }
       } else if (this.patternSwitch === 5) {
         this.ctx.fillStyle = this.ctx.createPattern(this.patternKosovo, 'repeat');
-
       } else if (this.patternSwitch === 6) {
         this.ctx.fillStyle = this.ctx.createPattern(this.patternArabesque, 'repeat');
+      } else if (this.patternSwitch === 7) {
+        this.ctx.fillStyle = this.ctx.createPattern(this.patternFriezeTwo, 'repeat');
+        isOffset = true;
+
+        offset_x = this.patternOffset;
+        offset_y = this.patternOffset;
       } else {
         this.ctx.fillStyle = this.ctx.createPattern(this.patternMexico, 'no-repeat');
+      }
+      if (this.isFrieze && main) {
+        offset_x = this.patternOffset;
+        offset_y = this.patternOffset;
+        isOffset = true;
+        this.ctx.fillStyle = this.ctx.createPattern(this.patternFrieze, 'repeat');
+        console.log('created pattern frieze');
+      }
+      if (this.isFriezeTwo && main) {
+        offset_x = this.patternOffset;
+        offset_y = this.patternOffset;
+        isOffset = true;
+        this.ctx.fillStyle = this.ctx.createPattern(this.patternFriezeTwo, 'repeat');
+        console.log('created pattern frieze');
+
+
       }
       if (this.isTrunks && main) {
         // if(rand === 1) {
         this.ctx.fillStyle = this.ctx.createPattern(this.patternTrunks, 'repeat');
+
         isOffset = true;
 
         offset_x = this.patternOffset;
@@ -817,6 +938,8 @@ export class AppComponent {
         // } else {
         // this.ctx.fillStyle = this.ctx.createPattern(this.patternArabesque, 'repeat');
         // }
+        console.log('created pattern trunks');
+
       }
       if (this.isArabesque && main) {
         console.log('seetting to this.isarabesque')
@@ -825,10 +948,10 @@ export class AppComponent {
         offset_y = this.patternOffset;
         isOffset = false;
         this.ctx.fillStyle = this.ctx.createPattern(this.patternArabesque, 'repeat');
-        // } else {
-        // this.ctx.fillStyle = this.ctx.createPattern(this.patternArabesque, 'repeat');
-        // }
+        console.log('created pattern arabesque');
       }
+
+
       if (this.isMexico && main) {
         console.log('seetting to this.isarabesque')
         // if(rand === 1) {
@@ -836,25 +959,33 @@ export class AppComponent {
         offset_y = 0;
         isOffset = false;
         this.ctx.fillStyle = this.ctx.createPattern(this.patternMexico, 'no-repeat');
-        // } else {
-        // this.ctx.fillStyle = this.ctx.createPattern(this.patternArabesque, 'repeat');
-        // }
+        console.log('created pattern mexico');
       }
-      // offset_x = (Math.random() * (this.canvasSize - xPos)) - xPos;
-      // offset_y= (Math.random() *(this.canvasSize - yPos)) - yPos;
 
-      // rand = this.randomlyChooseOneOrTwo();
-      // if(this.pattern.src === 'assets/trunks.png') {
-      // var rand2 = this.randomlyChooseOneOrTwo();
+      // if (this.isBuddhist && main) {
+      //   console.log('seetting to this.isarabesque')
+      //   // if(rand === 1) {
+      //   offset_x = 0;
+      //   offset_y = 0;
+      //   isOffset = false;
+      //   this.ctx.fillStyle = this.ctx.createPattern(this.patternBuddhist, 'repeat');
+      //   console.log('created pattern mexico');
+      // }
 
-      // if(rand2 === 1) {
-      // offset_x = (Math.random() * (this.canvasSize - xPos/2)) - xPos/2;
-      // offset_y= (Math.random() *(this.canvasSize - yPos/2)) - yPos/2;
-      // }
-      // }
+      if (this.isBedroom && main) {
+        console.log('seetting to this.isarabesque')
+        // if(rand === 1) {
+        offset_x = 0;
+        offset_y = 0;
+        isOffset = false;
+         this.ctx.fillStyle = this.ctx.createPattern(this.patternBedroom, 'repeat');
+        console.log('created pattern mexico');
+      }
+
       if (isOffset) {
         this.ctx.translate(offset_x, offset_y);
       }
+
     }
     rand = Math.floor(Math.random() * 100) + 1;
 
@@ -981,7 +1112,6 @@ export class AppComponent {
 
 
   renderImage(index?: number, startEdit?: boolean) {
-    debugger;
     if (this.currImageIndex !== index) {
       this.edit = false;
     }
@@ -989,8 +1119,8 @@ export class AppComponent {
       this.edit = startEdit;
     }
 
-    if(index !== undefined) {
-    this.currImageIndex = index;
+    if (index !== undefined) {
+      this.currImageIndex = index;
     }
 
     var img = new Image();
@@ -1011,7 +1141,7 @@ export class AppComponent {
       this.renderDone = true;
       this.loader.nativeElement.style.visibility = "hidden";
       this.ready = true;
-    }.bind(this);   
+    }.bind(this);
 
 
   }
@@ -1331,6 +1461,14 @@ export class AppComponent {
     }
   }
 
+  randomlyChooseTrueOrFalseThird() {
+    const num = Math.random() + 3;
+    if (num < 1.5) {
+      return true;
+    } else {
+      return false;
+    }
+  }
   // end utility
   // old local storage stuff *could come in handy*
   // @Component({
@@ -1379,7 +1517,7 @@ export class AppComponent {
   //     });
   //   }
   // }
-  
+
   // old fields
   // sources = [];
   // maxArea = (700 * 700);
@@ -1689,22 +1827,22 @@ export class AppComponent {
   // }, handler);
   // }
   // old htmal
-//   <div #storage style="margin: auto; z-index: 100">
+  //   <div #storage style="margin: auto; z-index: 100">
 
-//   <button class="material-text float-right hover" style="min-width: 0px !important; margin-right: -20px !important; margin-top: -20px !important; opacity: .5"
-//     mat-icon-button [mat-dialog-close]="false">X</button>
-//   <span>
-//     <h2 class="material-text" mat-dialog-title>  Your library is full!
+  //   <button class="material-text float-right hover" style="min-width: 0px !important; margin-right: -20px !important; margin-top: -20px !important; opacity: .5"
+  //     mat-icon-button [mat-dialog-close]="false">X</button>
+  //   <span>
+  //     <h2 class="material-text" mat-dialog-title>  Your library is full!
 
-//     </h2>
-//     <mat-dialog-content>
-//  Sign In To Save More Images
-//  <button [mat-dialog-close]="true" mat-button>
-//    Sign In 
-// </button>
+  //     </h2>
+  //     <mat-dialog-content>
+  //  Sign In To Save More Images
+  //  <button [mat-dialog-close]="true" mat-button>
+  //    Sign In 
+  // </button>
 
-//     </mat-dialog-content>
-//   </span>
-// </div>
+  //     </mat-dialog-content>
+  //   </span>
+  // </div>
 }
 

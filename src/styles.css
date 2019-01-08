@@ -4,6 +4,10 @@ body {
   text-align: center;
   /* background: rgba(255, 197, 143, .2); */
   /* background-color: #ffa339; */
+  color: white !important;
+    /* background-color: black;
+
+    background-color: darkslategray; */
   /* background: rgba(255, 197, 143);
     opacity: .8; */
 }
@@ -43,6 +47,8 @@ button {
 
 .material-text {
 color: rgb(0, 0, 0);
+/* color: white; */
+
 font-family: system-ui;
 font-weight: 400;
 font-size: 18px !important;
@@ -342,6 +348,9 @@ button.edit.mat-button {
   .full-height {
     height: 900.425532px;
   }
+  /* input[type="button" i], input[type="submit" i], input[type="reset" i], input[type="file" i]::-webkit-file-upload-button, button {
+    color: white !important;
+  } */
    /* Large screens ----------- */
   @media only screen  and (min-width : 1824px) {
   /* Styles */

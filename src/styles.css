@@ -266,7 +266,31 @@ button.edit.mat-button {
    margin-top: 0 !important; 
    overflow: scroll !important;
 }
+.tile {
+  height: 25px;
+  width:  25px;
+  padding: 5px;
+  border: 1px  rgb(0, 0, 0) solid;
+}
+.arabesque {
+  background-image: url('assets/arabesque_pattern.jpg');
+}
 
+.van {
+  background-image: url('assets/van_tile.jpg');
+}
+.frieze {
+   background-image: url('assets/frieze_tile.jpg');
+}
+.trunks {
+  background-image: url('assets/trunks_tile.png');
+}
+.mexico {
+   background-image: url('assets/mexico_flag_tile.jpg');
+}
+.kosovo  {
+   background-image: url('assets/kosovo_map_tile.jpg');
+}
 /* Smartphones (portrait and landscape) ----------- */
 @media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
   /* Styles */

@@ -37,6 +37,15 @@ export class AppComponent {
   ctx;
   ctxTwo;
   currImageIndex = 0;
+  customImages =
+    [{ 'name': 'uploadCustom1', 'crossOrigin': "Anonymous", 'src': 'assets/arabesque_pattern.jpg', 'ready': true, 'fileTooBig': false },
+    { 'name': 'uploadCustom2', 'crossOrigin': "Anonymous", 'src': 'assets/kosovo_map.jpg', 'ready': true, 'fileTooBig': false },
+    { 'name': 'uploadCustom3', 'crossOrigin': "Anonymous", 'src': 'assets/frieze.jpg', 'ready': true, 'fileTooBig': false },
+    { 'name': 'uploadCustom4', 'crossOrigin': "Anonymous", 'src': 'assets/mexico_flag.jpg', 'ready': true, 'fileTooBig': false },
+    { 'name': 'uploadCustom5', 'crossOrigin': "Anonymous", 'src': 'assets/van.jpg', 'ready': true, 'fileTooBig': false },
+    { 'name': 'uploadCustom6', 'crossOrigin': "Anonymous", 'src': 'assets/trunks.png', 'ready': true, 'fileTooBig': false }
+    ];
+
   database;
   dialogRef;
   displayName = '';
@@ -80,16 +89,18 @@ export class AppComponent {
   isFriezeTwo;
   genType;
   isArabesque;
+  isBedroom = false;
   isMexico;
   singleLayer;
-
+  guid;
+  showSignOut = false;
   // removed undo remove features
   undoList = [];
   redoList = [];
   disableRedo = true;
   disableUndo = true;
   edit = false;
-  
+
 
   @ViewChild('mainContainer') mainContainer;
   @ViewChild('loaderCanvas') loader;
@@ -181,8 +192,6 @@ export class AppComponent {
 
   async handleSignedInUser() {
     this.ready = false;
-    console.log('this.location', location);
-    console.log('handling signed in user');
     this.displayName = this.user.displayName;
     this.email = this.user.email;
 
@@ -203,9 +212,23 @@ export class AppComponent {
       }
     } else {
       this.savedImageArr = [];
-
-
       if ((!this.newUser) || (this.newUser && this.savedImageArr.length === 0)) {
+
+
+        // var storageRef = firebase.storage().ref();
+        // for (let img in this.customImages) {
+        //   let numerator = (img + '1');
+        //   await storageRef.child(trimmedName + '/customImages/uploadCustom' + numerator).getDownloadURL().then(function (url) {
+        //     if (url) {
+        //       this.customImages[img].src = url;
+        //     }
+
+        //   }).catch(function (error) {
+        //   });
+        //   if (parseInt(img) == (this.customImages.length - 1)) {
+        //     this.setCustomImages();
+        //   }
+        // }
         await this.database.collection('users/' + trimmedName + '/images').get().then((querySnapshot) => {
           querySnapshot.forEach((doc) => {
             this.savedImageArr.push(doc.data());
@@ -222,8 +245,7 @@ export class AppComponent {
     }
     this.ready = true;
   }
-  guid;
-  showSignOut = false;
+
   toggleSignOut() {
     this.showSignOut = !this.showSignOut;
 
@@ -235,8 +257,6 @@ export class AppComponent {
   }
 
   async handleSignedOutUser() {
-
-    // this.savedImageArr = [];
     let guid = '';
     if (location.hash.split('/') && location.hash.split('/')[1]) {
       this.guid = location.hash.split('/')[1];
@@ -250,22 +270,32 @@ export class AppComponent {
       if (!this.user) {
         // create a rand guid
         if (location.href.indexOf('loggedOut') < 0) {
-
-
           this.guid = this.getGuid();
           location.href = '#loggedOut/' + this.guid;
           this.getRandomArt(true);
         } else {
           if (guid) {
-            this.savedImageArr = [];
+            // var storageRef = firebase.storage().ref();
+            // for (let img in this.customImages) {
+            //   let numerator = (img + '1');
+            //   await storageRef.child(guid + '/customImages/uploadCustom' + numerator).getDownloadURL().then(function (url) {
+            //     if (url) {
+            //       this.customImages[img].src = url;
+            //     }
+
+            //   }).catch(function (error) {
+            //   });
+            //   if (parseInt(img) == (this.customImages.length - 1)) {
+            //     this.setCustomImages();
+            //   }
+            // }
+
             await this.database.collection('users/' + guid + '/images').get().then((querySnapshot) => {
               querySnapshot.forEach((doc) => {
+                console.log('this second', this);
                 this.savedImageArr.push(doc.data());
-                console.log('saved image', this.savedImageArr);
               });
               if (querySnapshot.docs.length) {
-                // const displayName = this.displayName.replace(/\s/g, '');
-                // location.href = '#user/' + displayName;
                 this.renderImage(0);
               } else {
                 this.getRandomArt(true);
@@ -273,8 +303,6 @@ export class AppComponent {
             });
 
           }
-          // put in href
-          // query guid on reload
         }
         await this.openLoginModal();
       }
@@ -332,68 +360,192 @@ export class AppComponent {
     return uiConfig;
   }
 
+  uploadCustomImage(fileName, event) {
+    fileName = 'uploadCustom' + (fileName + 1);
 
-  ngOnInit() {
+    const replaceObj = this.customImages.find(img => { return img.name === fileName })
+    const replaceIndex = this.customImages.indexOf(replaceObj);
+
+    if (event.target.files && event.target.files[0]) {
+      this.customImages[replaceIndex].ready = false;
+      let file = event.target.files[0]
+      const url = window.URL.createObjectURL(file);
+      const newImg = new Image();
+      newImg.crossOrigin = "Anonymous";
+      newImg.src = url;
+
+      const fileUrl = newImg.src;
+      let trimmedName = this.guid;
+      if (this.user) {
+        this.email = this.user.email;
+        trimmedName = this.email;
+      }
+
+      if (this.byteCount(fileUrl) > 1048487) {
+        this.customImages[replaceIndex].ready = true;
+        this.customImages[replaceIndex].fileTooBig = true;
+        setTimeout(() => {
+          this.customImages[replaceIndex].fileTooBig = false;
+        }, 1000);
+        return;
+
+      } else {
+        var storageRef = firebase.storage().ref();
+        storageRef.child(trimmedName + '/customImages/' + fileName).put(file).then(function (snapshot) {
+          console.log('Uploaded a blob or file!', snapshot);
+        });
+      }
+
+      if (replaceIndex >= 0) {
+        this.customImages[replaceIndex].src = fileUrl;
+      } else {
+        this.customImages.push({ 'name': fileName, 'crossOrigin': "Anonymous", 'src': fileUrl, 'ready': true, 'fileTooBig': false });
+      }
+      this.setCustomImages();
+    }
+  }
+  setCustomImages() {
+    this.ready = false;
+    for (let img of this.customImages) {
+      let fileName = img.name;
+      let fileUrl = img.src;
+      if (fileName === 'uploadCustom1') {
+
+        this.patternArabesque.src = fileUrl;
+
+        this.patternArabesque.onload = function () {
+          const pattern = this.ctx.createPattern(this.patternArabesque, 'repeat');
+          this.ctx.fillStyle = pattern;
+          this.customImages[0].ready = true;
+        }.bind(this);
+      }
+      if (fileName === 'uploadCustom2') {
+        this.patternKosovo.src = fileUrl;
+        this.patternKosovo.onload = function () {
+          const pattern = this.ctx.createPattern(this.patternKosovo, 'repeat');
+          this.ctx.fillStyle = pattern;
+          this.customImages[1].ready = true;
+
+        }.bind(this);
+      }
+      if (fileName === 'uploadCustom3') {
+        this.patternFrieze.src = fileUrl;
+        this.patternFrieze.onload = function () {
+          const pattern = this.ctx.createPattern(this.patternFrieze, 'repeat');
+          this.ctx.fillStyle = pattern;
+          this.customImages[2].ready = true;
+        }.bind(this);
+      }
+
+      if (fileName === 'uploadCustom4') {
+        this.patternMexico.src = fileUrl;
+        this.patternMexico.onload = function () {
+          const pattern = this.ctx.createPattern(this.patternMexico, 'repeat');
+          this.ctx.fillStyle = pattern;
+          this.customImages[3].ready = true;
+        }.bind(this);
+      }
+
+      if (fileName === 'uploadCustom5') {
+        this.patternFriezeTwo.src = fileUrl;
+        this.patternFriezeTwo.onload = function () {
+          const pattern = this.ctx.createPattern(this.patternFriezeTwo, 'repeat');
+          this.ctx.fillStyle = pattern;
+          this.customImages[4].ready = true;
+        }.bind(this);
+      }
+      if (fileName === 'uploadCustom6') {
+        this.patternTrunks.src = fileUrl;
+        this.patternTrunks.onload = function () {
+          const pattern = this.ctx.createPattern(this.patternTrunks, 'repeat');
+          this.ctx.fillStyle = pattern;
+          this.customImages[5].ready = true;
+        }.bind(this);
+      }
+    }
+    this.ready = true;
+  }
+  async ngOnInit() {
     this.ready = false;
     this.renderDone = false;
 
     // creating the pattern images for image patterns
     this.patternArabesque = new Image();
+    this.patternArabesque.crossOrigin = "Anonymous";
+
     this.patternTrunks = new Image();
+    this.patternTrunks.crossOrigin = "Anonymous";
+
     this.patternKosovo = new Image();
+    this.patternKosovo.crossOrigin = "Anonymous";
+
     this.patternMexico = new Image();
+    this.patternMexico.crossOrigin = "Anonymous";
+
     this.patternBuddhist = new Image();
+    this.patternBuddhist.crossOrigin = "Anonymous";
+
     this.patternBedroom = new Image();
+    this.patternBedroom.crossOrigin = "Anonymous";
+
 
     this.patternFrieze = new Image();
+    this.patternFrieze.crossOrigin = "Anonymous";
+
     this.patternFriezeTwo = new Image();
+    this.patternFriezeTwo.crossOrigin = "Anonymous";
+
+
 
     this.patternBedroom.src = 'assets/haystacks.jpg';
+    this.patternFriezeTwo.crossOrigin = "Anonymous";
+
     this.patternBedroom.onload = function () {
       const pattern = this.ctx.createPattern(this.patternBedroom, 'repeat');
       this.ctx.fillStyle = pattern;
-    }.bind(this); 
+    }.bind(this);
 
     this.patternBuddhist.src = 'assets/buddhist.png';
     this.patternBuddhist.onload = function () {
       const pattern = this.ctx.createPattern(this.patternBuddhist, 'repeat');
       this.ctx.fillStyle = pattern;
-    }.bind(this); 
-
-    this.patternFrieze.src = 'assets/van.jpg';
-    this.patternFrieze.onload = function () {
-      const pattern = this.ctx.createPattern(this.patternFrieze, 'repeat');
-      this.ctx.fillStyle = pattern;
-    }.bind(this);
-    this.patternFriezeTwo.src = 'assets/frieze.jpg';
-    this.patternFriezeTwo.onload = function () {
-      const pattern = this.ctx.createPattern(this.patternFriezeTwo, 'repeat');
-      this.ctx.fillStyle = pattern;
-    }.bind(this);
-    this.patternArabesque.src = 'assets/arabesque_pattern.jpg';
-    this.patternArabesque.onload = function () {
-      const pattern = this.ctx.createPattern(this.patternArabesque, 'repeat');
-      this.ctx.fillStyle = pattern;
     }.bind(this);
 
-    this.patternTrunks.src = 'assets/trunks.png';
-    this.patternTrunks.onload = function () {
-      const pattern = this.ctx.createPattern(this.patternTrunks, 'repeat');
-      this.ctx.fillStyle = pattern;
-    }.bind(this);
+    // this.patternFrieze.src = 'assets/van.jpg';
+    // this.patternFrieze.onload = function () {
+    //   const pattern = this.ctx.createPattern(this.patternFrieze, 'repeat');
+    //   this.ctx.fillStyle = pattern;
+    // }.bind(this);
+    // this.patternFriezeTwo.src = 'assets/frieze.jpg';
+    // this.patternFriezeTwo.onload = function () {
+    //   const pattern = this.ctx.createPattern(this.patternFriezeTwo, 'repeat');
+    //   this.ctx.fillStyle = pattern;
+    // }.bind(this);
+    // this.patternArabesque.src = 'assets/arabesque_pattern.jpg';
+    // this.patternArabesque.onload = function () {
+    //   const pattern = this.ctx.createPattern(this.patternArabesque, 'repeat');
+    //   this.ctx.fillStyle = pattern;
+    // }.bind(this);
 
-    this.patternKosovo.src = 'assets/kosovo_map.jpg';
-    this.patternKosovo.onload = function () {
-      const pattern = this.ctx.createPattern(this.patternKosovo, 'repeat');
-      this.ctx.fillStyle = pattern;
-    }.bind(this);
-    this.patternMexico.src = 'assets/mexico_flag.jpg';
-    this.patternMexico.onload = function () {
-      const pattern = this.ctx.createPattern(this.patternMexico, 'repeat');
-      this.ctx.fillStyle = pattern;
-    }.bind(this);
+    // this.patternTrunks.src = 'assets/trunks.png';
+    // this.patternTrunks.onload = function () {
+    //   const pattern = this.ctx.createPattern(this.patternTrunks, 'repeat');
+    //   this.ctx.fillStyle = pattern;
+    // }.bind(this);
+
+    // this.patternKosovo.src = 'assets/kosovo_map.jpg';
+    // this.patternKosovo.onload = function () {
+    //   const pattern = this.ctx.createPattern(this.patternKosovo, 'repeat');
+    //   this.ctx.fillStyle = pattern;
+    // }.bind(this);
+    // this.patternMexico.src = 'assets/mexico_flag.jpg';
+    // this.patternMexico.onload = function () {
+    //   const pattern = this.ctx.createPattern(this.patternMexico, 'repeat');
+    //   this.ctx.fillStyle = pattern;
+    // }.bind(this);
 
     // this.pattern.src = 'assets/arabesque_pattern.jpg';
+
 
     this.isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
@@ -422,8 +574,7 @@ export class AppComponent {
       this.ready = true;
     }.bind(this));
   }
-  isBedroom = false;
-  
+
   getRandomArt(clear, recurseStep?) {
     // hide favorites because we're about to switch to savedimagearr
     this.showFavorites = false;
@@ -510,20 +661,20 @@ export class AppComponent {
         this.isTrunks = false;
       } else if (solidSwitch === 4) {
         this.isFrieze = true;
-      }  else if (solidSwitch === 5) {
+      } else if (solidSwitch === 5) {
         this.isFrieze = true;
-      }  else if (solidSwitch === 6) {
+      } else if (solidSwitch === 6) {
         this.isFriezeTwo = true;
-      }  
+      }
       //  else if (solidSwitch === 7) {
       //   this.isBedroom = true;   
       // }
       // else if (solidSwitch === 8) {
-      
+
       //   this.isBuddhist = true;
       // } 
-      
-      else  {
+
+      else {
         this.isMexico = true;
       }
     }
@@ -978,7 +1129,7 @@ export class AppComponent {
         offset_x = 0;
         offset_y = 0;
         isOffset = false;
-         this.ctx.fillStyle = this.ctx.createPattern(this.patternBedroom, 'repeat');
+        this.ctx.fillStyle = this.ctx.createPattern(this.patternBedroom, 'repeat');
         console.log('created pattern mexico');
       }
 
@@ -1131,8 +1282,8 @@ export class AppComponent {
       img.src = this.savedImageArr[this.currImageIndex].src
     } else {
       img.src = this.canvas.toDataURL();
-
-    }// this.sources.push(img.src);
+    }
+    // this.sources.push(img.src);
     // }
     img.onload = function () {
       this.ctx.drawImage(img, 0, 0, this.canvasSize, this.canvasSize, 0, 0, this.canvasSize, this.canvasSize);
@@ -1308,8 +1459,6 @@ export class AppComponent {
   saveImageFirebase(imageObj) {
     let trimmedName = this.guid;
     if (this.user) {
-      console.log('yes is user so putting trimmed name to that');
-      console.log('this.user', this.user);
       this.email = this.user.email;
       trimmedName = this.email;
     }
@@ -1319,7 +1468,6 @@ export class AppComponent {
       let compSize = 1.0;
       while (tooLong && (compSize > 0)) {
         if (this.byteCount(imageObj.src) > 1048487) {
-          console.log('compressing to', compSize);
           const canvasSrc = this.canvas.toDataURL("image/jpeg", compSize);
           if (this.byteCount(canvasSrc) <= 1048487) {
             imageObj.src = canvasSrc;
@@ -1332,11 +1480,10 @@ export class AppComponent {
       }
     }
 
-
     this.database.collection('users/' + trimmedName + '/images').doc(imageObj.name).set({
       'name': imageObj.name, 'src': imageObj.src, 'favorite': false
     }).then(function (docRef) {
-      // console.log('Document written with ID: ', docRef.id);
+      console.log('Document written with ID: ', docRef.id);
     }).catch(function (error) {
       console.error('Error adding document: ', error);
     });

@@ -100,6 +100,7 @@ export class AppComponent {
   disableRedo = true;
   disableUndo = true;
   edit = false;
+  customImagesReady = false;
 
 
   @ViewChild('mainContainer') mainContainer;
@@ -179,19 +180,18 @@ export class AppComponent {
   }
 
   signOut() {
-    this.ready = false;
+    // this.ready = false;
     firebase.auth().signOut().then(function () {
       console.log('signout about to do ready = false');
-      this.ready = false;
+      // this.ready = false;
     }).catch(function (error) {
     });
-    if (window.history.length > 1) {
+    if (window.history.length > 1 && this.guid) {
       location.href = '#loggedOut/' + this.guid;
-    }
+    } 
   }
 
   async handleSignedInUser() {
-    this.ready = false;
     this.displayName = this.user.displayName;
     this.email = this.user.email;
 
@@ -214,21 +214,19 @@ export class AppComponent {
       this.savedImageArr = [];
       if ((!this.newUser) || (this.newUser && this.savedImageArr.length === 0)) {
 
-
-        // var storageRef = firebase.storage().ref();
-        // for (let img in this.customImages) {
-        //   let numerator = (img + '1');
-        //   await storageRef.child(trimmedName + '/customImages/uploadCustom' + numerator).getDownloadURL().then(function (url) {
-        //     if (url) {
-        //       this.customImages[img].src = url;
-        //     }
-
-        //   }).catch(function (error) {
-        //   });
-        //   if (parseInt(img) == (this.customImages.length - 1)) {
-        //     this.setCustomImages();
-        //   }
-        // }
+        var storageRef = firebase.storage().ref();
+        for (let img in this.customImages) {
+          let numerator = (parseInt(img) + 1);
+           await storageRef.child(trimmedName + '/customImages/uploadCustom' + numerator).getDownloadURL().then((url) => {
+            if (url) {
+              this.customImages[parseInt(img)].src = url;
+            }
+          }).catch(function (error) {
+          });
+          if (parseInt(img) == (this.customImages.length - 1)) {
+            this.setCustomImages();
+          }
+        }
         await this.database.collection('users/' + trimmedName + '/images').get().then((querySnapshot) => {
           querySnapshot.forEach((doc) => {
             this.savedImageArr.push(doc.data());
@@ -243,7 +241,6 @@ export class AppComponent {
         });
       }
     }
-    this.ready = true;
   }
 
   toggleSignOut() {
@@ -275,21 +272,20 @@ export class AppComponent {
           this.getRandomArt(true);
         } else {
           if (guid) {
-            // var storageRef = firebase.storage().ref();
-            // for (let img in this.customImages) {
-            //   let numerator = (img + '1');
-            //   await storageRef.child(guid + '/customImages/uploadCustom' + numerator).getDownloadURL().then(function (url) {
-            //     if (url) {
-            //       this.customImages[img].src = url;
-            //     }
-
-            //   }).catch(function (error) {
-            //   });
-            //   if (parseInt(img) == (this.customImages.length - 1)) {
-            //     this.setCustomImages();
-            //   }
-            // }
-
+            var storageRef = firebase.storage().ref();
+            for (let img in this.customImages) {
+              let numerator = (parseInt(img) + 1);
+               await storageRef.child(guid + '/customImages/uploadCustom' + numerator).getDownloadURL().then((url) => {
+                if (url) {
+                  this.customImages[parseInt(img)].src = url;
+                }
+              }).catch(function (error) {
+              });
+              if (parseInt(img) == (this.customImages.length - 1)) {
+                this.setCustomImages();
+              }
+            }
+            this.savedImageArr = [];
             await this.database.collection('users/' + guid + '/images').get().then((querySnapshot) => {
               querySnapshot.forEach((doc) => {
                 console.log('this second', this);
@@ -307,7 +303,6 @@ export class AppComponent {
         await this.openLoginModal();
       }
     }
-
   }
 
   newUser = false;
@@ -381,9 +376,15 @@ export class AppComponent {
         trimmedName = this.email;
       }
 
-      if (this.byteCount(fileUrl) > 1048487) {
+// console.log('file.size', file.size);
+      var fileSize = file.size / 1024 / 1024; // in MB
+      if (fileSize > 1) {
+  
+      // if (this.byteCount(fileUrl) > 1048487) {
         this.customImages[replaceIndex].ready = true;
         this.customImages[replaceIndex].fileTooBig = true;
+      
+        alert('File size exceeds 1 MB');
         setTimeout(() => {
           this.customImages[replaceIndex].fileTooBig = false;
         }, 1000);
@@ -405,14 +406,14 @@ export class AppComponent {
     }
   }
   setCustomImages() {
-    this.ready = false;
+    // this.ready = false;
     for (let img of this.customImages) {
       let fileName = img.name;
       let fileUrl = img.src;
       if (fileName === 'uploadCustom1') {
 
         this.patternArabesque.src = fileUrl;
-
+        this.patternArabesque.crossOrigin = "Anonymous";
         this.patternArabesque.onload = function () {
           const pattern = this.ctx.createPattern(this.patternArabesque, 'repeat');
           this.ctx.fillStyle = pattern;
@@ -463,7 +464,7 @@ export class AppComponent {
         }.bind(this);
       }
     }
-    this.ready = true;
+    // this.ready = true;
   }
   async ngOnInit() {
     this.ready = false;
@@ -494,8 +495,6 @@ export class AppComponent {
 
     this.patternFriezeTwo = new Image();
     this.patternFriezeTwo.crossOrigin = "Anonymous";
-
-
 
     this.patternBedroom.src = 'assets/haystacks.jpg';
     this.patternFriezeTwo.crossOrigin = "Anonymous";
@@ -571,7 +570,7 @@ export class AppComponent {
     firebase.auth().onAuthStateChanged(async function (this, user) {
       this.user = user;
       this.user ? await this.handleSignedInUser() : await this.handleSignedOutUser();
-      this.ready = true;
+      // this.ready = true;
     }.bind(this));
   }
 
@@ -1483,7 +1482,7 @@ export class AppComponent {
     this.database.collection('users/' + trimmedName + '/images').doc(imageObj.name).set({
       'name': imageObj.name, 'src': imageObj.src, 'favorite': false
     }).then(function (docRef) {
-      console.log('Document written with ID: ', docRef.id);
+      // console.log('Document written with ID: ', docRef.id);
     }).catch(function (error) {
       console.error('Error adding document: ', error);
     });

@@ -241,7 +241,7 @@ button.edit.mat-button {
   /* optional: just make scrollbar invisible */
 }
 
-.mat-button {
+.mat-stroked-button {
   background-color: transparent;
 }
 
@@ -258,7 +258,7 @@ button.edit.mat-button {
   top: -20px !important;
   left: 741px !important; */
 }
-.md-button.md-focused {
+.md-stroked-button.md-stroked-focused {
   background-color: rgba(0,0,0,0) !important;
 }
 .cdk-focused {
@@ -443,7 +443,11 @@ input:hover::before {
   @media only screen  and (min-width : 1824px) {
   /* Styles */
   .canvas-height {
-    height: 900.425532px;
+    /* height: 900.425532px; */
+
+    height: 843.297px;
+
+    /* 810.3829788px; */
   }
 
   }

@@ -71,9 +71,9 @@
   </div>
 
   <div #mainContainer fxLayout="row" fxFlexOffset.md="0" fxFlexOffset.sm="0" fxFlexOffset.xs="0" fxLayout.md="column" fxLayout.sm="column"
-    fxLayout.xs="column" style="height: 90%;">
+    fxLayout.xs="column" >
     <div fxFlexOffset.xl="5" fxFlexOffset.md="5" fxFlexOffset.lg="5" fxFlexOffset.md="0" fxFlexOffset.sm="0" fxFlex="40" fxFlex.md="25"
-      fxFlex.sm="20" fxFlex.xs="20" class="canvas-height" style="position: relative; overflow: scroll !important;">
+      fxFlex.sm="20" fxFlex.xs="20" style="position: relative; overflow: scroll !important;">
 
       <mat-grid-list [fxShow]="!showFavorites" class="canvas-height" cols="5" rows="5" gutterSize="5px">
         <mat-grid-tile fxLayout="row" *ngFor="let savedImg of savedImageArr; let i = index;">

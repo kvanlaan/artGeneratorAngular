@@ -43,7 +43,7 @@
     </div>
   </div>
   <div fxFlexOffset="0" fxLayout="row" fxShow="false" fxShow.md="true" fxShow.sm="true" fxShow.xs="true" fxLayoutWrap>
-    <div fxFlexOffset="4" fxFlex="55" fxLayoutAlign="start center" fxLayoutGap="5">
+    <div fxFlexOffset="4" fxFlex="60" fxLayoutAlign="start center" fxLayoutGap="5">
       <button [disabled]="!renderDone" (click)="getRandomArt(true)" class="float-left inline" mat-stroked-button>
         Get New Art</button>
       <a href="#" target="_blank" class="inline" #downloadLinkTwo (click)="download(downloadLinkTwo)" download="art.jpg">
@@ -53,7 +53,7 @@
         </button>
       </a>
     </div>
-    <div fxFlex="45" fxLayoutAlign="end center">
+    <div fxFlex="40" fxLayoutAlign="end center">
 
       <span (click)="filterFavorites()" class="hover-red">
         <i class="material-icons">
@@ -71,7 +71,7 @@
   </div>
 
   <div #mainContainer fxLayout="row" fxFlexOffset.md="0" fxFlexOffset.sm="0" fxFlexOffset.xs="0" fxLayout.md="column" fxLayout.sm="column"
-    fxLayout.xs="column" >
+    fxLayout.xs="column" style="min-height: 450px">
     <div fxFlexOffset.xl="5" fxFlexOffset.md="5" fxFlexOffset.lg="5" fxFlexOffset.md="0" fxFlexOffset.sm="0" fxFlex="40" fxFlex.md="25"
       fxFlex.sm="20" fxFlex.xs="20" style="position: relative; overflow: scroll !important;">
 

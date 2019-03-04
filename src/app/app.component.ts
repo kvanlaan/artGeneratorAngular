@@ -510,38 +510,38 @@ export class AppComponent {
       this.ctx.fillStyle = pattern;
     }.bind(this);
 
-    // this.patternFrieze.src = 'assets/van.jpg';
-    // this.patternFrieze.onload = function () {
-    //   const pattern = this.ctx.createPattern(this.patternFrieze, 'repeat');
-    //   this.ctx.fillStyle = pattern;
-    // }.bind(this);
-    // this.patternFriezeTwo.src = 'assets/frieze.jpg';
-    // this.patternFriezeTwo.onload = function () {
-    //   const pattern = this.ctx.createPattern(this.patternFriezeTwo, 'repeat');
-    //   this.ctx.fillStyle = pattern;
-    // }.bind(this);
-    // this.patternArabesque.src = 'assets/arabesque_pattern.jpg';
-    // this.patternArabesque.onload = function () {
-    //   const pattern = this.ctx.createPattern(this.patternArabesque, 'repeat');
-    //   this.ctx.fillStyle = pattern;
-    // }.bind(this);
+    this.patternFrieze.src = 'assets/van.jpg';
+    this.patternFrieze.onload = function () {
+      const pattern = this.ctx.createPattern(this.patternFrieze, 'repeat');
+      this.ctx.fillStyle = pattern;
+    }.bind(this);
+    this.patternFriezeTwo.src = 'assets/frieze.jpg';
+    this.patternFriezeTwo.onload = function () {
+      const pattern = this.ctx.createPattern(this.patternFriezeTwo, 'repeat');
+      this.ctx.fillStyle = pattern;
+    }.bind(this);
+    this.patternArabesque.src = 'assets/arabesque_pattern.jpg';
+    this.patternArabesque.onload = function () {
+      const pattern = this.ctx.createPattern(this.patternArabesque, 'repeat');
+      this.ctx.fillStyle = pattern;
+    }.bind(this);
 
-    // this.patternTrunks.src = 'assets/trunks.png';
-    // this.patternTrunks.onload = function () {
-    //   const pattern = this.ctx.createPattern(this.patternTrunks, 'repeat');
-    //   this.ctx.fillStyle = pattern;
-    // }.bind(this);
+    this.patternTrunks.src = 'assets/trunks.png';
+    this.patternTrunks.onload = function () {
+      const pattern = this.ctx.createPattern(this.patternTrunks, 'repeat');
+      this.ctx.fillStyle = pattern;
+    }.bind(this);
 
-    // this.patternKosovo.src = 'assets/kosovo_map.jpg';
-    // this.patternKosovo.onload = function () {
-    //   const pattern = this.ctx.createPattern(this.patternKosovo, 'repeat');
-    //   this.ctx.fillStyle = pattern;
-    // }.bind(this);
-    // this.patternMexico.src = 'assets/mexico_flag.jpg';
-    // this.patternMexico.onload = function () {
-    //   const pattern = this.ctx.createPattern(this.patternMexico, 'repeat');
-    //   this.ctx.fillStyle = pattern;
-    // }.bind(this);
+    this.patternKosovo.src = 'assets/kosovo_map.jpg';
+    this.patternKosovo.onload = function () {
+      const pattern = this.ctx.createPattern(this.patternKosovo, 'repeat');
+      this.ctx.fillStyle = pattern;
+    }.bind(this);
+    this.patternMexico.src = 'assets/mexico_flag.jpg';
+    this.patternMexico.onload = function () {
+      const pattern = this.ctx.createPattern(this.patternMexico, 'repeat');
+      this.ctx.fillStyle = pattern;
+    }.bind(this);
 
     // this.pattern.src = 'assets/arabesque_pattern.jpg';
 

@@ -54,6 +54,11 @@
     </div>
     <div fxFlex="40" fxLayoutAlign="end center">
 
+    </div>
+  </div>
+
+  <div fxFlexOffset="0" fxLayout="row" fxShow="false" fxShow.md="true" fxShow.sm="true" fxShow.xs="true" fxLayoutWrap fxLayoutGap="5px" fxLayoutAlign="start center">
+    <div fxFlexOffset="4" fxLayoutAlign="start center">
       <span (click)="filterFavorites()" class="hover-red">
         <i class="material-icons">
           filter_list
@@ -67,9 +72,32 @@
         </i>
       </span>
     </div>
+
+      
+      <mat-slide-toggle [@.disabled]="true" (change)="toggleImages()"></mat-slide-toggle>
+      <span *ngIf="ready" fxLayout="row" fxLayoutAlign="start center">
+        <span *ngFor="let customImage of customImages; let i = index" [ngStyle]="{'background-image': 'url(' + this.customImages[i]?.src + ')'}"
+          class="tile">
+          <input #fileInput class="file-input" type="file" multiple (change)="uploadCustomImage(i, $event)">
+          <span class="upload hover" fxLayoutAlign="center end">
+            <i [fxShow]="customImage.ready" class="material-icons heart margin-top-auto bottom-0">
+              arrow_upward
+            </i>
+          </span>
+          <span [fxShow]="!customImage.ready" class="upload" fxLayoutAlign="center end">
+            <div class="margin-auto loader small"></div>
+          </span>
+          <span [fxShow]="customImage.fileTooBig" class="upload warning" fxLayoutAlign="end center"
+            fxLayout="column">
+            <i class="material-icons heart margin-top-auto bottom-0">
+              warning
+            </i>
+          </span>
+        </span>
+      </span>
   </div>
 
-  <div class="min-height-450" fxLayout="row" fxFlexOffset.md="0" fxFlexOffset.sm="0" fxFlexOffset.xs="0" fxLayout.md="column" fxLayout.sm="column"
+  <div class="min-height-450" fxLayout="row" fxFlex fxFlexOffset.md="5" fxFlexOffset.sm="5" fxFlexOffset.xs="5" fxLayout.md="column" fxLayout.sm="column"
     fxLayout.xs="column">
     <div class="relative overflow-scroll" fxFlex="40" fxFlexOffset.xl="5" fxFlexOffset.md="5" fxFlexOffset.lg="5" fxFlexOffset.md="0" fxFlexOffset.sm="0" fxFlex.md="25"
       fxFlex.sm="20" fxFlex.xs="20">

@@ -8,14 +8,18 @@ import {
   MatIconModule,
   MatProgressSpinnerModule,
 } from '@angular/material';
+
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-
+import { GeneratorComponent } from './generator/generator.component';
+import 'hammerjs';
 @NgModule({
   declarations: [
     AppComponent,
     LoginDialogComponent,
-    DeleteDialogComponent
+    DeleteDialogComponent,
+    GeneratorComponent
   ],
   entryComponents: [
     LoginDialogComponent,
@@ -25,6 +29,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     MatButtonModule,
     MatDialogModule,
     BrowserAnimationsModule,
+    MatSlideToggleModule,
+  
     BrowserModule,
     FlexLayoutModule,
     MatGridListModule,

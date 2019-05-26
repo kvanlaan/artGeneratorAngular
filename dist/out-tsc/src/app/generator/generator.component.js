@@ -1103,7 +1103,6 @@ var GeneratorComponent = /** @class */ (function () {
         var b = num & 255;
         return { 'r': r, 'g': g, 'b': b };
     };
-    var _a;
     __decorate([
         core_1.ViewChild('loaderCanvas'),
         __metadata("design:type", Object)
@@ -1147,7 +1146,7 @@ var GeneratorComponent = /** @class */ (function () {
             styleUrls: ['./generator.component.css'],
             providers: [utilities_1.Utilities]
         }),
-        __metadata("design:paramtypes", [typeof (_a = typeof http_1.HttpClient !== "undefined" && http_1.HttpClient) === "function" ? _a : Object, utilities_1.Utilities])
+        __metadata("design:paramtypes", [http_1.HttpClient, utilities_1.Utilities])
     ], GeneratorComponent);
     return GeneratorComponent;
 }());

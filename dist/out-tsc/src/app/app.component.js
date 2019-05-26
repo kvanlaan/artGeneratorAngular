@@ -639,7 +639,6 @@ var AppComponent = /** @class */ (function () {
         element.href = this.generator.canvas.toDataURL();
         return;
     };
-    var _a, _b, _c;
     __decorate([
         core_1.ViewChild(generator_component_1.GeneratorComponent),
         __metadata("design:type", Object)
@@ -665,7 +664,7 @@ var AppComponent = /** @class */ (function () {
             styleUrls: ['./app.component.css'],
             providers: [common_1.Location, { provide: common_2.LocationStrategy, useClass: common_2.PathLocationStrategy }, utilities_1.Utilities]
         }),
-        __metadata("design:paramtypes", [typeof (_a = typeof http_1.HttpClient !== "undefined" && http_1.HttpClient) === "function" ? _a : Object, utilities_1.Utilities, typeof (_b = typeof material_1.MatDialog !== "undefined" && material_1.MatDialog) === "function" ? _b : Object, typeof (_c = typeof common_1.Location !== "undefined" && common_1.Location) === "function" ? _c : Object])
+        __metadata("design:paramtypes", [http_1.HttpClient, utilities_1.Utilities, material_1.MatDialog, common_1.Location])
     ], AppComponent);
     return AppComponent;
 }());

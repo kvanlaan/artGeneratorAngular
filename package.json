@@ -1,10 +1,9 @@
 {
   "name": "art-generator",
   "version": "0.0.0",
-  "main": "dist/server.js",
   "scripts": {
     "ng": "ng",
-    "start": "npm run server",
+    "start": "concurrently \"cd dist/out-tsc/ && ng serve\" \"cd dist/out-tsc/ && node server/server.js\"",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",

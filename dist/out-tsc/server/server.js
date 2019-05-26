@@ -18,16 +18,16 @@ app.use(function (req, res, next) {
     }
 });
 // Handle POST requests that come in formatted as JSON
-app.use(express.json());
+// app.use(express.json());
 // make express look in the public directory for assets (css/js/img)
-app.use(express.static(__dirname + '/dist/out-tsc'));
+app.use(express.static(__dirname + '/dist/out-tsc/', routes_1.routes));
 // app.get('/*all', function(req, res) {
 //     res.sendFile(path.join(__dirname + '/dist/index.html'));
 //   });
 // A default hello word route
 // Put at the top
 // Put after the express.json() call
-app.use('/', routes_1.routes);
+// app.use('/', routes_1.routes);
 // start our server on port 4201
 var port = parseInt(process.env.PORT) || 4201;
 app.listen(port, '127.0.0.1', function () {

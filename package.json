@@ -8,7 +8,7 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "server": "concurrently \"ng serve\" \"node server/server.js\"",
+    "server": "concurrently \"ng serve\" \"ts-node server/server.ts\"",
     "heroku-postbuild": "ng build --prod"
   },
   "engines": {

@@ -16,6 +16,13 @@ app.use((req: any, res: any, next: any) => {
 })
 // Handle POST requests that come in formatted as JSON
 app.use(express.json());
+// make express look in the public directory for assets (css/js/img)
+app.use(express.static(__dirname + '/dist/artGenerator'));
+
+// app.get('/*all', function(req, res) {
+//     res.sendFile(path.join(__dirname + '/dist/index.html'));
+//   });
+
 // A default hello word route
 // Put at the top
 // Put after the express.json() call

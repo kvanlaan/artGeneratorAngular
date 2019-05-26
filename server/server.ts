@@ -26,9 +26,7 @@ app.use(express.static(__dirname + '/dist/artGenerator'));
 // A default hello word route
 // Put at the top
 // Put after the express.json() call
-app.use('/', routes);
+app.use('/dist/out-tsc/', routes);
 // start our server on port 4201
-var port = parseInt(process.env.PORT) || 4201;
-app.listen(port, '127.0.0.1', function() {
-    console.log("Server now listening on 4201");
-});
+var port = process.env.PORT || 4201;
+app.listen(port);

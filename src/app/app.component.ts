@@ -126,7 +126,6 @@ export class AppComponent {
       this.user = user;
       this.user ? await this.handleSignedInUser() : await this.handleSignedOutUser();
     }.bind(this));
-
   }
 
   // getDarkPatterns() {

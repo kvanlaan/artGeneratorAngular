@@ -20,7 +20,7 @@ app.use(function (req, res, next) {
 // Handle POST requests that come in formatted as JSON
 app.use(express.json());
 // make express look in the public directory for assets (css/js/img)
-app.use(express.static(__dirname + '/dist'));
+app.use(express.static(__dirname + '/dist/out-tsc'));
 // app.get('/*all', function(req, res) {
 //     res.sendFile(path.join(__dirname + '/dist/index.html'));
 //   });

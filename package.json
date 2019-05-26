@@ -1,6 +1,7 @@
 {
   "name": "art-generator",
   "version": "0.0.0",
+  "main": "dist/server.js",
   "scripts": {
     "ng": "ng",
     "start": "npm run server",
@@ -59,7 +60,6 @@
     "karma-jasmine-html-reporter": "^0.2.2",
     "protractor": "~5.3.0",
     "rxjs": "^6.4.0",
-    "ts-node": "^8.0.3",
     "ts-node-dev": "^1.0.0-pre.32",
     "tslint": "^5.15.0",
     "typescript": "^3.1.6",
@@ -83,7 +83,7 @@
     "karma-jasmine": "~1.1.1",
     "karma-jasmine-html-reporter": "^0.2.2",
     "protractor": "~5.3.0",
-    "ts-node": "~5.0.1",
+    "ts-node": "^8.2.0",
     "tslint": "~5.9.1"
   }
 }

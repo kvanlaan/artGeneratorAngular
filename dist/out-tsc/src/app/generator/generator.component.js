@@ -107,7 +107,8 @@ var GeneratorComponent = /** @class */ (function () {
         var storageRef = firebase.storage().ref();
         if (this.darkDatabaseList.length === 0 || this.patternDatabaseList.length === 0) {
             return new Promise(function (resolve) {
-                _this.http.get('http://localhost:4201/artImages').subscribe(function (res) {
+                if (!_this.artImagesSubscription) { }
+                _this.artImagesSubscription = _this.http.get('http://localhost:4201/artImages').subscribe(function (res) {
                     res.forEach(function (item) {
                         if (item["metadata"]["name"].indexOf('dark') > -1) {
                             storageRef.child(item["metadata"]["name"]).getDownloadURL().then(function (url) {

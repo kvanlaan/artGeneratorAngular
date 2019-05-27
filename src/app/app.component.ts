@@ -273,6 +273,7 @@ export class AppComponent {
                   this.customImages[parseInt(img)].src = url;
                 }
               }).catch(function (error) {
+                console.log('error', error);
               });
               if (parseInt(img) == (this.customImages.length - 1)) {
                 this.setCustomImages();

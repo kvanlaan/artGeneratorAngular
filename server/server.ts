@@ -22,7 +22,7 @@ app.use((req: any, res: any, next: any) => {
 // app.use(express.static(__dirname + '/dist/artGenerator'));
 
 app.get('/*', function(req, res) {
-    res.sendFile('dist/artGenerator/index.html');
+    res.sendFile('/dist/artGenerator/index.html');
   });
 
 // A default hello word route

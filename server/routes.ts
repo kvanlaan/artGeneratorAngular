@@ -1,6 +1,7 @@
 import * as express from 'express';
 export const routes = express.Router();
 const { Storage } = require('@google-cloud/storage');
+import * as path from 'path';
 
 import * as firebase from 'firebase';
 var patternImages: string[] = [];
@@ -9,7 +10,10 @@ var patternImages: string[] = [];
 // let artImagesBucketName = imagesRef.bucket
 // const gCloud = gcs();
 
-routes.get('/', (req, res) => res.send({ hello: 'world' }))
+routes.get('/', (req, res) =>   res.sendFile(path.join('dist/artGenerator/index.html'))
+
+
+)
 routes.get('/artImages', function (req, res) {
   const storage = new Storage(
     {

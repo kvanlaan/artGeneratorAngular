@@ -9,7 +9,7 @@ var patternImages = [];
 // const imagesRef = storageRef.ref('artImages');
 // let artImagesBucketName = imagesRef.bucket
 // const gCloud = gcs();
-exports.routes.get('/', function (req, res) { return res.sendFile(path.join('dist/artGenerator/index.html')); });
+exports.routes.get('/', function (req, res) { return res.sendFile(path.join(__dirname + '/../../artGenerator/index.html'))});
 exports.routes.get('/artImages', function (req, res) {
     var storage = new Storage({
         "keyFilename": "artGenerator-c7aeb7e6db05.json",

@@ -23,7 +23,7 @@ app.use(express.json());
 // make express look in the public directory for assets (css/js/img)
 // app.use(express.static(__dirname + '/dist/artGenerator'));
 app.get('/*', function (req, res) {
-    res.sendFile(path.join(__dirname + '/dist/artGenerator/index.html'));
+    exports.routes.get('/', function (req, res) { return res.sendFile(path.join(__dirname + '/../../artGenerator/index.html'))});
 });
 // A default hello word route
 // Put at the top

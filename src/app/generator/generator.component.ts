@@ -91,15 +91,15 @@ export class GeneratorComponent implements OnInit {
     this.isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
     this.calculateCanvasSize();
     this.getDarkPatterns();
-
   }
-
+artImagesSubscription;
   getDarkPatterns() {
     var storageRef = firebase.storage().ref();
 
     if (this.darkDatabaseList.length === 0 || this.patternDatabaseList.length === 0) {
       return new Promise(resolve => {
-        this.http.get('http://localhost:4201/artImages').subscribe(function (this, res: any) {
+        if(!this.artImagesSubscription) {}
+        this.artImagesSubscription = this.http.get('http://localhost:4201/artImages').subscribe(function (this, res: any) {
           res.forEach(function (this, item) {
             if (item["metadata"]["name"].indexOf('dark') > -1) {
               storageRef.child(item["metadata"]["name"]).getDownloadURL().then(function (this, url) {

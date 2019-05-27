@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "concurrently \"cd dist/artGenerator && ng serve\" \"ts-node dist/out-tsc/server/server.js\"",
+    "start": "concurrently \"cd dist/artGenerator && ng serve\" \"node dist/out-tsc/server/server.js\"",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",

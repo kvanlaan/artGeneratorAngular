@@ -9,7 +9,7 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "server": "concurrently \"cd dist/artGenerator && ng serve\" \"ts-node dist/out-tsc/server/server.js\"",
-    "heroku-postbuild": "ng build --prod && tsc build"
+    "heroku-postbuild": "ng build --prod && tsc --build"
   },
   "engines": {
     "node": "10.15.0",

@@ -99,7 +99,8 @@ artImagesSubscription;
     if (this.darkDatabaseList.length === 0 || this.patternDatabaseList.length === 0) {
       return new Promise(resolve => {
         if(!this.artImagesSubscription) {}
-        this.artImagesSubscription = this.http.get('http://localhost:4201/artImages').subscribe(function (this, res: any) {
+        console.log('url',window.location.href );
+        this.artImagesSubscription = this.http.get(window.location.href  + 'artImages').subscribe(function (this, res: any) {
           res.forEach(function (this, item) {
             if (item["metadata"]["name"].indexOf('dark') > -1) {
               storageRef.child(item["metadata"]["name"]).getDownloadURL().then(function (this, url) {

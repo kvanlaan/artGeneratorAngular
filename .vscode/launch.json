@@ -4,25 +4,24 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "Launch Program",
-            "program": "${workspaceFolder}/serve",
-            "preLaunchTask": "tsc: build - tsconfig.json",
-            "outFiles": [
-                "${workspaceFolder}/dist/out-tsc/**/*.js"
-            ]
-        },
+        // {
+        //     "type": "node",
+        //     "request": "launch",
+        //     "name": "Launch Program",
+        //     "program": "${workspaceFolder}/serve",
+        //     "preLaunchTask": "tsc: build - tsconfig.json",
+        //     "outFiles": [
+        //     ]
+        // },
         {
             "type": "node",
             "request": "launch",
             "name": "Launch Server",
-            "program": "${workspaceFolder}/server/server.ts",
+            "program": "${workspaceFolder}/server.ts",
             "preLaunchTask": "tsc: build - tsconfig.json",
 
             "outFiles": [
-                "${workspaceFolder}/dist/out-tsc/server/*.js"
+                "${workspaceFolder}/*.js"
             ]
         },
         {
@@ -31,7 +30,7 @@
             "name": "Typescript Server",
             "protocol": "inspector",
             "restart": true,
-            "localRoot": "${workspaceFolder}/server/server.ts",
+            "localRoot": "${workspaceFolder}/server.ts",
             "remoteRoot": "."
         }
     ]

@@ -8,7 +8,6 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "server": "concurrently \"cd dist/artGenerator && ng serve\" \"ts-node dist/out-tsc/server/server.js\"",
     "heroku-postbuild": "ng build --prod"
   },
   "engines": {

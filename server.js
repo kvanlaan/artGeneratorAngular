@@ -1,9 +1,9 @@
 "use strict";
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 // equivalent of older: const express = require('express')
 var express = require("express");
-var routes_1 = require("./src/app/routes");
-var path = require("path");
+// import { routes } from 'routes';
+var routes_1 = require("./routes");
 var app = express();
 // Allow any method from any host and log requests
 app.use(function (req, res, next) {
@@ -25,14 +25,15 @@ app.use(express.json());
 // app.get('/*', function(req, res) {
 //     res.sendFile(path.join('dist/artGenerator/index.html'));
 //   });
-app.get('/*', function (req, res) {
-    res.sendFile(path.join(__dirname + '/dist/artGenerator/index.html'));
-});
+// app.get('/*', function (req, res) {
+//     res.sendFile(path.join(__dirname + '/dist/artGenerator/index.html'));
+// });
 // A default hello word route
 // Put at the top
 // Put after the express.json() call
 app.use(express.static(__dirname + '/dist/artGenerator'));
-app.use(routes_1.routes);
+app.use('/', routes_1.routes);
 // start our server on port 4201
 var port = process.env.PORT || 4201;
 app.listen(port);
+//# sourceMappingURL=server.js.map

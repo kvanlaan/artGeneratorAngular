@@ -1,6 +1,7 @@
 // equivalent of older: const express = require('express')
 import * as express from 'express';
-import { routes } from './src/app/routes';
+// import { routes } from 'routes';
+import { routes } from './routes'; 
 import * as path from 'path';
 
 const app = express();
@@ -25,16 +26,16 @@ app.use(express.json());
 //     res.sendFile(path.join('dist/artGenerator/index.html'));
 //   });
 
-app.get('/*', function (req, res) {
-    res.sendFile(path.join(__dirname + '/dist/artGenerator/index.html'));
-});
+// app.get('/*', function (req, res) {
+//     res.sendFile(path.join(__dirname + '/dist/artGenerator/index.html'));
+// });
 // A default hello word route
 // Put at the top
 // Put after the express.json() call
 app.use(express.static(__dirname + '/dist/artGenerator'))
 
 
-app.use(routes);
+app.use('/', routes);
 // start our server on port 4201
 var port = process.env.PORT || 4201;
 app.listen(port);

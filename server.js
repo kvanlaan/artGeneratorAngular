@@ -2,8 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 // equivalent of older: const express = require('express')
 var express = require("express");
-// import { routes } from 'routes';
-var routes_1 = require("./routes");
+var Storage = require('@google-cloud/storage').Storage;
 var app = express();
 // Allow any method from any host and log requests
 app.use(function (req, res, next) {
@@ -32,7 +31,45 @@ app.use(express.json());
 // Put at the top
 // Put after the express.json() call
 app.use(express.static(__dirname + '/dist/artGenerator'));
-app.use('/', routes_1.routes);
+// app.use('/', routes);
+app.get('/artImages', function (req, res) {
+    var storage = new Storage({
+        "keyFilename": "artGenerator-c7aeb7e6db05.json",
+        "project_id": "artgenerator-8008a",
+    });
+    // res.send({hello: 'world'});
+    var options = {
+        prefix: 'artImages/'
+    };
+    var artImagesBucket = storage.bucket('artgenerator-8008a.appspot.com');
+    artImagesBucket.getFiles(options).catch(function (err) {
+        console.log('found error', err);
+    }).then(function (response) {
+        if (response) {
+            res.send(response[0]);
+        }
+    });
+    //  .subscribe(function (res: any) {
+    // console.log('res', res); 
+    // });
+    // artImagesBucket.getFiles(function (err: any, files: any) {
+    //   if(!err) {
+    //   files.forEach(function (file) {
+    //     file.getDownloadURL().then((url) => {
+    //       if (url) {
+    //         console.log('url', url);
+    //         patternImages.push(url);
+    //       }
+    //     }).catch(function (error) {
+    //     });
+    //   }
+    //   )
+    // } else {
+    //   console.log('error', err);
+    // }
+    // })
+    // res.send('patternImages')
+});
 // start our server on port 4201
 var port = process.env.PORT || 4201;
 app.listen(port);

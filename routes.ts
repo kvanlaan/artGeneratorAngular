@@ -10,7 +10,10 @@ var patternImages: string[] = [];
 // let artImagesBucketName = imagesRef.bucket
 // const gCloud = gcs();
 
-routes.get('/', (req, res) => res.send({hello: 'world'}));
+// routes.get('/', (req, res) => res.send({hello: 'world'}));
+routes.get('*',(req, res) => {
+  res.sendFile(path.resolve(__dirname, 'dist', 'artGenerator', 'index.html'));
+});
 routes.get('/artImages', function (req, res) {
   const storage = new Storage(
     {

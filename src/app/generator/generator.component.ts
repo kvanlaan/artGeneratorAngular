@@ -907,26 +907,26 @@ artImagesSubscription;
 
         // const set y diff
 
-       const yDiff = 50;
-       this.ctx.lineTo(rand1, ty1-yDiff);
-       this.ctx.stroke();
+      //  const yDiff = 50;
+      //  this.ctx.lineTo(rand1, ty1-yDiff);
+      //  this.ctx.stroke();
 
-       this.ctx.lineTo(rand2, rand1-yDiff);
-       this.ctx.stroke();
+      //  this.ctx.lineTo(rand2, rand1-yDiff);
+      //  this.ctx.stroke();
 
-       this.ctx.lineTo(rand2, rand1);
-       this.ctx.moveTo(rand2, rand1-yDiff);
+      //  this.ctx.lineTo(rand2, rand1);
+      //  this.ctx.moveTo(rand2, rand1-yDiff);
 
-       this.ctx.stroke();
+      //  this.ctx.stroke();
 
-       this.ctx.lineTo(rand2, ty2-yDiff);
-       this.ctx.stroke();
+      //  this.ctx.lineTo(rand2, ty2-yDiff);
+      //  this.ctx.stroke();
 
-       this.ctx.lineTo(rand2, ty2);
-       this.ctx.moveTo(rand2, ty2-yDiff);
-       this.ctx.stroke();
+      //  this.ctx.lineTo(rand2, ty2);
+      //  this.ctx.moveTo(rand2, ty2-yDiff);
+      //  this.ctx.stroke();
 
-       this.ctx.lineTo(rand1, ty1-yDiff);
+      //  this.ctx.lineTo(rand1, ty1-yDiff);
 
        this.ctx.stroke();
 

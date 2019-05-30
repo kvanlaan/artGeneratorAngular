@@ -492,7 +492,7 @@ var GeneratorComponent = /** @class */ (function () {
                 }
                 rand = this.utilities.randomlyChooseOneOrTwo();
                 if (rand === 1) {
-                    this.ctx.strokeStyle = 'black';
+                    // this.ctx.strokeStyle = 'black';
                 }
                 // if (!this.isSafari) {
                 this.randomColor = this.randomColor.substring(0, this.randomColor.length - 1) + ',' + this.randomShapeOpacity + ")";
@@ -557,7 +557,7 @@ var GeneratorComponent = /** @class */ (function () {
             this.ctx.strokeStyle = 'rgb(' + stroke['r'] + ',' + stroke['g'] + ',' + stroke['b'] + ', 1)';
             var blackStroke = this.utilities.randomlyChooseTrueOrFalse();
             if (blackStroke) {
-                this.ctx.strokeStyle = 'black';
+                // this.ctx.strokeStyle = 'black';
             }
             this.randomColor = this.randomColor.substring(0, this.randomColor.length - 1) + ',' + this.randomShapeOpacity + ")";
             // Safari feature detection
@@ -597,7 +597,7 @@ var GeneratorComponent = /** @class */ (function () {
             }
             var rand = this.utilities.randomlyChooseOneOrTwo();
             if (rand === 1) {
-                this.ctx.strokeStyle = 'black';
+                // this.ctx.strokeStyle = 'black';
             }
             if (!this.isSafari) {
                 this.ctx.globalAlpha = 1;
@@ -612,7 +612,7 @@ var GeneratorComponent = /** @class */ (function () {
             }
             this.ctx.fillStyle = this.randomColor;
             this.patternFill = this.utilities.randomlyChooseTrueOrFalse();
-            this.ctx.lineWidth = Math.random() * 10;
+            this.ctx.lineWidth = .1;
             this.drawShape(randomShape, true);
             this.layerCounter++;
             // this.ctx.globalAlpha = .1;
@@ -685,7 +685,7 @@ var GeneratorComponent = /** @class */ (function () {
             this.ctx.strokeStyle = 'rgb(' + stroke['r'] + ',' + stroke['g'] + ',' + stroke['b'] + ')';
             rand = Math.floor(Math.random() * 2) + 1;
             if (rand === 1) {
-                this.ctx.strokeStyle = 'black';
+                // this.ctx.strokeStyle = 'black';
             }
             this.randomColor = this.randomColor.substring(0, this.randomColor.length - 1) + ',' + this.randomShapeOpacity + ")";
             this.ctx.fillStyle = this.randomColor;

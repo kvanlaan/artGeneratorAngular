@@ -457,12 +457,13 @@ artImagesSubscription;
     if (rand === 2) {
       norm = false;
     }
+    norm = true;
 
     let trapTrans = 2;
     if (rand === 2) {
       trapTrans = this.utilities.randomlyChooseOneOrTwo();
     }
-
+    // trapTrans = 2;
     let layerNum = 20;
     if (norm || trapTrans === 1) {
       if (trapTrans === 1) {
@@ -493,14 +494,22 @@ artImagesSubscription;
         // if (!this.isSafari) {
         this.randomColor = this.randomColor.substring(0, this.randomColor.length - 1) + ',' + this.randomShapeOpacity + ")";
         // }
-        // this.ctx.globalAlpha = (Math.random() * .4);
+        //this.ctx.globalAlpha = (Math.random() * .4);
        
         this.ctx.globalAlpha = .4 - (layerNum/this.layerCounter * .01);
-        console.log('trans global alpha', this.ctx.globalAlpha);
         this.ctx.fillStyle = this.randomColor;
 
         this.patternFill = this.utilities.randomlyChooseTrueOrFalse();
         this.ctx.lineWidth = Math.random() * 10;
+
+        if(this.singleLayer) {
+          this.ctx.lineWidth =  Math.random() * 5.2;
+          console.log('TRAP');
+        console.log('norm', norm);
+        console.log('traptrans', trapTrans);
+        console.log('shape opacity', this.randomShapeOpacity);
+        console.log('random shape ocaicty', this.randomStrokeOpacity);
+        }
         this.drawShape(randomShape);
         this.layerCounter++;
       }
@@ -533,12 +542,12 @@ artImagesSubscription;
     //   this.forceBeginPath = false;
     // }
     if (this.singleLayer) {
-      this.forceBeginPath = true;
+       this.forceBeginPath = true;
       this.getSecondSmallLayer(true);
       this.resetForNewLayer();
       this.forceBeginPath = false;
     }
-
+    this.ctx.globalAlpha = 1;
     if (recurse && recurseStep && recurseStep > 1) {
       recurseStep--;
       this.getRandomArt(clear, recurseStep);
@@ -548,8 +557,12 @@ artImagesSubscription;
   }
   getSecondSmallLayer(norm) {
     let count = 25;
+    // norm = true;
     if (norm) {
       count = 45;
+    }
+    if(this.singleLayer) {
+      count = 75;
     }
     while (this.layerCounter <= count) {
       this.randomColor = this.colorArr[Math.floor(Math.random() * this.colorArr.length)];
@@ -561,7 +574,7 @@ artImagesSubscription;
       this.ctx.strokeStyle = 'rgb(' + stroke['r'] + ',' + stroke['g'] + ',' + stroke['b'] + ', 1)';
       const blackStroke = this.utilities.randomlyChooseTrueOrFalse();
       if (blackStroke) {
-        this.ctx.strokeStyle = 'black';
+         this.ctx.strokeStyle = 'black';
       }
       this.randomColor = this.randomColor.substring(0, this.randomColor.length - 1) + ',' + this.randomShapeOpacity + ")";
 
@@ -579,12 +592,26 @@ artImagesSubscription;
       this.ctx.fillStyle = this.randomColor;
       this.patternFill = this.utilities.randomlyChooseTrueOrFalse();
       this.ctx.lineWidth = Math.random() * 10;
+
+      if(this.singleLayer) {
+        this.ctx.lineWidth =  Math.random() * 5.2;
+
+        console.log('shape opacity', this.randomShapeOpacity);
+        console.log('random shape ocaicty', this.randomStrokeOpacity);
+        console.log('linewidth', this.ctx.lineWidth);
+        console.log('strokestyle', this.ctx.strokeStyle);
+        console.log('DONE');
+        }
       this.drawShape(randomShape, true);
       this.layerCounter++;
     }
   }
   getFirstSmallLayer() {
-    while (this.layerCounter <= 25) {
+    let smallCounter = 25;
+    if(this.singleLayer) {
+      smallCounter = 100
+    }
+    while (this.layerCounter <= smallCounter) {
       this.randomColor = this.colorArr[Math.floor(Math.random() * this.colorArr.length)];
       this.randomStrokeOpacity = Math.random();
       this.randomShapeOpacity = Math.random();
@@ -619,6 +646,15 @@ artImagesSubscription;
       this.layerCounter++;
       // this.ctx.globalAlpha = .1;
 
+      if(this.singleLayer) {
+        this.ctx.lineWidth =  Math.random() * 5.2;
+
+        console.log('FIRST SINGLE LAYER')
+        console.log('shape opacity', this.randomShapeOpacity);
+        console.log('random shape ocaicty', this.randomStrokeOpacity);
+        console.log('linewidth', this.ctx.lineWidth);
+        console.log('strokestyle', this.ctx.strokeStyle);
+        }
     }
   }
   resetForNewLayer() {
@@ -644,6 +680,7 @@ artImagesSubscription;
     if (!norm) {
       objNum = Math.floor(Math.random() * 1) + 5;
       this.shapeArr = ['Trapezoid', 'Line'];
+
       if (this.singleLayer) {
         this.beginPath = false;
         this.isTrunks = this.utilities.randomlyChooseTrueOrFalse();
@@ -677,11 +714,10 @@ artImagesSubscription;
       }
 
       if(this.singleLayer) {
-      this.ctx.globalAlpha = this.layerCounter/objNum + .4;
+      this.ctx.globalAlpha = this.layerCounter/objNum + .1;
       } else {
         this.ctx.globalAlpha = 1;
       }
-      console.log('main global alpha', this.ctx.globalAlpha);
 
       var randomShape = this.shapeArr[Math.floor(Math.random() * this.shapeArr.length)];
       // if (this.singleLayer && randomShape !== 'Line') {
@@ -707,6 +743,17 @@ artImagesSubscription;
       }
 
       this.ctx.lineWidth = newLineWidth;
+
+      if(this.singleLayer) {
+        this.patternFill = true;
+        this.ctx.lineWidth =  Math.random() * 5.2;
+      console.log('norm', norm);
+      console.log('traptrans', trapTrans);
+      console.log('shape opacity', this.randomShapeOpacity);
+      console.log('random shape ocaicty', this.randomStrokeOpacity);
+      console.log('linewidth', this.ctx.lineWidth);
+      console.log('strokestyle', this.ctx.strokeStyle);
+      }
       this.drawShape(randomShape, false, true);
       this.layerCounter++;
     }
@@ -876,7 +923,6 @@ artImagesSubscription;
         } else {
           this.ctx.beginPath();
         }
-        this.ctx.setLineDash([]);
 
         if (!this.utilities.randomlyChooseTrueOrFalseThird()) {
           if (!this.utilities.randomlyChooseTrueOrFalseThird()) {
@@ -897,7 +943,7 @@ artImagesSubscription;
 
        // vertex two
         this.ctx.lineTo(rand2, rand1);
-        this.ctx.stroke();
+        // this.ctx.stroke();
        
         // vertex three
         this.ctx.lineTo(rand2, ty2);
@@ -929,7 +975,7 @@ artImagesSubscription;
 
       //  this.ctx.lineTo(rand1, ty1-yDiff);
 
-       this.ctx.stroke();
+      //  this.ctx.stroke();
 
         this.ctx.fill();
         currObjArea = this.calcPolygonArea([{ x: rand1, y: ty1 }, { x: rand2, y: rand1 }, { x: rand2, y: ty2 }]);
@@ -983,7 +1029,6 @@ artImagesSubscription;
         this.ctx.translate(-offset_x, -offset_y);
       }
     }
-    this.ctx.setLineDash([]);
     this.aggrObjArea += currObjArea;
     // if(this.transform) {
 
@@ -1022,12 +1067,8 @@ artImagesSubscription;
     var canvas = ctx.canvas;
     var hRatio = canvas.width / img.width;
     var vRatio = canvas.height / img.height;
-    console.log('canvas width', canvas.width);
-    console.log('canvas height', canvas.height);
 
     var ratio = Math.min(hRatio, vRatio);
-    console.log('ratio width', img.width * ratio);
-    console.log('ratio height', img.height * ratio);
     var centerShift_x = (canvas.width - img.width * ratio) / 2;
     var centerShift_y = (canvas.height - img.height * ratio) / 2;
     ctx.clearRect(0, 0, canvas.width, canvas.height);

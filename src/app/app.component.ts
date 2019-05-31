@@ -128,23 +128,6 @@ export class AppComponent {
     }.bind(this));
   }
 
-  // getDarkPatterns() {
-  //   if (this.darkDatabaseList.length === 0) {
-  //     return new Promise(resolve => {
-  //       this.http.get('http://localhost:4201/artImages').subscribe(function (this, res: any) {
-  //         res.forEach(function (this, item) {
-  //           if (item["metadata"]["name"].indexOf('dark') > -1) {
-  //             this.darkDatabaseList.push(item["metadata"]["name"]);
-  //           } 
-  //         }.bind(this));
-  //         // this.patternDatabaseList = res.map(function (item) { return item["metadata"]["name"]; });
-  //         resolve();
-  //       }.bind(this))
-  //     });
-  //   }
-  //   return;
-  // }
-
   openLoginDialog() {
     this.dialogRef = this.dialog.open(LoginDialogComponent, {
       width: '300px'

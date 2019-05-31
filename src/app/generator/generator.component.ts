@@ -90,7 +90,7 @@ export class GeneratorComponent implements OnInit {
     this.initiatePatterns();
     this.isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
     this.calculateCanvasSize();
-    // this.getDarkPatterns();
+    this.getDarkPatterns();
   }
 artImagesSubscription;
   getDarkPatterns() {

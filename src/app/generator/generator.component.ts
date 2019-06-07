@@ -108,15 +108,17 @@ artImagesSubscription;
             if (item["metadata"]["name"].indexOf('dark') > -1) {
               storageRef.child(item["metadata"]["name"]).getDownloadURL().then(function (this, url) {
                 const darkImage = new Image();
-                darkImage.src = url;
                 darkImage.crossOrigin = "Anonymous";
+
+                darkImage.src = url;
                 this.darkDatabaseList.push(darkImage)
               }.bind(this));
             } else {
               storageRef.child(item["metadata"]["name"]).getDownloadURL().then(function (this, url) {
                 const darkImage = new Image();
-                darkImage.src = url;
                 darkImage.crossOrigin = "Anonymous";
+
+                darkImage.src = url;
                 this.patternDatabaseList.push(darkImage)
               }.bind(this));
             }
@@ -505,11 +507,11 @@ artImagesSubscription;
 
         if(this.singleLayer) {
           this.ctx.lineWidth =  Math.random() * 5.2;
-          console.log('TRAP');
-        console.log('norm', norm);
-        console.log('traptrans', trapTrans);
-        console.log('shape opacity', this.randomShapeOpacity);
-        console.log('random shape ocaicty', this.randomStrokeOpacity);
+        //   console.log('TRAP');
+        // console.log('norm', norm);
+        // console.log('traptrans', trapTrans);
+        // console.log('shape opacity', this.randomShapeOpacity);
+        // console.log('random shape ocaicty', this.randomStrokeOpacity);
         }
         this.drawShape(randomShape);
         this.layerCounter++;
@@ -597,11 +599,11 @@ artImagesSubscription;
       if(this.singleLayer) {
         this.ctx.lineWidth =  Math.random() * 5.2;
 
-        console.log('shape opacity', this.randomShapeOpacity);
-        console.log('random shape ocaicty', this.randomStrokeOpacity);
-        console.log('linewidth', this.ctx.lineWidth);
-        console.log('strokestyle', this.ctx.strokeStyle);
-        console.log('DONE');
+        // console.log('shape opacity', this.randomShapeOpacity);
+        // console.log('random shape ocaicty', this.randomStrokeOpacity);
+        // console.log('linewidth', this.ctx.lineWidth);
+        // console.log('strokestyle', this.ctx.strokeStyle);
+        // console.log('DONE');
         }
       this.drawShape(randomShape, true);
       this.layerCounter++;

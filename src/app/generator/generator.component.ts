@@ -99,10 +99,10 @@ artImagesSubscription;
     if (this.darkDatabaseList.length === 0 || this.patternDatabaseList.length === 0) {
       return new Promise(resolve => {
         if(!this.artImagesSubscription) {}
-        console.log('url',window.location.href );
-        console.log('window', window);
+        // console.log('url',window.location.href );
+        // console.log('window', window);
 
-        console.log('window.location.href ', window.location.href );
+        // console.log('window.location.href ', window.location.href );
         this.artImagesSubscription = this.http.get(window.location.origin  + '/artImages').subscribe(function (this, res: any) {
           res.forEach(function (this, item) {
             if (item["metadata"]["name"].indexOf('dark') > -1) {
@@ -652,11 +652,11 @@ artImagesSubscription;
       if(this.singleLayer) {
         this.ctx.lineWidth =  Math.random() * 5.2;
 
-        console.log('FIRST SINGLE LAYER')
-        console.log('shape opacity', this.randomShapeOpacity);
-        console.log('random shape ocaicty', this.randomStrokeOpacity);
-        console.log('linewidth', this.ctx.lineWidth);
-        console.log('strokestyle', this.ctx.strokeStyle);
+        // console.log('FIRST SINGLE LAYER')
+        // console.log('shape opacity', this.randomShapeOpacity);
+        // console.log('random shape ocaicty', this.randomStrokeOpacity);
+        // console.log('linewidth', this.ctx.lineWidth);
+        // console.log('strokestyle', this.ctx.strokeStyle);
         }
     }
   }
@@ -750,12 +750,12 @@ artImagesSubscription;
       if(this.singleLayer) {
         this.patternFill = true;
         this.ctx.lineWidth =  Math.random() * 5.2;
-      console.log('norm', norm);
-      console.log('traptrans', trapTrans);
-      console.log('shape opacity', this.randomShapeOpacity);
-      console.log('random shape ocaicty', this.randomStrokeOpacity);
-      console.log('linewidth', this.ctx.lineWidth);
-      console.log('strokestyle', this.ctx.strokeStyle);
+      // console.log('norm', norm);
+      // console.log('traptrans', trapTrans);
+      // console.log('shape opacity', this.randomShapeOpacity);
+      // console.log('random shape ocaicty', this.randomStrokeOpacity);
+      // console.log('linewidth', this.ctx.lineWidth);
+      // console.log('strokestyle', this.ctx.strokeStyle);
       }
       this.drawShape(randomShape, false, true);
       this.layerCounter++;

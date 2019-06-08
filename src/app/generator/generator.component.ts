@@ -162,39 +162,39 @@ artImagesSubscription;
     this.patternOne.src = this.initialImages[0].src
     this.patternOne.crossOrigin = "Anonymous";
     this.patternOne.onload = function () {
-      const pattern = this.ctx.createPattern(this.patternOne, 'repeat');
+      const pattern = this.ctx.createPattern(this.patternOne, this.repeat);
       this.ctx.fillStyle = pattern;
       // this.customImages[0].ready = true;
       // this.customImagesLoaded.push(this.patternOne);
 
       this.patternTwo.src = this.initialImages[1].src;
       this.patternTwo.onload = function () {
-        const pattern = this.ctx.createPattern(this.patternTwo, 'repeat');
+        const pattern = this.ctx.createPattern(this.patternTwo, this.repeat);
         this.ctx.fillStyle = pattern;
         // this.customImages[1].ready = true;
         // this.customImagesLoaded.push(this.patternTwo);
         this.patternThree.src = this.initialImages[2].src;
         this.patternThree.onload = function () {
-          const pattern = this.ctx.createPattern(this.patternThree, 'repeat');
+          const pattern = this.ctx.createPattern(this.patternThree, this.repeat);
           this.ctx.fillStyle = pattern;
           // this.customImages[2].ready = true;
           // this.customImagesLoaded.push(this.patternThree);
 
           this.patternFour.src = this.initialImages[3].src;
           this.patternFour.onload = function () {
-            const pattern = this.ctx.createPattern(this.patternFour, 'repeat');
+            const pattern = this.ctx.createPattern(this.patternFour, this.repeat);
             this.ctx.fillStyle = pattern;
             // this.customImages[3].ready = true;
             // this.customImagesLoaded.push(this.patternFour);
             this.patternFive.src = this.initialImages[4].src;
             this.patternFive.onload = function () {
-              const pattern = this.ctx.createPattern(this.patternFive, 'repeat');
+              const pattern = this.ctx.createPattern(this.patternFive, this.repeat);
               this.ctx.fillStyle = pattern;
               // this.customImages[4].ready = true;
               // this.customImagesLoaded.push(this.patternFive);
               this.patternSix.src = this.initialImages[5].src;
               this.patternSix.onload = async function () {
-                const pattern = this.ctx.createPattern(this.patternSix, 'repeat');
+                const pattern = this.ctx.createPattern(this.patternSix, this.repeat);
                 this.ctx.fillStyle = pattern;
                 // this.customImages[5].ready = true;
                 // this.customImagesLoaded.push(this.patternSix);
@@ -763,7 +763,9 @@ artImagesSubscription;
   }
   patternFillSingleBegun = false;
   transform = false;
+  repeat: string = 'repeat';
   drawShape(shape, small?, main?) {
+    this.repeat = this.utilities.randomlyChooseTrueOrFalse() ? 'no-repeat' : 'repeat';
     var offset_x = 0;
     var offset_y = 0;
     var xPos = Math.random() * this.canvasSize;
@@ -804,53 +806,53 @@ artImagesSubscription;
         this.ctx.translate(offset_x, offset_y);
       }
       if (this.patternSwitch === 1) {
-        this.ctx.fillStyle = this.ctx.createPattern(this.patternThree, 'repeat');
+        this.ctx.fillStyle = this.ctx.createPattern(this.patternThree, this.repeat);
       } else if (this.patternSwitch === 2) {
         if (rand === 1) {
-          this.ctx.fillStyle = this.ctx.createPattern(this.patternTwo, 'repeat');
+          this.ctx.fillStyle = this.ctx.createPattern(this.patternTwo, this.repeat);
         } else if (rand === 2) {
-          this.ctx.fillStyle = this.ctx.createPattern(this.patternFour, 'no-repeat');
+          this.ctx.fillStyle = this.ctx.createPattern(this.patternFour, this.repeat);
         }
       } else if (this.patternSwitch === 3) {
-        this.ctx.fillStyle = this.ctx.createPattern(this.patternSix, 'repeat');
+        this.ctx.fillStyle = this.ctx.createPattern(this.patternSix, this.repeat);
 
       } else if (this.patternSwitch === 4) {
         if (rand === 1) {
 
-          this.ctx.fillStyle = this.ctx.createPattern(this.patternFour, 'no-repeat');
+          this.ctx.fillStyle = this.ctx.createPattern(this.patternFour, this.repeat);
 
         } else if (rand === 2) {
-          this.ctx.fillStyle = this.ctx.createPattern(this.patternSix, 'repeat');
+          this.ctx.fillStyle = this.ctx.createPattern(this.patternSix, this.repeat);
         }
       } else if (this.patternSwitch === 5) {
-        this.ctx.fillStyle = this.ctx.createPattern(this.patternTwo, 'repeat');
+        this.ctx.fillStyle = this.ctx.createPattern(this.patternTwo, this.repeat);
       } else if (this.patternSwitch === 6) {
-        this.ctx.fillStyle = this.ctx.createPattern(this.patternOne, 'repeat');
+        this.ctx.fillStyle = this.ctx.createPattern(this.patternOne, this.repeat);
       } else if (this.patternSwitch === 7) {
-        this.ctx.fillStyle = this.ctx.createPattern(this.patternFive, 'repeat');
+        this.ctx.fillStyle = this.ctx.createPattern(this.patternFive, this.repeat);
       } else {
-        this.ctx.fillStyle = this.ctx.createPattern(this.patternFour, 'no-repeat');
+        this.ctx.fillStyle = this.ctx.createPattern(this.patternFour, this.repeat);
       }
       if (this.isFrieze && main) {
-        this.ctx.fillStyle = this.ctx.createPattern(this.patternThree, 'repeat');
+        this.ctx.fillStyle = this.ctx.createPattern(this.patternThree, this.repeat);
       }
       if (this.isFriezeTwo && main) {
-        this.ctx.fillStyle = this.ctx.createPattern(this.patternFive, 'repeat');
+        this.ctx.fillStyle = this.ctx.createPattern(this.patternFive, this.repeat);
       }
       if (this.isTrunks && main) {
-        this.ctx.fillStyle = this.ctx.createPattern(this.patternSix, 'repeat');
+        this.ctx.fillStyle = this.ctx.createPattern(this.patternSix, this.repeat);
 
       }
       if (this.isArabesque && main) {
-        this.ctx.fillStyle = this.ctx.createPattern(this.patternOne, 'repeat');
+        this.ctx.fillStyle = this.ctx.createPattern(this.patternOne, this.repeat);
       }
 
       if (this.isMexico && main) {
-        this.ctx.fillStyle = this.ctx.createPattern(this.patternFour, 'no-repeat');
+        this.ctx.fillStyle = this.ctx.createPattern(this.patternFour, this.repeat);
       }
 
       if (this.isBedroom && main) {
-        this.ctx.fillStyle = this.ctx.createPattern(this.patternBedroom, 'repeat');
+        this.ctx.fillStyle = this.ctx.createPattern(this.patternBedroom, this.repeat);
       }
     }
 
@@ -1109,39 +1111,39 @@ artImagesSubscription;
     this.patternOne.src = this.customImages[0].src
     this.patternOne.crossOrigin = "Anonymous";
     this.patternOne.onload = function () {
-      const pattern = this.ctx.createPattern(this.patternOne, 'repeat');
+      const pattern = this.ctx.createPattern(this.patternOne, this.repeat);
       this.ctx.fillStyle = pattern;
       this.customImages[0].ready = true;
       this.customImagesLoaded.push(this.patternOne);
 
       this.patternTwo.src = this.customImages[1].src;
       this.patternTwo.onload = function () {
-        const pattern = this.ctx.createPattern(this.patternTwo, 'repeat');
+        const pattern = this.ctx.createPattern(this.patternTwo, this.repeat);
         this.ctx.fillStyle = pattern;
         this.customImages[1].ready = true;
         this.customImagesLoaded.push(this.patternTwo);
         this.patternThree.src = this.customImages[2].src;
         this.patternThree.onload = function () {
-          const pattern = this.ctx.createPattern(this.patternThree, 'repeat');
+          const pattern = this.ctx.createPattern(this.patternThree, this.repeat);
           this.ctx.fillStyle = pattern;
           this.customImages[2].ready = true;
           this.customImagesLoaded.push(this.patternThree);
 
           this.patternFour.src = this.customImages[3].src;
           this.patternFour.onload = function () {
-            const pattern = this.ctx.createPattern(this.patternFour, 'repeat');
+            const pattern = this.ctx.createPattern(this.patternFour, this.repeat);
             this.ctx.fillStyle = pattern;
             this.customImages[3].ready = true;
             this.customImagesLoaded.push(this.patternFour);
             this.patternFive.src = this.customImages[4].src;
             this.patternFive.onload = function () {
-              const pattern = this.ctx.createPattern(this.patternFive, 'repeat');
+              const pattern = this.ctx.createPattern(this.patternFive, this.repeat);
               this.ctx.fillStyle = pattern;
               this.customImages[4].ready = true;
               this.customImagesLoaded.push(this.patternFive);
               this.patternSix.src = this.customImages[5].src;
               this.patternSix.onload = async function () {
-                const pattern = this.ctx.createPattern(this.patternSix, 'repeat');
+                const pattern = this.ctx.createPattern(this.patternSix, this.repeat);
                 this.ctx.fillStyle = pattern;
                 this.customImages[5].ready = true;
                 this.customImagesLoaded.push(this.patternSix);

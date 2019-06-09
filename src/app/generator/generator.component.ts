@@ -251,7 +251,13 @@ artImagesSubscription;
     this.patternSix = this.customImagesLoaded[5];
     }
     if (recurseStep === undefined) {
-      this.genType = this.genTypeArr[Math.floor(Math.random() * this.genTypeArr.length)];
+      this.offset_x = Math.floor(Math.random() * this.canvasSize / 2.5) - this.canvasSize / 2.5;
+      this.offset_y = Math.floor(Math.random() * this.canvasSize / 2.5) - this.canvasSize / 2.5;
+      //  this.ctx.translate(this.offset_x, this.offset_y);
+       console.log('offset start', this.offset_x);
+       console.log('offset', this.offset_y);
+
+       this.genType = this.genTypeArr[Math.floor(Math.random() * this.genTypeArr.length)];
       this.patternFill = this.utilities.randomlyChooseTrueOrFalse();
 
       // if no recurse, this means this is a new piece, not just a layer, so clear and calculate recurse chance
@@ -431,11 +437,19 @@ artImagesSubscription;
           this.ctx.drawImage(img, 0, 0, this.canvasSize, this.canvasSize, 0, 0, this.canvasSize, this.canvasSize);
           this.getRandomArtAlg(clear, recurse, recurseStep);
         }.bind(this);
+        // this.ctx.translate(-this.offset_x, -this.offset_y);
+        // console.log('offset end', this.offset_x);
+        // console.log('offset', this.offset_y);
       } else {
         this.getRandomArtAlg(clear, recurse, recurseStep);
       }
-    }
+    } else {
     // }
+    // this.ctx.translate(-this.offset_x, -this.offset_y);
+    // console.log('offset end', this.offset_x);
+    // console.log('offset', this.offset_y);
+
+    }
   }
 
   largeRecurseStep = false;
@@ -612,7 +626,7 @@ artImagesSubscription;
   getFirstSmallLayer() {
     let smallCounter = 25;
     if(this.singleLayer) {
-      smallCounter = 100
+      smallCounter = 100;
     }
     while (this.layerCounter <= smallCounter) {
       this.randomColor = this.colorArr[Math.floor(Math.random() * this.colorArr.length)];
@@ -651,12 +665,6 @@ artImagesSubscription;
 
       if(this.singleLayer) {
         this.ctx.lineWidth =  Math.random() * 5.2;
-
-        // console.log('FIRST SINGLE LAYER')
-        // console.log('shape opacity', this.randomShapeOpacity);
-        // console.log('random shape ocaicty', this.randomStrokeOpacity);
-        // console.log('linewidth', this.ctx.lineWidth);
-        // console.log('strokestyle', this.ctx.strokeStyle);
         }
     }
   }
@@ -699,7 +707,6 @@ artImagesSubscription;
         } else {
           this.patternFill = false;
         }
-
       }
     }
     while (this.layerCounter < objNum) {
@@ -797,13 +804,13 @@ artImagesSubscription;
       this.transform = false;
     }
     if (this.patternFill) {
-
+      this.ctx.translate(this.offset_x, this.offset_y);
       if (!this.patternFillSingleBegun && (this.isFrieze || this.isFriezeTwo || this.isTrunks || this.isArabesque || this.isMexico || this.isBedroom)) {
         this.patternFillSingleBegun = true;
       } else {
         offset_x = Math.floor(Math.random() * this.canvasSize / 2.5) - this.canvasSize / 2.5;
         offset_y = Math.floor(Math.random() * this.canvasSize / 2.5) - this.canvasSize / 2.5;
-        this.ctx.translate(offset_x, offset_y);
+        // this.ctx.translate(offset_x, offset_y);
       }
       if (this.patternSwitch === 1) {
         this.ctx.fillStyle = this.ctx.createPattern(this.patternThree, this.repeat);
@@ -1031,13 +1038,14 @@ artImagesSubscription;
       if (!this.patternFillSingleBegun && (this.isFrieze || this.isFriezeTwo || this.isTrunks || this.isArabesque || this.isMexico || this.isBedroom)) {
 
       } else {
-        this.ctx.translate(-offset_x, -offset_y);
+        // this.ctx.translate(-offset_x, -offset_y);
       }
+      this.ctx.translate(-this.offset_x, -this.offset_y);
     }
     this.aggrObjArea += currObjArea;
     // if(this.transform) {
 
-      this.ctx.setTransform(1, 0, 0, 1, 0, 0);
+      // this.ctx.setTransform(1, 0, 0, 1, 0, 0);
 // this.ctx.restore();    // }
   }
 

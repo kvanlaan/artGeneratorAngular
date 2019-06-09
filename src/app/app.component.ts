@@ -337,7 +337,7 @@ export class AppComponent {
     if(!this.customImagesActive) {
     // this.resetImages();
     this.setCustomImages();
-    // this.customImagesActive = true;
+   this.customImagesActive = true;
     } else {
       this.customImagesActive = false;
       this.generator.initiatePatterns();
@@ -414,7 +414,7 @@ export class AppComponent {
   }
   setCustomImages() {
     this.generator.setCustomImages(true);
-    // this.customImagesActive = true;
+     this.customImagesActive = true;
   }
 
   async getRandomArt(clear, recurseStep?) {

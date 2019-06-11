@@ -265,6 +265,7 @@ artImagesSubscription;
       this.ctx.fillStyle = 'white';
       this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
       recurse = this.utilities.randomlyChooseTrueOrFalse();
+      this.singleLayer = true;
       if (!recurse) {
         this.singleLayer = true;
         if (this.genType === 'noPattern' || (this.genType === 'transPattern' && this.singleLayer)) {
@@ -480,7 +481,7 @@ artImagesSubscription;
     if (rand === 2) {
       trapTrans = this.utilities.randomlyChooseOneOrTwo();
     }
-    // trapTrans = 2;
+    trapTrans = 1;
     let layerNum = 20;
     if (norm || trapTrans === 1) {
       if (trapTrans === 1) {
@@ -789,20 +790,20 @@ artImagesSubscription;
     // if (this.largeRecurseStep) {
     //   this.patternFill = false;
     // }
-    if(!this.singleLayer && main && !this.utilities.randomlyChooseTrueOrFalse()) {
-      this.transform = true;
+    // if(!this.singleLayer && main && !this.utilities.randomlyChooseTrueOrFalse()) {
+    //   this.transform = true;
 
-      //  this.ctx.save();
-      if(this.utilities.randomlyChooseTrueOrFalse) {
+    //   //  this.ctx.save();
+    //   if(this.utilities.randomlyChooseTrueOrFalse) {
 
-    // this.ctx.setTransform(1, .6, .2, 1, 0, 0);
-      } else {
-        // this.ctx.setTransform(1, .2, .6, 1, 0, 0);
+    // // this.ctx.setTransform(1, .6, .2, 1, 0, 0);
+    //   } else {
+    //     // this.ctx.setTransform(1, .2, .6, 1, 0, 0);
 
-      }
-    } else {
-      this.transform = false;
-    }
+    //   }
+    // } else {
+    //   this.transform = false;
+    // }
     if (this.patternFill) {
       this.ctx.translate(this.offset_x, this.offset_y);
       if (!this.patternFillSingleBegun && (this.isFrieze || this.isFriezeTwo || this.isTrunks || this.isArabesque || this.isMexico || this.isBedroom)) {

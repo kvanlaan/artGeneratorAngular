@@ -543,7 +543,11 @@ artImagesSubscription;
     this.resetForNewLayer();
 
     // second small layer
+    if(this.singleLayer) {
+      this.getFirstSmallLayer(true);
+    } else {
     this.getSecondSmallLayer(norm);
+    }
     this.resetForNewLayer();
 
     // if(!this.beginPath) {
@@ -561,7 +565,7 @@ artImagesSubscription;
     // }
     if (this.singleLayer) {
        this.forceBeginPath = true;
-      this.getSecondSmallLayer(true);
+      this.getFirstSmallLayer(true);
       this.resetForNewLayer();
       this.forceBeginPath = false;
     }
@@ -624,10 +628,14 @@ artImagesSubscription;
       this.layerCounter++;
     }
   }
-  getFirstSmallLayer() {
+  getFirstSmallLayer(smallCount?: boolean) {
     let smallCounter = 25;
     if(this.singleLayer) {
+      
       smallCounter = 100;
+      if(smallCount) {
+        smallCounter = 45;
+      }
     }
     while (this.layerCounter <= smallCounter) {
       this.randomColor = this.colorArr[Math.floor(Math.random() * this.colorArr.length)];

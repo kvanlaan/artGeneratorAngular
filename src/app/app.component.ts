@@ -34,10 +34,8 @@ export class DeleteDialogComponent {
 export class AppComponent {
   @ViewChild(GeneratorComponent) generator;
   @ViewChild('loaderCanvas') loader;
-  // @ViewChild('fileInput') fileInput;
-
   @ViewChildren('fileInput') fileInputs
-  currImageIndex = 0;
+  currImageIndex: number = 0;
   customImages =
     [{ 'name': 'uploadCustom1', 'crossOrigin': "Anonymous", 'src': 'assets/arabesque_pattern.jpg', 'ready': true, 'fileTooBig': false },
     { 'name': 'uploadCustom2', 'crossOrigin': "Anonymous", 'src': 'assets/kosovo_map.jpg', 'ready': true, 'fileTooBig': false },
@@ -46,26 +44,31 @@ export class AppComponent {
     { 'name': 'uploadCustom5', 'crossOrigin': "Anonymous", 'src': 'assets/van.jpg', 'ready': true, 'fileTooBig': false },
     { 'name': 'uploadCustom6', 'crossOrigin': "Anonymous", 'src': 'assets/trunks.png', 'ready': true, 'fileTooBig': false }
     ];
-  database;
-  dialogRef;
-  displayName = '';
-  email = '';
-  favoritesArr;
-  guid;
+  displayName: string = '';
+  email: string = '';
+
   imagesActive: boolean = false;
-  imagePopulationDone = true;
-  login = false;
-  newUser = false;
-  suffix = '';
-  ready = false;
-  renderDone = false;
+  imagePopulationDone: boolean = true;
+  isMainPhotoView: boolean = true;
+
+  login: boolean = false;
+  newUser: boolean = false;
+  suffix: string  = '';
+  ready: boolean = false;
+  renderDone: boolean = false;
   shapeArr = ['Rectangle', 'Triangle', 'Circle', 'Line'];
-  showFavorites = false;
+  showFavorites: boolean = false;
   savedImageArr = [];
+  darkDatabaseList = [];
+  
+  // need typing
   user;
   ui;
   patternImageArr;
-  darkDatabaseList = [];
+  favoritesArr;
+  guid;
+  database;
+  dialogRef;
   constructor(public http: HttpClient, public utilities: Utilities, public dialog: MatDialog, public location: Location) {
     this.utilities = utilities;
     this.location = location;
@@ -150,7 +153,6 @@ export class AppComponent {
       });
     }
   }
-
   signOut() {
     firebase.auth().signOut().then(function () {
     }).catch(function (error) {

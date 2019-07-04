@@ -73,13 +73,13 @@ export class GeneratorComponent implements OnInit {
   startingRecurseStep = 0;
   customImagesLoaded = [];
   initialImages =
-  [{ 'name': 'uploadCustom1', 'crossOrigin': "Anonymous", 'src': 'assets/arabesque_pattern.jpg', 'ready': true, 'fileTooBig': false },
-  { 'name': 'uploadCustom2', 'crossOrigin': "Anonymous", 'src': 'assets/kosovo_map.jpg', 'ready': true, 'fileTooBig': false },
-  { 'name': 'uploadCustom3', 'crossOrigin': "Anonymous", 'src': 'assets/frieze.jpg', 'ready': true, 'fileTooBig': false },
-  { 'name': 'uploadCustom4', 'crossOrigin': "Anonymous", 'src': 'assets/mexico_flag.jpg', 'ready': true, 'fileTooBig': false },
-  { 'name': 'uploadCustom5', 'crossOrigin': "Anonymous", 'src': 'assets/van.jpg', 'ready': true, 'fileTooBig': false },
-  { 'name': 'uploadCustom6', 'crossOrigin': "Anonymous", 'src': 'assets/trunks.png', 'ready': true, 'fileTooBig': false }
-  ];
+    [{ 'name': 'uploadCustom1', 'crossOrigin': "Anonymous", 'src': 'assets/arabesque_pattern.jpg', 'ready': true, 'fileTooBig': false },
+    { 'name': 'uploadCustom2', 'crossOrigin': "Anonymous", 'src': 'assets/kosovo_map.jpg', 'ready': true, 'fileTooBig': false },
+    { 'name': 'uploadCustom3', 'crossOrigin': "Anonymous", 'src': 'assets/frieze.jpg', 'ready': true, 'fileTooBig': false },
+    { 'name': 'uploadCustom4', 'crossOrigin': "Anonymous", 'src': 'assets/mexico_flag.jpg', 'ready': true, 'fileTooBig': false },
+    { 'name': 'uploadCustom5', 'crossOrigin': "Anonymous", 'src': 'assets/van.jpg', 'ready': true, 'fileTooBig': false },
+    { 'name': 'uploadCustom6', 'crossOrigin': "Anonymous", 'src': 'assets/trunks.png', 'ready': true, 'fileTooBig': false }
+    ];
   constructor(public http: HttpClient, public utilities: Utilities) {
     this.utilities = utilities;
   }
@@ -92,18 +92,13 @@ export class GeneratorComponent implements OnInit {
     this.calculateCanvasSize();
     this.getDarkPatterns();
   }
-artImagesSubscription;
+  artImagesSubscription;
   getDarkPatterns() {
     var storageRef = firebase.storage().ref();
-
     if (this.darkDatabaseList.length === 0 || this.patternDatabaseList.length === 0) {
       return new Promise(resolve => {
-        if(!this.artImagesSubscription) {}
-        // console.log('url',window.location.href );
-        // console.log('window', window);
-
-        // console.log('window.location.href ', window.location.href );
-        this.artImagesSubscription = this.http.get(window.location.origin  + '/artImages').subscribe(function (this, res: any) {
+        if(!this.artImagesSubscription) { }
+        this.artImagesSubscription = this.http.get(window.location.origin + '/artImages').subscribe(function (this, res: any) {
           res.forEach(function (this, item) {
             if (item["metadata"]["name"].indexOf('dark') > -1) {
               storageRef.child(item["metadata"]["name"]).getDownloadURL().then(function (this, url) {
@@ -243,21 +238,21 @@ artImagesSubscription;
     this.isBedroom = false;
     this.isFriezeTwo = false;
     if(this.customImagesActive) {
-    this.patternOne = this.customImagesLoaded[0];
-    this.patternTwo = this.customImagesLoaded[1];
-    this.patternThree = this.customImagesLoaded[2];
-    this.patternFour = this.customImagesLoaded[3];
-    this.patternFive = this.customImagesLoaded[4];
-    this.patternSix = this.customImagesLoaded[5];
+      this.patternOne = this.customImagesLoaded[0];
+      this.patternTwo = this.customImagesLoaded[1];
+      this.patternThree = this.customImagesLoaded[2];
+      this.patternFour = this.customImagesLoaded[3];
+      this.patternFive = this.customImagesLoaded[4];
+      this.patternSix = this.customImagesLoaded[5];
     }
     if (recurseStep === undefined) {
       this.offset_x = Math.floor(Math.random() * this.canvasSize / 2.5) - this.canvasSize / 2.5;
       this.offset_y = Math.floor(Math.random() * this.canvasSize / 2.5) - this.canvasSize / 2.5;
       //  this.ctx.translate(this.offset_x, this.offset_y);
-       console.log('offset start', this.offset_x);
-       console.log('offset', this.offset_y);
+      console.log('offset start', this.offset_x);
+      console.log('offset', this.offset_y);
 
-       this.genType = this.genTypeArr[Math.floor(Math.random() * this.genTypeArr.length)];
+      this.genType = this.genTypeArr[Math.floor(Math.random() * this.genTypeArr.length)];
       this.patternFill = this.utilities.randomlyChooseTrueOrFalse();
 
       // if no recurse, this means this is a new piece, not just a layer, so clear and calculate recurse chance
@@ -445,10 +440,10 @@ artImagesSubscription;
         this.getRandomArtAlg(clear, recurse, recurseStep);
       }
     } else {
-    // }
-    // this.ctx.translate(-this.offset_x, -this.offset_y);
-    // console.log('offset end', this.offset_x);
-    // console.log('offset', this.offset_y);
+      // }
+      // this.ctx.translate(-this.offset_x, -this.offset_y);
+      // console.log('offset end', this.offset_x);
+      // console.log('offset', this.offset_y);
 
     }
   }
@@ -513,7 +508,7 @@ artImagesSubscription;
         this.randomColor = this.randomColor.substring(0, this.randomColor.length - 1) + ',' + this.randomShapeOpacity + ")";
         // }
         //this.ctx.globalAlpha = (Math.random() * .4);
-       
+
         this.ctx.globalAlpha = .4 - (layerNum/this.layerCounter * .01);
         this.ctx.fillStyle = this.randomColor;
 
@@ -521,12 +516,12 @@ artImagesSubscription;
         this.ctx.lineWidth = Math.random() * 10;
 
         if(this.singleLayer) {
-          this.ctx.lineWidth =  Math.random() * 5.2;
-        //   console.log('TRAP');
-        // console.log('norm', norm);
-        // console.log('traptrans', trapTrans);
-        // console.log('shape opacity', this.randomShapeOpacity);
-        // console.log('random shape ocaicty', this.randomStrokeOpacity);
+          this.ctx.lineWidth = Math.random() * 3.2;
+          //   console.log('TRAP');
+          // console.log('norm', norm);
+          // console.log('traptrans', trapTrans);
+          // console.log('shape opacity', this.randomShapeOpacity);
+          // console.log('random shape ocaicty', this.randomStrokeOpacity);
         }
         this.drawShape(randomShape);
         this.layerCounter++;
@@ -546,7 +541,7 @@ artImagesSubscription;
     if(this.singleLayer) {
       this.getFirstSmallLayer(true);
     } else {
-    this.getSecondSmallLayer(norm);
+      this.getSecondSmallLayer(norm);
     }
     this.resetForNewLayer();
 
@@ -564,7 +559,7 @@ artImagesSubscription;
     //   this.forceBeginPath = false;
     // }
     if (this.singleLayer) {
-       this.forceBeginPath = true;
+      this.forceBeginPath = true;
       this.getFirstSmallLayer(true);
       this.resetForNewLayer();
       this.forceBeginPath = false;
@@ -596,7 +591,7 @@ artImagesSubscription;
       this.ctx.strokeStyle = 'rgb(' + stroke['r'] + ',' + stroke['g'] + ',' + stroke['b'] + ', 1)';
       const blackStroke = this.utilities.randomlyChooseTrueOrFalse();
       if (blackStroke) {
-         this.ctx.strokeStyle = 'black';
+        this.ctx.strokeStyle = 'black';
       }
       this.randomColor = this.randomColor.substring(0, this.randomColor.length - 1) + ',' + this.randomShapeOpacity + ")";
 
@@ -616,14 +611,14 @@ artImagesSubscription;
       this.ctx.lineWidth = Math.random() * 10;
 
       if(this.singleLayer) {
-        this.ctx.lineWidth =  Math.random() * 5.2;
+        this.ctx.lineWidth = Math.random() * 3.2;
 
         // console.log('shape opacity', this.randomShapeOpacity);
         // console.log('random shape ocaicty', this.randomStrokeOpacity);
         // console.log('linewidth', this.ctx.lineWidth);
         // console.log('strokestyle', this.ctx.strokeStyle);
         // console.log('DONE');
-        }
+      }
       this.drawShape(randomShape, true);
       this.layerCounter++;
     }
@@ -631,11 +626,14 @@ artImagesSubscription;
   getFirstSmallLayer(smallCount?: boolean) {
     let smallCounter = 25;
     if(this.singleLayer) {
-      
+
       smallCounter = 100;
       if(smallCount) {
+      smallCounter = 65;
+       if(this.forceBeginPath) {
         smallCounter = 45;
       }
+    }
     }
     while (this.layerCounter <= smallCounter) {
       this.randomColor = this.colorArr[Math.floor(Math.random() * this.colorArr.length)];
@@ -653,28 +651,43 @@ artImagesSubscription;
       }
       let rand = this.utilities.randomlyChooseOneOrTwo();
       if (rand === 1) {
-        this.ctx.strokeStyle = 'black';
+        // this.ctx.strokeStyle = 'black';
       }
       if (!this.isSafari) {
         this.ctx.globalAlpha = 1;
         this.randomColor = this.randomColor.substring(0, this.randomColor.length - 1) + ',' + this.randomShapeOpacity + ")";
         rand = Math.floor(Math.random() * 2) + 1;
-        if (rand === 1) {
+        // if(!smallCount) {
+          // if(!smallCount || (smallCount && this.layerCounter > 2 && !this.forceBeginPath)) {
+            // if(!smallCount || (smallCount && !this.forceBeginPath)) {
+              // if(!this.forceBeginPath) {
+          if (rand === 1) {
           this.ctx.globalAlpha = this.randomShapeOpacity;
+        } else {
+          // if (smallCount && !this.forceBeginPath) {
+          //   this.randomShapeOpacity = Math.random() * .5;
+          //   this.randomColor = this.randomColor.substring(0, this.randomColor.length - 1) + ',' + this.randomShapeOpacity + ")";
+          // }
         }
+      // }
+        // }
       } else {
         this.ctx.globalAlpha = this.randomShapeOpacity;
       }
       this.ctx.fillStyle = this.randomColor;
       this.patternFill = this.utilities.randomlyChooseTrueOrFalse();
+      if (rand !== 1 && smallCount && !this.forceBeginPath && !this.patternFill) {
+        this.randomShapeOpacity = Math.random() * .5;
+        this.randomColor = this.randomColor.substring(0, this.randomColor.length - 1) + ',' + this.randomShapeOpacity + ")";
+        this.ctx.fillStyle = this.randomColor;
+      }
       this.ctx.lineWidth = Math.random() * 10;
+      if (this.singleLayer) {
+        this.ctx.lineWidth = Math.random() * 6.2;
+      }
       this.drawShape(randomShape, true);
       this.layerCounter++;
       // this.ctx.globalAlpha = .1;
-
-      if(this.singleLayer) {
-        this.ctx.lineWidth =  Math.random() * 5.2;
-        }
     }
   }
   resetForNewLayer() {
@@ -733,7 +746,7 @@ artImagesSubscription;
       }
 
       if(this.singleLayer) {
-      this.ctx.globalAlpha = this.layerCounter/objNum + .1;
+        this.ctx.globalAlpha = this.layerCounter/objNum + .1;
       } else {
         this.ctx.globalAlpha = 1;
       }
@@ -765,13 +778,13 @@ artImagesSubscription;
 
       if(this.singleLayer) {
         this.patternFill = true;
-        this.ctx.lineWidth =  Math.random() * 5.2;
-      // console.log('norm', norm);
-      // console.log('traptrans', trapTrans);
-      // console.log('shape opacity', this.randomShapeOpacity);
-      // console.log('random shape ocaicty', this.randomStrokeOpacity);
-      // console.log('linewidth', this.ctx.lineWidth);
-      // console.log('strokestyle', this.ctx.strokeStyle);
+        this.ctx.lineWidth = Math.random() * 3.2;
+        // console.log('norm', norm);
+        // console.log('traptrans', trapTrans);
+        // console.log('shape opacity', this.randomShapeOpacity);
+        // console.log('random shape ocaicty', this.randomStrokeOpacity);
+        // console.log('linewidth', this.ctx.lineWidth);
+        // console.log('strokestyle', this.ctx.strokeStyle);
       }
       this.drawShape(randomShape, false, true);
       this.layerCounter++;
@@ -962,10 +975,10 @@ artImagesSubscription;
         // vertex one
         this.ctx.moveTo(rand1, ty1);
 
-       // vertex two
+        // vertex two
         this.ctx.lineTo(rand2, rand1);
         // this.ctx.stroke();
-       
+
         // vertex three
         this.ctx.lineTo(rand2, ty2);
         this.ctx.stroke();
@@ -975,28 +988,28 @@ artImagesSubscription;
 
         // const set y diff
 
-      //  const yDiff = 50;
-      //  this.ctx.lineTo(rand1, ty1-yDiff);
-      //  this.ctx.stroke();
+        //  const yDiff = 50;
+        //  this.ctx.lineTo(rand1, ty1-yDiff);
+        //  this.ctx.stroke();
 
-      //  this.ctx.lineTo(rand2, rand1-yDiff);
-      //  this.ctx.stroke();
+        //  this.ctx.lineTo(rand2, rand1-yDiff);
+        //  this.ctx.stroke();
 
-      //  this.ctx.lineTo(rand2, rand1);
-      //  this.ctx.moveTo(rand2, rand1-yDiff);
+        //  this.ctx.lineTo(rand2, rand1);
+        //  this.ctx.moveTo(rand2, rand1-yDiff);
 
-      //  this.ctx.stroke();
+        //  this.ctx.stroke();
 
-      //  this.ctx.lineTo(rand2, ty2-yDiff);
-      //  this.ctx.stroke();
+        //  this.ctx.lineTo(rand2, ty2-yDiff);
+        //  this.ctx.stroke();
 
-      //  this.ctx.lineTo(rand2, ty2);
-      //  this.ctx.moveTo(rand2, ty2-yDiff);
-      //  this.ctx.stroke();
+        //  this.ctx.lineTo(rand2, ty2);
+        //  this.ctx.moveTo(rand2, ty2-yDiff);
+        //  this.ctx.stroke();
 
-      //  this.ctx.lineTo(rand1, ty1-yDiff);
+        //  this.ctx.lineTo(rand1, ty1-yDiff);
 
-      //  this.ctx.stroke();
+        //  this.ctx.stroke();
 
         this.ctx.fill();
         currObjArea = this.calcPolygonArea([{ x: rand1, y: ty1 }, { x: rand2, y: rand1 }, { x: rand2, y: ty2 }]);
@@ -1054,8 +1067,8 @@ artImagesSubscription;
     this.aggrObjArea += currObjArea;
     // if(this.transform) {
 
-      // this.ctx.setTransform(1, 0, 0, 1, 0, 0);
-// this.ctx.restore();    // }
+    // this.ctx.setTransform(1, 0, 0, 1, 0, 0);
+    // this.ctx.restore();    // }
   }
 
   renderImage(index?: number, favorites?: boolean) {

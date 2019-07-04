@@ -7,6 +7,8 @@ import {
   MatGridListModule,
   MatIconModule,
   MatProgressSpinnerModule,
+  MatButtonToggleModule,
+  MatDividerModule,
 } from '@angular/material';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
@@ -16,6 +18,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { GeneratorComponent } from './generator/generator.component';
 import 'hammerjs';
 import { HttpClientModule } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
 @NgModule({
   declarations: [
     AppComponent,
@@ -30,7 +33,9 @@ import { HttpClientModule } from '@angular/common/http';
   imports: [
     MatButtonModule,
     MatDialogModule,
+    FormsModule,
     BrowserAnimationsModule,
+    MatButtonToggleModule,
     MatSlideToggleModule,
     MatTooltipModule,
     HttpClientModule,
@@ -38,7 +43,8 @@ import { HttpClientModule } from '@angular/common/http';
     FlexLayoutModule,
     MatGridListModule,
     MatIconModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatDividerModule
   ],
   providers: [],
   bootstrap: [AppComponent]

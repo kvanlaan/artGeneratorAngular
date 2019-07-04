@@ -8,7 +8,7 @@
 
     <div fxFlex>
       <div fxFlex fxFlexOffset="7" fxShow="true" fxLayoutGap="5px" fxShow.md="false" fxShow.sm="false" fxShow.xs="false" fxLayoutAlign="start center">
-        <button matTooltip="Customize Patterns" matTooltipPosition="right" [disabled]="!renderDone" (click)="getRandomArt(true)"
+        <button [disabled]="!renderDone" (click)="getRandomArt(true)"
           class="float-left inline" mat-raised-button>
           Get New Art</button>
         <a href="#" target="_blank" class="float-left inline" #downloadLink (click)="download(downloadLink)" download="art.jpg">
@@ -18,7 +18,7 @@
         </a>
       </div>
       <div fxFlex fxShow="true" fxLayoutAlign="end center">
-        <button matTooltip="Customize Patterns" matTooltipPosition="right" [fxShow]="!login" (click)="openLoginModal()" mat-stroked-button>
+        <button [fxShow]="!login" (click)="openLoginModal()" mat-stroked-button>
           <span> Sign In </span>
         </button>
         <span *ngIf="login" fxLayoutAlign="horizontal center" fxLayoutGap="5px">
@@ -28,93 +28,83 @@
           </button>
         </span>
       </div>
-      <div fxFlex="6"></div>
+      <div fxFlex="6" fxShow.md="false" fxShow.sm="false" fxShow.xs="false"></div>
     </div>
   </div>
   <div fxFlexOffset="2" fxLayout="row" fxShow="false" fxShow.md="true" fxShow.sm="true" fxShow.xs="true" fxLayoutWrap>
-    <div fxFlex fxFlexOffset="5" fxFlexOffset.sm="1"   fxLayoutAlign="start center"> Each piece is algorithmically unique.</div>
+    <div fxFlex fxFlexOffset="5" fxFlexOffset.sm="1" class="material-text" style="font-size: 14px !important; text-align: left" fxLayoutAlign="start center"> Each piece is algorithmically unique.</div>
     <div fxFlex="20" fxLayoutAlign="end center">
-
-
       <button *ngIf="login" fxFlex="5" (click)="signOut()" mat-stroked-button>
         <span> Sign Out </span>
       </button>
 
     </div>
   </div>
-<!-- 
-  <div fxFlexOffset="2" fxLayoutAlign="center center" fxShow="false" fxShow.md="true" fxShow.sm="true" fxShow.xs="true" fxLayoutWrap>
 
-  <mat-button-toggle-group name="view">
-    <mat-button-toggle value="gallery">Bold</mat-button-toggle>
-    <mat-button-toggle value="art">Italic</mat-button-toggle>
-  </mat-button-toggle-group> 
-  </div> -->
-  <div fxFlexOffset="1" fxLayout="row" fxShow="false" fxShow.md="true" fxShow.sm="true" fxShow.xs="true" fxLayoutWrap>
-    <div fxFlexOffset="4" fxFlexOffset.sm="1"  fxFlex="60" fxLayoutAlign="start center" fxLayoutGap="5">
+  <div fxFlex style="padding-top: 15px; padding-bottom: 5px;" fxLayout="row" fxShow="false" fxShow.md="true" fxShow.sm="true" fxShow.xs="true" fxLayoutWrap fxLayoutAlign="center center">
+        <mat-button-toggle-group  [(ngModel)]="isMainPhotoView">
+            <mat-button-toggle [value]="true">  <i  class="material-icons" >
+                photo
+                </i></mat-button-toggle>
+            <mat-button-toggle [value]="false"> <i  class="material-icons">
+                view_module
+                </i></mat-button-toggle>
+          </mat-button-toggle-group>
+  </div>
+  <!-- <mat-divider></mat-divider> -->
+  <div style="padding-top: 5px; padding-bottom: 5px" fxFlexOffset="1" fxLayout="row" fxShow="false" fxShow.md="true" fxShow.sm="true" fxShow.xs="true" fxLayoutWrap>
+    <div fxLayoutAlign="start center" fxLayoutGap="5px" style="padding-right: 5px">
       <button [disabled]="!renderDone" (click)="getRandomArt(true)" class="float-left inline" mat-stroked-button>
         Get New Art</button>
-      <a href="#" target="_blank" class="inline" #downloadLinkTwo (click)="download(downloadLinkTwo)" download="art.jpg">
-
-        <button [disabled]="!renderDone" mat-stroked-button>
-          Save this art
-        </button>
+      <a href="#" target="_blank" class="inline" #downloadLinkTwo (click)="!renderDone && download(downloadLinkTwo)" download="artGenerator.jpg">
+          <i class="material-icons">
+              save_alt
+              </i>
       </a>
     </div>
-    <div fxFlex="40" fxLayoutAlign="end center">
-
-    </div>
-  </div>
-
-  <div fxFlexOffset="1" fxLayout="row" fxShow="false" fxShow.md="true" fxShow.sm="true" fxShow.xs="true" fxLayoutWrap fxLayoutGap="5px"
-    fxLayoutAlign="start center">
-    <div fxFlexOffset="4" fxFlexOffset.sm="1"   fxLayoutAlign="start center">
-      <span (click)="filterFavorites()" class="hover-red">
-        <i class="material-icons">
-          filter_list
-        </i>
-
-        <i [fxShow]="showFavorites" class="material-icons">
-          favorite
-        </i>
-        <i [fxShow]="!showFavorites" class="material-icons">
-          favorite_border
-        </i>
-      </span>
-    </div>
-    <mat-slide-toggle matTooltip="Customize Patterns" tool-tip="Customize Patterns" [checked]="customImagesActive" (change)="toggleImages()"></mat-slide-toggle>
-
-    <!-- <mat-slide-toggle [@.disabled]="true" [checked]="true" (dragChange)="toggleImages($event)"></mat-slide-toggle> -->
-
-    <!-- <mat-slide-toggle [checked]="customImagesActive" (dragChange)="toggleImages($event)"></mat-slide-toggle> -->
-    <span *ngIf="ready" fxLayout="row" fxLayoutAlign="start center">
-      <span *ngFor="let customImage of customImages; let i = index" [ngStyle]="{'background-image': 'url(' + this.customImages[i]?.src + ')'}"
-        class="tile">
-        <input #fileInput class="file-input" type="file" multiple (change)="uploadCustomImage(i, $event)">
-        <span class="upload hover" fxLayoutAlign="center end">
-          <i [fxShow]="customImage.ready" class="material-icons heart margin-top-auto bottom-0">
-            arrow_upward
+ 
+    <div [fxShow.md]="!isMainPhotoView" [fxShow.sm]="!isMainPhotoView" [fxShow.xs]="!isMainPhotoView"  fxLayout="row" fxFlex fxLayoutAlign="end center">
+        <span (click)="filterFavorites()" class="hover-red">
+          <i class="material-icons">
+            filter_list
+          </i>
+  
+          <i [fxShow]="showFavorites" class="material-icons">
+            favorite
+          </i>
+          <i [fxShow]="!showFavorites" class="material-icons">
+            favorite_border
           </i>
         </span>
-        <span [fxShow]="!customImage.ready" class="upload" fxLayoutAlign="center end">
-          <div class="margin-auto loader small"></div>
-        </span>
-        <span [fxShow]="customImage.fileTooBig" class="upload warning" fxLayoutAlign="end center" fxLayout="column">
-          <i class="material-icons heart margin-top-auto bottom-0">
-            warning
-          </i>
-        </span>
-      </span>
-    </span>
+      </div>
+      <div [fxShow.md]="isMainPhotoView" [fxShow.sm]="isMainPhotoView" [fxShow.xs]="isMainPhotoView"  fxLayout="row" fxLayoutAlign="end center"  fxLayoutGap="5px">
+          <mat-slide-toggle matTooltip="Customize Patterns" tool-tip="Customize Patterns" [checked]="customImagesActive" (change)="toggleImages()"></mat-slide-toggle>
+          <span *ngIf="ready" fxLayout="row" fxLayoutAlign="start center">
+            <span *ngFor="let customImage of customImages; let i = index" [ngStyle]="{'background-image': 'url(' + this.customImages[i]?.src + ')'}"
+              class="tile">
+              <input #fileInput class="file-input" type="file" multiple (change)="uploadCustomImage(i, $event)">
+              <span class="upload hover" fxLayoutAlign="center end">
+                <i [fxShow]="customImage.ready" class="material-icons heart margin-top-auto bottom-0">
+                  arrow_upward
+                </i>
+              </span>
+              <span [fxShow]="!customImage.ready" class="upload" fxLayoutAlign="center end">
+                <div class="margin-auto loader small"></div>
+              </span>
+              <span [fxShow]="customImage.fileTooBig" class="upload warning" fxLayoutAlign="end center" fxLayout="column">
+                <i class="material-icons heart margin-top-auto bottom-0">
+                  warning
+                </i>
+              </span>
+            </span>
+          </span>
+      </div>
   </div>
 
   <div class="min-height-450" fxLayout="row" fxFlexOffset.md="5" fxFlexOffset.sm="2"  fxLayout.md="column"
     fxLayout.sm="column" fxLayout.xs="column" fxFlex.md="100" fxFlex.sm="100" fxFlex.xs="100">
-
-
-
     <div class="relative overflow-scroll" fxFlex="40" fxFlexOffset.xl="5" fxFlexOffset.md="5" fxFlexOffset.lg="5" fxFlexOffset.md="0"
-      fxFlexOffset.sm="0" fxFlex.md="25" fxFlex.sm="20" fxFlex.xs="20">
+      fxFlexOffset.sm="0" [fxShow.md]="!isMainPhotoView" [fxShow.sm]="!isMainPhotoView" [fxShow.xs]="!isMainPhotoView" fxFlex.md="100" fxFlex.sm="100" fxFlex.xs="100">
       <mat-grid-list *ngIf="!showFavorites" class="canvas-height" cols="5" rows="5" gutterSize="5px">
         <div [fxShow]="!imagePopulationDone" #loaderCanvas class="absolute margin-auto loader">
         </div>
@@ -216,7 +206,7 @@
           </span>
         </span>
       </span>
-      <generator (updateCurrentIndex)="updateCurrentIndex($event)" [currImageIndex]="currImageIndex" [customImagesActive]="customImagesActive"
+      <generator [fxShow.md]="isMainPhotoView" [fxShow.sm]="isMainPhotoView" [fxShow.xs]="isMainPhotoView" (updateCurrentIndex)="updateCurrentIndex($event)" [currImageIndex]="currImageIndex" [customImagesActive]="customImagesActive"
         [customImages]="customImages" [savedImageArr]="savedImageArr" [favoritesArr]="favoritesArr" (saveImageFirebase)="saveImageFirebase($event)"
         (renderDoneEmit)="setRenderDone(true)"></generator>
     </div>

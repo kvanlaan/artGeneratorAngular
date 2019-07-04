@@ -65,7 +65,7 @@ button {
 
 .material-text {
 color: rgb(0, 0, 0);
-font-family: system-ui;
+font-family: Roboto,"Helvetica Neue",sans-serif;
 font-weight: 400;
 font-size: 18px !important;
 }
@@ -348,6 +348,11 @@ input:hover::before {
 .z-index-100 {
   z-index: 100;
 }
+.hide {
+  display: none;
+  height: 0;
+  visibility: hidden !important;
+}
 /* Smartphones (portrait and landscape) ----------- */
 @media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
   /* Styles */
@@ -442,7 +447,9 @@ input:hover::before {
   }
 
   }
-   /* iPhone 4 ----------- */
+ 
+ 
+  /* iPhone 4 ----------- */
   @media only screen and (min-device-width : 320px) and (max-device-width : 480px) and (orientation : landscape) and (-webkit-min-device-pixel-ratio : 2) {
   /* Styles */
   .canvas-height {
@@ -567,7 +574,7 @@ input:hover::before {
   }
 
   }
-   @media only screen and (min-device-width: 360px) and (max-device-height: 640px) and (orientation : portrait) and (-webkit-device-pixel-ratio: 3){
+  @media only screen and (min-device-width: 360px) and (max-device-height: 640px) and (orientation : portrait) and (-webkit-device-pixel-ratio: 3){
   /* Styles */
   .canvas-height {
     height: 587.234043px;
@@ -579,3 +586,14 @@ input:hover::before {
   @media only screen and (min-device-width: 1336px) {
     /* Styles */
 }
+
+
+@media only screen and (min-device-width : 320px) and (max-device-width : 376px)  {
+  /* Styles */
+  .canvas-height {
+    height: 374.425532px;
+  }
+  .cdk-overlay-pane {
+    left:5% !important;
+  }
+  }

@@ -60,7 +60,8 @@ export class AppComponent {
   showFavorites: boolean = false;
   savedImageArr = [];
   darkDatabaseList = [];
-  
+  customImagesActive: boolean = false;
+
   // need typing
   user;
   ui;
@@ -334,7 +335,6 @@ export class AppComponent {
       { 'name': 'uploadCustom6', 'crossOrigin': "Anonymous", 'src': 'assets/trunks.png', 'ready': true, 'fileTooBig': false }
       ];
   }
-  customImagesActive = false;
   toggleImages() {
     if(!this.customImagesActive) {
     // this.resetImages();

@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild, Output, EventEmitter, Input, ViewChildren
 import { Utilities } from './utilities';
 import { HttpClient } from '@angular/common/http';
 import * as firebase from 'firebase';
+import { start } from 'repl';
 
 @Component({
   selector: 'generator',
@@ -80,6 +81,9 @@ export class GeneratorComponent implements OnInit {
     { 'name': 'uploadCustom5', 'crossOrigin': "Anonymous", 'src': 'assets/van.jpg', 'ready': true, 'fileTooBig': false },
     { 'name': 'uploadCustom6', 'crossOrigin': "Anonymous", 'src': 'assets/trunks.png', 'ready': true, 'fileTooBig': false }
     ];
+  artImagesSubscription;
+  restoreScale;
+
   constructor(public http: HttpClient, public utilities: Utilities) {
     this.utilities = utilities;
   }
@@ -92,12 +96,11 @@ export class GeneratorComponent implements OnInit {
     this.calculateCanvasSize();
     this.getDarkPatterns();
   }
-  artImagesSubscription;
   getDarkPatterns() {
     var storageRef = firebase.storage().ref();
     if (this.darkDatabaseList.length === 0 || this.patternDatabaseList.length === 0) {
       return new Promise(resolve => {
-        if(!this.artImagesSubscription) { }
+        if (!this.artImagesSubscription) { }
         this.artImagesSubscription = this.http.get(window.location.origin + '/artImages').subscribe(function (this, res: any) {
           res.forEach(function (this, item) {
             if (item["metadata"]["name"].indexOf('dark') > -1) {
@@ -202,7 +205,6 @@ export class GeneratorComponent implements OnInit {
       }.bind(this);
     }.bind(this);
   }
-
   calculateCanvasSize() {
     this.canvas = <HTMLCanvasElement>document.getElementById("myCanvas");
     this.ctx = this.canvas.getContext("2d");
@@ -215,11 +217,28 @@ export class GeneratorComponent implements OnInit {
     this.canvasSizeTwo = this.canvasTwo.clientHeight;
     this.ctxTwo.canvas.width = this.canvasSizeTwo;
     this.ctxTwo.canvas.height = this.canvasSizeTwo;
+    console.log('context height before scale', this.ctx.canvas.height)
+    this.ctx.scale(.6, .6)
+    console.log('context height after scale', this.ctx.canvas.height)
+    console.log('canvas size after scale', this.canvasSize)
+
+    this.ctxTwo.scale(.6, .6)
+    this.restoreScale = 1.667;
+    this.fullCanvasSize = this.ctx.canvas.width * this.restoreScale;
+    this.leftmostPoint = this.fullCanvasSize
+    console.log('full canva sizee', this.fullCanvasSize)
+
   }
   offset_x = 0;
   offset_y = 0;
 
+  fullCanvasSize: number = 0;
+  forceTrapezoidBeginPath: boolean;
+
+  lowestPoint = 0;
+  rightmostPoint = 0;
   async getRandomArt(clear, recurseStep?) {
+    this.colorArr = this.getRandomColorArr();
     // hide favorites because we're about to switch to savedimagearr
     // hiding stuff since a new image is being drawn]
 
@@ -237,7 +256,7 @@ export class GeneratorComponent implements OnInit {
     this.isFrieze = false;
     this.isBedroom = false;
     this.isFriezeTwo = false;
-    if(this.customImagesActive) {
+    if (this.customImagesActive) {
       this.patternOne = this.customImagesLoaded[0];
       this.patternTwo = this.customImagesLoaded[1];
       this.patternThree = this.customImagesLoaded[2];
@@ -249,20 +268,30 @@ export class GeneratorComponent implements OnInit {
       this.offset_x = Math.floor(Math.random() * this.canvasSize / 2.5) - this.canvasSize / 2.5;
       this.offset_y = Math.floor(Math.random() * this.canvasSize / 2.5) - this.canvasSize / 2.5;
       //  this.ctx.translate(this.offset_x, this.offset_y);
-      console.log('offset start', this.offset_x);
-      console.log('offset', this.offset_y);
 
       this.genType = this.genTypeArr[Math.floor(Math.random() * this.genTypeArr.length)];
       this.patternFill = this.utilities.randomlyChooseTrueOrFalse();
 
-      // if no recurse, this means this is a new piece, not just a layer, so clear and calculate recurse chance
-      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      // if no recurse, this means t his is a new piece, not just a layer, so clear and calculate recurse chance
+      this.ctx.clearRect(0, 0, this.fullCanvasSize, this.fullCanvasSize);
       this.ctx.fillStyle = 'white';
-      this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+      this.ctx.fillRect(0, 0, this.fullCanvasSize, this.fullCanvasSize);
       recurse = this.utilities.randomlyChooseTrueOrFalse();
       this.singleLayer = true;
+
       if (!recurse) {
+        // this.ctx.save();
         this.singleLayer = true;
+        this.forceTrapezoidBeginPath = this.utilities.randomlyChooseTrueOrFalse();
+        // this.ctx.scale(1.2, 1.2);
+        // this.ctxTwo.scale(1.2, 1.2);
+        // this.restoreScale = 1.282;
+        // this.fullCanvasSize = this.ctx.canvas.width * this.restoreScale;
+        console.log('full canvas size', this.fullCanvasSize);
+        this.ctx.clearRect(0, 0, this.fullCanvasSize, this.fullCanvasSize);
+        this.ctx.fillStyle = 'white';
+        this.ctx.fillRect(0, 0, this.fullCanvasSize, this.fullCanvasSize);
+
         if (this.genType === 'noPattern' || (this.genType === 'transPattern' && this.singleLayer)) {
           this.isTrunks = this.utilities.randomlyChooseTrueOrFalseThird();
           if (!this.isTrunks) {
@@ -430,7 +459,7 @@ export class GeneratorComponent implements OnInit {
         var img = new Image();
         img.src = this.canvas.toDataURL();
         img.onload = function () {
-          this.ctx.drawImage(img, 0, 0, this.canvasSize, this.canvasSize, 0, 0, this.canvasSize, this.canvasSize);
+          this.ctx.drawImage(img, 0, 0, this.fullCanvasSize, this.fullCanvasSize, 0, 0, this.fullCanvasSize, this.fullCanvasSize);
           this.getRandomArtAlg(clear, recurse, recurseStep);
         }.bind(this);
         // this.ctx.translate(-this.offset_x, -this.offset_y);
@@ -455,7 +484,6 @@ export class GeneratorComponent implements OnInit {
 
     this.beginPath = this.utilities.randomlyChooseTrueOrFalse();
     this.randomScheme = "Random";
-    this.colorArr = this.getRandomColorArr();
     let rand = 1;
     this.patternOffset = 0;
 
@@ -509,14 +537,23 @@ export class GeneratorComponent implements OnInit {
         // }
         //this.ctx.globalAlpha = (Math.random() * .4);
 
-        this.ctx.globalAlpha = .4 - (layerNum/this.layerCounter * .01);
+        this.ctx.globalAlpha = .4 - (layerNum / this.layerCounter * .01);
         this.ctx.fillStyle = this.randomColor;
 
         this.patternFill = this.utilities.randomlyChooseTrueOrFalse();
         this.ctx.lineWidth = Math.random() * 10;
 
-        if(this.singleLayer) {
+        if (this.singleLayer) {
           this.ctx.lineWidth = Math.random() * 3.2;
+          const rand = this.utilities.randomlyChooseTrueOrFalse();
+          if (rand) {
+            if (this.forceTrapezoidBeginPath) {
+              this.ctx.lineWidth = Math.random() * 10;
+            } else {
+              this.ctx.lineWidth = Math.random() * 7;
+
+            }
+          }
           //   console.log('TRAP');
           // console.log('norm', norm);
           // console.log('traptrans', trapTrans);
@@ -538,8 +575,10 @@ export class GeneratorComponent implements OnInit {
     this.resetForNewLayer();
 
     // second small layer
-    if(this.singleLayer) {
-      this.getFirstSmallLayer(true);
+    if (this.singleLayer) {
+      // this.getFirstSmallLayer(true);
+      this.getSecondSmallLayer(norm);
+
     } else {
       this.getSecondSmallLayer(norm);
     }
@@ -578,7 +617,7 @@ export class GeneratorComponent implements OnInit {
     if (norm) {
       count = 45;
     }
-    if(this.singleLayer) {
+    if (this.singleLayer) {
       count = 75;
     }
     while (this.layerCounter <= count) {
@@ -610,9 +649,16 @@ export class GeneratorComponent implements OnInit {
       this.patternFill = this.utilities.randomlyChooseTrueOrFalse();
       this.ctx.lineWidth = Math.random() * 10;
 
-      if(this.singleLayer) {
+      if (this.singleLayer) {
         this.ctx.lineWidth = Math.random() * 3.2;
-
+        const rand = this.utilities.randomlyChooseTrueOrFalse();
+        if (rand) {
+          if (this.forceTrapezoidBeginPath) {
+            this.ctx.lineWidth = Math.random() * 10;
+          } else {
+            this.ctx.lineWidth = Math.random() * 7;
+          }
+        }
         // console.log('shape opacity', this.randomShapeOpacity);
         // console.log('random shape ocaicty', this.randomStrokeOpacity);
         // console.log('linewidth', this.ctx.lineWidth);
@@ -625,20 +671,34 @@ export class GeneratorComponent implements OnInit {
   }
   getFirstSmallLayer(smallCount?: boolean) {
     let smallCounter = 25;
-    if(this.singleLayer) {
+    if (this.singleLayer) {
 
       smallCounter = 100;
-      if(smallCount) {
-      smallCounter = 65;
-       if(this.forceBeginPath) {
-        smallCounter = 45;
+      if (smallCount) {
+        smallCounter = 65;
+        if (this.forceBeginPath) {
+          smallCounter = 45;
+        }
       }
-    }
     }
     while (this.layerCounter <= smallCounter) {
       this.randomColor = this.colorArr[Math.floor(Math.random() * this.colorArr.length)];
       this.randomStrokeOpacity = Math.random();
       this.randomShapeOpacity = Math.random();
+      let rand = this.utilities.randomlyChooseOneOrTwo();
+      if (rand === 1) {
+        // this.ctx.strokeStyle = 'black';
+      }
+      rand = Math.floor(Math.random() * 2) + 1;
+
+      if (rand === 1 && smallCount && this.layerCounter === smallCounter) {
+        // if(this.randomShapeOpacity < .5) {
+        //   this.randomShapeOpacity = .6;
+        // }
+        // this.randomShapeOpacity = 0;
+        // this.randomShapeOpacity = Math.random() + .5
+
+      }
       var randomShape = this.smallShapeArr[Math.floor(Math.random() * this.shapeArr.length)];
       var stroke = this.getRandomRgb();
       if (this.randomScheme === 'Complementary') {
@@ -649,33 +709,44 @@ export class GeneratorComponent implements OnInit {
       } else {
         this.ctx.strokeStyle = 'rgb(' + stroke['r'] + ',' + stroke['g'] + ',' + stroke['b'] + ', 1)';
       }
-      let rand = this.utilities.randomlyChooseOneOrTwo();
-      if (rand === 1) {
-        // this.ctx.strokeStyle = 'black';
-      }
-      if (!this.isSafari) {
-        this.ctx.globalAlpha = 1;
-        this.randomColor = this.randomColor.substring(0, this.randomColor.length - 1) + ',' + this.randomShapeOpacity + ")";
-        rand = Math.floor(Math.random() * 2) + 1;
-        // if(!smallCount) {
-          // if(!smallCount || (smallCount && this.layerCounter > 2 && !this.forceBeginPath)) {
-            // if(!smallCount || (smallCount && !this.forceBeginPath)) {
-              // if(!this.forceBeginPath) {
-          if (rand === 1) {
-          this.ctx.globalAlpha = this.randomShapeOpacity;
-        } else {
-          // if (smallCount && !this.forceBeginPath) {
-          //   this.randomShapeOpacity = Math.random() * .5;
-          //   this.randomColor = this.randomColor.substring(0, this.randomColor.length - 1) + ',' + this.randomShapeOpacity + ")";
-          // }
-        }
+
+      // if (!this.isSafari) {
+      this.ctx.globalAlpha = 1;
+      this.randomColor = this.randomColor.substring(0, this.randomColor.length - 1) + ',' + this.randomShapeOpacity + ")";
+      // if(!smallCount) {
+      // if(!smallCount || (smallCount && this.layerCounter > 2 && !this.forceBeginPath)) {
+      // if(!smallCount || (smallCount && !this.forceBeginPath)) {
+      // if(!this.forceBeginPath) {
+      // if (!this.forceBeginPath && smallCount && smallCounter >= 1) {
+      //   rand = 2
       // }
-        // }
-      } else {
-        this.ctx.globalAlpha = this.randomShapeOpacity;
+      if (smallCount && !this.forceBeginPath && smallCounter < 2) {
+        // rand = 2;
       }
+
+      // || (!smallCount && this.singleLayer)
+
+      if (rand === 1) {
+        this.ctx.globalAlpha = this.randomShapeOpacity;
+        if (smallCount && this.layerCounter === smallCounter) {
+          console.log('LAST IS GLOBAL ALPHA', this.ctx.globalAlpha);
+
+        }
+      } else {
+        // if (smallCount && !this.forceBeginPath) {
+        //   this.randomShapeOpacity = Math.random() * .5;
+        //   this.randomColor = this.randomColor.substring(0, this.randomColor.length - 1) + ',' + this.randomShapeOpacity + ")";
+        // }
+      }
+      // }
+      // }
+      // } 
+      // else {
+      //   this.ctx.globalAlpha = this.randomShapeOpacity;
+      // }
       this.ctx.fillStyle = this.randomColor;
       this.patternFill = this.utilities.randomlyChooseTrueOrFalse();
+      // if (rand !== 1 && smallCount && !this.forceBeginPath && (!this.patternFill || smallCounter < 20)) {
       if (rand !== 1 && smallCount && !this.forceBeginPath && !this.patternFill) {
         this.randomShapeOpacity = Math.random() * .5;
         this.randomColor = this.randomColor.substring(0, this.randomColor.length - 1) + ',' + this.randomShapeOpacity + ")";
@@ -683,11 +754,20 @@ export class GeneratorComponent implements OnInit {
       }
       this.ctx.lineWidth = Math.random() * 10;
       if (this.singleLayer) {
-        this.ctx.lineWidth = Math.random() * 6.2;
+        this.ctx.lineWidth = Math.random() * 3.2;
+
+
+        const rand = this.utilities.randomlyChooseTrueOrFalse();
+        if (rand) {
+          if (this.forceTrapezoidBeginPath) {
+            this.ctx.lineWidth = Math.random() * 10;
+          } else {
+            this.ctx.lineWidth = Math.random() * 5;
+          }
+        }
       }
       this.drawShape(randomShape, true);
       this.layerCounter++;
-      // this.ctx.globalAlpha = .1;
     }
   }
   resetForNewLayer() {
@@ -699,7 +779,6 @@ export class GeneratorComponent implements OnInit {
 
   getMainLayer(objNum, norm, rand, trapTrans) {
     this.shapeArr = ['Rectangle', 'Triangle', 'Line'];
-
     if (this.genType !== 'random') {
       this.patternFill = false;
     } else {
@@ -715,7 +794,8 @@ export class GeneratorComponent implements OnInit {
       this.shapeArr = ['Trapezoid', 'Line'];
 
       if (this.singleLayer) {
-        this.beginPath = false;
+        objNum = 6;
+        // this.beginPath = false;
         this.isTrunks = this.utilities.randomlyChooseTrueOrFalse();
         if (this.isTrunks) {
           this.isArabesque = false;
@@ -745,8 +825,8 @@ export class GeneratorComponent implements OnInit {
         this.randomShapeOpacity = .1;
       }
 
-      if(this.singleLayer) {
-        this.ctx.globalAlpha = this.layerCounter/objNum + .1;
+      if (this.singleLayer) {
+        this.ctx.globalAlpha = this.layerCounter / objNum + .1;
       } else {
         this.ctx.globalAlpha = 1;
       }
@@ -776,9 +856,13 @@ export class GeneratorComponent implements OnInit {
 
       this.ctx.lineWidth = newLineWidth;
 
-      if(this.singleLayer) {
+      if (this.singleLayer) {
         this.patternFill = true;
         this.ctx.lineWidth = Math.random() * 3.2;
+        const rand = this.utilities.randomlyChooseTrueOrFalse();
+        if (rand) {
+          this.ctx.lineWidth = Math.random() * 10;
+        }
         // console.log('norm', norm);
         // console.log('traptrans', trapTrans);
         // console.log('shape opacity', this.randomShapeOpacity);
@@ -793,14 +877,32 @@ export class GeneratorComponent implements OnInit {
   patternFillSingleBegun = false;
   transform = false;
   repeat: string = 'repeat';
+leftmostPoint = 0;
+  setXYExtremes(xPos: number, yPos: number, small: boolean) {
+    if(xPos < this.leftmostPoint) {
+      this.leftmostPoint = xPos;
+    }
+    if (xPos > this.rightmostPoint) {
+      this.rightmostPoint = xPos;
+    }
+   
+    if (yPos > this.rightmostPoint) {
+      this.lowestPoint = xPos;
+    }
+  }
   drawShape(shape, small?, main?) {
     this.repeat = this.utilities.randomlyChooseTrueOrFalse() ? 'no-repeat' : 'repeat';
     var offset_x = 0;
     var offset_y = 0;
-    var xPos = Math.random() * this.canvasSize;
-    var yPos = Math.random() * this.canvasSize;
-    var height = Math.random() * this.canvasSize;
-    var width = Math.random() * this.canvasSize;
+    var xPos = (Math.random() * this.canvasSize) + ((this.fullCanvasSize - this.canvasSize) / 2);
+    var yPos = (Math.random() * this.canvasSize) + ((this.fullCanvasSize - this.canvasSize) / 2);
+    if(xPos > 1500) {
+    console.log('XPOS', xPos);
+    }
+    // small
+    this.setXYExtremes(xPos, yPos, small);
+    var height = (Math.random() * this.canvasSize) / 2;
+    var width = (Math.random() * this.canvasSize) / 2;
     let currObjArea = height * width;
 
     this.patternSwitch = Math.floor(Math.random() * 8) + 1;
@@ -826,7 +928,7 @@ export class GeneratorComponent implements OnInit {
     //   this.transform = false;
     // }
     if (this.patternFill) {
-      this.ctx.translate(this.offset_x, this.offset_y);
+      // this.ctx.translate(this.offset_x, this.offset_y);
       if (!this.patternFillSingleBegun && (this.isFrieze || this.isFriezeTwo || this.isTrunks || this.isArabesque || this.isMexico || this.isBedroom)) {
         this.patternFillSingleBegun = true;
       } else {
@@ -895,12 +997,29 @@ export class GeneratorComponent implements OnInit {
 
     switch (shape) {
       case 'Rectangle':
+        if((xPos + width) > this.fullCanvasSize) {
+          width = (this.fullCanvasSize - xPos - 10);
+        }
+        if((yPos + height) > this.fullCanvasSize) {
+          height = (this.fullCanvasSize - yPos - 10);
+        }
+
+        if((xPos + width) > this.fullCanvasSize) {
+          console.log('XPOS + width', xPos + width);
+          }
+          this.setXYExtremes(width + xPos, height + yPos, small);
+
+
         this.ctx.fillRect(xPos, yPos, width, height);
         this.ctx.strokeRect(xPos, yPos, width, height);
         break;
       case 'Trapezoid':
         // omitting begin path triggers the wireframe look
         if (!this.forceBeginPath && this.singleLayer) {
+          if (this.forceTrapezoidBeginPath) {
+            this.ctx.beginPath();
+          }
+
         } else {
           this.ctx.beginPath();
         }
@@ -915,18 +1034,27 @@ export class GeneratorComponent implements OnInit {
           }
         }
 
-        let rand1 = Math.random() * this.canvasSize;
-        const y1 = Math.random() * this.canvasSize;
+        let rand1 = (Math.random() * this.canvasSize) + ((this.fullCanvasSize - this.canvasSize) / 2);
+        const y1 = (Math.random() * this.canvasSize) + ((this.fullCanvasSize - this.canvasSize) / 2);
+
+        
+        this.setXYExtremes(rand1, y1, small);
+
         //first point
         this.ctx.moveTo(rand1, y1);
-        let rand2 = Math.random() * this.canvasSize;
+        let rand2 = (Math.random() * this.canvasSize) + ((this.fullCanvasSize - this.canvasSize) / 2);
 
         //second point completes first side
-        let y2 = Math.random() * this.canvasSize;
+        let y2 = (Math.random() * this.canvasSize) + ((this.fullCanvasSize - this.canvasSize) / 2);
         this.ctx.lineTo(rand2, y2);
-        let rand3 = Math.random() * this.canvasSize;
 
-        let y3 = Math.random() * this.canvasSize;
+        this.setXYExtremes(rand2, y2, small);
+
+        let rand3 = (Math.random() * this.canvasSize) + ((this.fullCanvasSize - this.canvasSize) / 2);
+
+        let y3 = (Math.random() * this.canvasSize) + ((this.fullCanvasSize - this.canvasSize) / 2);
+
+        this.setXYExtremes(rand3, y3, small);
 
         // third point completes second side
         this.ctx.lineTo(rand3, y3);
@@ -944,6 +1072,10 @@ export class GeneratorComponent implements OnInit {
         if (rand1 === leftMost && y1 === heightHigh && rand4 < rand2) {
           y4 = y1 + Math.random() * this.canvasSize;
         }
+
+
+        this.setXYExtremes(rand4, y4, small);
+
         this.ctx.lineTo(rand4, y4);
         this.ctx.fill();
         this.ctx.lineTo(rand1, y1);
@@ -954,6 +1086,10 @@ export class GeneratorComponent implements OnInit {
       case 'Triangle':
 
         if (!this.forceBeginPath && this.singleLayer) {
+          if (!this.forceTrapezoidBeginPath) {
+            this.ctx.beginPath();
+          }
+
         } else {
           this.ctx.beginPath();
         }
@@ -969,18 +1105,28 @@ export class GeneratorComponent implements OnInit {
         }
         rand1 = xPos;
         rand2 = yPos;
-        const ty1 = Math.random() * this.canvasSize;
-        const ty2 = Math.random() * this.canvasSize;
+        const ty1 = (Math.random() * this.canvasSize) +  ((this.fullCanvasSize - this.canvasSize) / 2);
+        const ty2 = (Math.random() * this.canvasSize) +  ((this.fullCanvasSize - this.canvasSize) / 2);
+
+
+     
 
         // vertex one
         this.ctx.moveTo(rand1, ty1);
 
+        this.setXYExtremes(0, ty1, small);
+
         // vertex two
         this.ctx.lineTo(rand2, rand1);
         // this.ctx.stroke();
+        this.setXYExtremes(0, rand1, small);
+
 
         // vertex three
         this.ctx.lineTo(rand2, ty2);
+
+        this.setXYExtremes(0, ty2, small);
+
         this.ctx.stroke();
 
         this.ctx.lineTo(rand1, ty1);
@@ -1025,15 +1171,20 @@ export class GeneratorComponent implements OnInit {
             }
           }
         }
-        rand1 = Math.random() * this.canvasSize;
+        rand1 = (Math.random() * this.canvasSize) +  ((this.fullCanvasSize - this.canvasSize) / 2);
         var rand = Math.floor(Math.random() * 2) + 1;
         if (rand === 1) {
           rand2 = rand1 + 15;
         } else {
           rand2 = rand1 - 15;
         }
-        let ly1 = Math.random() * this.canvasSize;
-        let ly2 = Math.random() * this.canvasSize;
+        let ly1 = (Math.random() * this.canvasSize) +  ((this.fullCanvasSize - this.canvasSize) / 2);
+        let ly2 = (Math.random() * this.canvasSize) +  ((this.fullCanvasSize - this.canvasSize) / 2);
+      
+        this.setXYExtremes(rand1, ly1, small);
+        this.setXYExtremes(rand2, rand1, small);
+        this.setXYExtremes(rand2, ly2, small);
+
         this.ctx.moveTo(rand1, ly1);
         this.ctx.lineTo(rand2, rand1);
         this.ctx.lineTo(rand2, ly2);
@@ -1052,6 +1203,9 @@ export class GeneratorComponent implements OnInit {
         this.ctx.fill();
         this.ctx.stroke();
 
+        
+        this.setXYExtremes(width + xPos, width + yPos, small);
+
         currObjArea = Math.PI * Math.pow(radius, 2);
         // get better with calculating for circles
         break;
@@ -1062,16 +1216,46 @@ export class GeneratorComponent implements OnInit {
       } else {
         // this.ctx.translate(-offset_x, -offset_y);
       }
-      this.ctx.translate(-this.offset_x, -this.offset_y);
+      // this.ctx.translate(-this.offset_x, -this.offset_y);
     }
+
     this.aggrObjArea += currObjArea;
     // if(this.transform) {
 
     // this.ctx.setTransform(1, 0, 0, 1, 0, 0);
     // this.ctx.restore();    // }
+
   }
 
   renderImage(index?: number, favorites?: boolean) {
+
+    // if((this.fullCanvasSize - this.rightmostPoint) < (this.fullCanvasSize - (this.canvasSize * 1.5)/2)) {
+    let overflowX = this.rightmostPoint - (this.canvasSize + ((this.fullCanvasSize - this.canvasSize) / 2));
+    let overflowY = this.lowestPoint - (this.canvasSize + ((this.fullCanvasSize - this.canvasSize) / 2));
+    overflowY = 0;
+    if(overflowX > ((this.fullCanvasSize - this.canvasSize) / 2)){
+      overflowX = ((this.fullCanvasSize - this.canvasSize) / 2);
+    }
+
+    if(overflowX > ((this.fullCanvasSize - this.canvasSize) / 2)){
+      overflowX = ((this.fullCanvasSize - this.canvasSize) / 2);
+    }
+    console.log('leftmost point', this.leftmostPoint, 'starting point', ((this.fullCanvasSize - this.canvasSize) / 2));
+    let startingPointDiff = 0;
+    if(this.leftmostPoint < ((this.fullCanvasSize - this.canvasSize) / 2)) {
+     startingPointDiff = ((this.fullCanvasSize - this.canvasSize) / 2) - this.leftmostPoint;
+     console.log('this.leftmost')
+     if(this.leftmostPoint && startingPointDiff) {
+      //  this.ctx.translate((startingPointDiff), (overflowY/2))
+      //  this.ctxTwo.translate((startingPointDiff), (overflowY/2))
+     }
+    } else {
+      overflowX =  overflowX - ( (this.leftmostPoint - ((this.fullCanvasSize - this.canvasSize) / 2) ) * 2);
+    }
+   
+    // this.ctx.translate((-overflowX/2), (overflowY/2))
+    
+
     if (index !== undefined) {
       this.currImageIndex = index;
     }
@@ -1086,17 +1270,60 @@ export class GeneratorComponent implements OnInit {
     } else {
       img.src = this.canvas.toDataURL();
     }
+    this.ctxTwo.save();
+
+    this.ctxTwo.scale(this.restoreScale, this.restoreScale);
+    if(this.lowestPoint > this.fullCanvasSize) {
+      // this.ctxTwo.translate(0, -(this.lowestPoint - this.fullCanvasSize));
+    }
+    
+    // if(this.leftmostPoint < ((this.fullCanvasSize - this.canvasSize) / 2)) {
+    //   startingPointDiff = ((this.fullCanvasSize - this.canvasSize) / 2) - this.leftmostPoint;
+    //   if(this.leftmostPoint && startingPointDiff) {
+    //     this.ctxTwo.translate((startingPointDiff), (overflowY/2))
+    //   }
+    //  } else {
+    //    overflowX =  overflowX - ( (this.leftmostPoint - ((this.fullCanvasSize - this.canvasSize) / 2) ) * 2);
+    //  }
+    //  this.ctxTwo.translate((-overflowX/2), (overflowY/2))
 
     img.onload = function () {
       this.ctx.drawImage(img, 0, 0, this.canvasSize, this.canvasSize, 0, 0, this.canvasSize, this.canvasSize);
       this.drawImageScaled(img, this.ctxTwo)
+      if (this.singleLayer) {
+        // this.ctx.restore();
+      }
+      
+      // this.ctxTwo.translate((overflowX/2), (-overflowY/2))
+      if(this.leftmostPoint && startingPointDiff) {
+        // this.ctxTwo.translate((-startingPointDiff), (overflowY/2))
+      }
+
+      this.ctxTwo.restore();
+      if (this.singleLayer) {
+        //  this.ctxTwo.scale(this.restoreScale, this.restoreScale);
+
+
+        // this.restoreScale = 2
+        // this.fullCanvasSize = this.ctx.canvas.width * this.restoreScale;
+        //  this.ctxTwo.scale(.5, .5);
+      }
       this.renderDone = true;
       this.renderDoneEmit.emit(true);
       this.loader.nativeElement.style.visibility = "hidden";
       if (index === undefined) {
         this.updateCurrentIndex.emit(this.savedImageArr.length - 1);
       }
+      console.log('this.gentype', this.genType, 'is single layer', this.singleLayer);
+      // this.ctx.translate( (overflowX/2), (-overflowY/2))
+
+      if(this.leftmostPoint && startingPointDiff) {
+        // this.ctx.translate((-startingPointDiff), (overflowY/2))
+        // this.ctxTwo.translate((-startingPointDiff), (overflowY/2))
+  
+      }
     }.bind(this);
+
   }
   drawImageScaled(img, ctx) {
     var canvas = ctx.canvas;
@@ -1214,22 +1441,128 @@ export class GeneratorComponent implements OnInit {
 
   //BBOOK WUZ HERE
   getRandomColorArr() {
-    let counter = 0;
-    var colorArr = [];
-    while (counter <= this.objNum + 1) {
-      var tempRgb = this.getRandomRgb();
-      var tempRgbString = 'rgb(' + tempRgb.r + ',' + tempRgb.g + ',' + tempRgb.b + ')';
-      colorArr.push(tempRgbString);
-      counter++;
+    // let counter = 0;
+    // var colorArr = [];
+    // for (var i = 0; i < 5; i++) {
+    //   var num = Math.round(0xffffff * Math.random());
+    //   var r = num >> 16;
+    //   var g = num >> 8 & 255;
+    //   var b = num & 255;
+    //   const tempRgb = { 'r': r, 'g': g, 'b': b };
+    //   //  var tempRgb = this.getRandomRgb();
+    //   var tempRgbString = 'rgb(' + tempRgb.r + ',' + tempRgb.g + ',' + tempRgb.b + ')';
+    //   colorArr.push(tempRgbString);
+    // }
+    // // while (counter <= this.objNum + 1) {
+    // //   var tempRgb = this.getRandomRgb();
+    // //   var tempRgbString = 'rgb(' + tempRgb.r + ',' + tempRgb.g + ',' + tempRgb.b + ')';
+    // //   colorArr.push(tempRgbString);
+    // //   counter++;
+    // // }
+    // return colorArr;
+    var tempRgb = this.getRandomRgb();
+    var complementaryColorArr = ['rgb(' + tempRgb.r + ',' + tempRgb.g + ',' + tempRgb.b + ')'];
+    var currRgb = tempRgb;
+
+    for (var i = 0; i < 6; i++) {
+      currRgb = this.getComplementary(currRgb);
+      complementaryColorArr.push(this.convertToRgbString(currRgb));
     }
-    return colorArr;
+
+    return complementaryColorArr;
+  }
+  convertToRgbString(rgbObj) {
+    return 'rgb(' + rgbObj.r + ',' + rgbObj.g + ',' + rgbObj.b + ')';
+  }
+  getComplementary(rgb) {
+    var temphsv = this.RGB2HSV(rgb);
+    temphsv.hue = this.hueShift(temphsv.hue, 180.0);
+    var finRgb = this.HSV2RGB(temphsv);
+    return finRgb;
+  }
+  RGB2HSV(rgb) {
+    var hsv;
+    hsv = new Object();
+    var max = Math.max(rgb.r, rgb.g, rgb.b);
+    var dif = max - Math.min(rgb.r, rgb.g, rgb.b);
+    hsv.saturation = (max == 0.0) ? 0 : (100 * dif / max);
+    if (hsv.saturation == 0) hsv.hue = 0;
+    else if (rgb.r == max) hsv.hue = 60.0 * (rgb.g - rgb.b) / dif;
+    else if (rgb.g == max) hsv.hue = 120.0 + 60.0 * (rgb.b - rgb.r) / dif;
+    else if (rgb.b == max) hsv.hue = 240.0 + 60.0 * (rgb.r - rgb.g) / dif;
+    if (hsv.hue < 0.0) hsv.hue += 360.0;
+    hsv.value = Math.round(max * 100 / 255);
+    hsv.hue = Math.round(hsv.hue);
+    hsv.saturation = Math.round(hsv.saturation);
+    return hsv;
   }
 
+  // RGB2HSV and HSV2RGB are based on Color Match Remix [http://color.twysted.net/]
+  // which is based on or copied from ColorMatch 5K [http://colormatch.dk/]
+  HSV2RGB(hsv) {
+    var rgb = { 'r': null, 'g': null, 'b': null }
+    if (hsv.saturation == 0) {
+      rgb['r'] = Math.round(hsv.value * 2.55);
+      rgb['g'] = Math.round(hsv.value * 2.55);
+      rgb['b'] = Math.round(hsv.value * 2.55);
+    } else {
+      hsv.hue /= 60;
+      hsv.saturation /= 100;
+      hsv.value /= 100;
+      var i = Math.floor(hsv.hue);
+      var f = hsv.hue - i;
+      var p = hsv.value * (1 - hsv.saturation);
+      var q = hsv.value * (1 - hsv.saturation * f);
+      var t = hsv.value * (1 - hsv.saturation * (1 - f));
+      switch (i) {
+        case 0: rgb.r = hsv.value; rgb.g = t; rgb.b = p; break;
+        case 1: rgb.r = q; rgb.g = hsv.value; rgb.b = p; break;
+        case 2: rgb.r = p; rgb.g = hsv.value; rgb.b = t; break;
+        case 3: rgb.r = p; rgb.g = q; rgb.b = hsv.value; break;
+        case 4: rgb.r = t; rgb.g = p; rgb.b = hsv.value; break;
+        default: rgb.r = hsv.value; rgb.g = p; rgb.b = q;
+      }
+      rgb.r = Math.round(rgb.r * 255);
+      rgb.g = Math.round(rgb.g * 255);
+      rgb.b = Math.round(rgb.b * 255);
+    }
+    return rgb;
+  }
+
+  //Adding hueShift via Jacob (see comments)
+  hueShift(h, s) {
+    h += s; while (h >= 360.0) h -= 360.0; while (h < 0.0) h += 360.0; return h;
+  }
+
+  //min max via Hairgami_Master (see comments)
+  min3(a, b, c) {
+    return (a < b) ? ((a < c) ? a : c) : ((b < c) ? b : c);
+  }
+  max3(a, b, c) {
+    return (a > b) ? ((a > c) ? a : c) : ((b > c) ? b : c);
+  }
   getRandomRgb() {
     var num = Math.round(0xffffff * Math.random());
     var r = num >> 16;
     var g = num >> 8 & 255;
     var b = num & 255;
-    return { 'r': r, 'g': g, 'b': b };
+    // if((r + g + b) > 450) {
+    //   const diff = (r + g + b) - 450;
+    //   const sub = diff/3;
+    //   r = r - sub;
+    //   g = g - sub;
+    //   b = b - sub;
+
+    // }
+    const retVal = { 'r': r, 'g': g, 'b': b };
+
+    // const rgb = this.colorArr[Math.floor(Math.random() * this.colorArr.length)];
+    // const rgbArr = rgb.split(',')
+    // console.log('rgb', rgb);
+    // const oneEntry= rgbArr[0].substring(4, rgbArr[0].length);
+    // console.log('oneEntry', oneEntry);
+    // const retVal =  { 'r': oneEntry, 'g': rgbArr[1], 'b': rgbArr[2].substring(0, rgbArr[2].length -1) };
+    // console.log('retVAl', retVal);
+    return retVal;
   }
 }

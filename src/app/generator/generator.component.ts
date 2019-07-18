@@ -555,11 +555,6 @@ export class GeneratorComponent implements OnInit {
               this.ctx.lineWidth = Math.random() * 7;
             }
           }
-          //   console.log('TRAP');
-          // console.log('norm', norm);
-          // console.log('traptrans', trapTrans);
-          // console.log('shape opacity', this.randomShapeOpacity);
-          // console.log('random shape ocaicty', this.randomStrokeOpacity);
         }
         this.drawShape(randomShape);
         this.layerCounter++;
@@ -590,19 +585,6 @@ export class GeneratorComponent implements OnInit {
     }
     this.resetForNewLayer();
 
-    // if(!this.beginPath) {
-    // this.beginPath = true;
-    // this.getSecondSmallLayer(norm);
-    // this.resetForNewLayer();
-
-    // }
-
-    // if (this.singleLayer && ((this.genType === "noPattern" || this.genType === "random"))) {
-    //   this.forceBeginPath = true;
-    //   this.getSecondSmallLayer(true);
-    //   this.resetForNewLayer();
-    //   this.forceBeginPath = false;
-    // }
     if (this.singleLayer) {
       this.forceBeginPath = true;
       this.getFirstSmallLayer(true);
@@ -730,14 +712,9 @@ export class GeneratorComponent implements OnInit {
         // rand = 2;
       }
 
-      // || (!smallCount && this.singleLayer)
 
       if (rand === 1) {
         this.ctx.globalAlpha = this.randomShapeOpacity;
-        if (smallCount && this.layerCounter === smallCounter) {
-          console.log('LAST IS GLOBAL ALPHA', this.ctx.globalAlpha);
-
-        }
       } else {
         // if (smallCount && !this.forceBeginPath) {
         //   this.randomShapeOpacity = Math.random() * .5;
@@ -879,9 +856,8 @@ export class GeneratorComponent implements OnInit {
 
           }
         }
-        if(recurseStep < 3) {
+        if (recurseStep < 3) {
           this.ctx.globalAlpha = 1;
-
         }
       }
       console.log('IS SINGLE LAYER', this.singleLayer);
@@ -894,16 +870,8 @@ export class GeneratorComponent implements OnInit {
         if (rand) {
           this.ctx.lineWidth = Math.random() * 10;
         }
-        // console.log('norm', norm);
-        // console.log('traptrans', trapTrans);
-        // console.log('shape opacity', this.randomShapeOpacity);
-        // console.log('random shape ocaicty', this.randomStrokeOpacity);
-        // console.log('linewidth', this.ctx.lineWidth);
-        // console.log('strokestyle', this.ctx.strokeStyle);
       }
       this.drawShape(randomShape, false, true);
-
-
 
       this.layerCounter++;
     }
@@ -1375,7 +1343,7 @@ leftmostPoint = 0;
     }
 
     this.currImageIndex = this.savedImageArr.length - 1;
-    // this.saveImageFirebase.emit(imgObj);
+    this.saveImageFirebase.emit(imgObj);
 
     this.loader.nativeElement.style.visibility = "hidden";
     this.renderDone = true;

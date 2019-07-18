@@ -1343,7 +1343,7 @@ leftmostPoint = 0;
     }
 
     this.currImageIndex = this.savedImageArr.length - 1;
-    // this.saveImageFirebase.emit(imgObj);
+    this.saveImageFirebase.emit(imgObj);
 
     this.loader.nativeElement.style.visibility = "hidden";
     this.renderDone = true;

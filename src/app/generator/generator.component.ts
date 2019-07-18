@@ -896,8 +896,8 @@ leftmostPoint = 0;
     this.repeat = this.utilities.randomlyChooseTrueOrFalse() ? 'no-repeat' : 'repeat';
     var offset_x = 0;
     var offset_y = 0;
-    var xPos = (Math.random() * this.canvasSize) + ((this.fullCanvasSize - this.canvasSize) / 2);
-    var yPos = (Math.random() * this.canvasSize) + ((this.fullCanvasSize - this.canvasSize) / 2);
+    var xPos = (Math.random() * this.canvasSize) + ((this.fullCanvasSize - this.canvasSize) / 2.5);
+    var yPos = (Math.random() * this.canvasSize) + ((this.fullCanvasSize - this.canvasSize) / 2.75);
     if(xPos > 1500) {
     console.log('XPOS', xPos);
     }
@@ -1343,7 +1343,7 @@ leftmostPoint = 0;
     }
 
     this.currImageIndex = this.savedImageArr.length - 1;
-    this.saveImageFirebase.emit(imgObj);
+    // this.saveImageFirebase.emit(imgObj);
 
     this.loader.nativeElement.style.visibility = "hidden";
     this.renderDone = true;

@@ -10,7 +10,7 @@
     <div fxFlex>
       <div fxFlex fxFlexOffset="7" fxShow="true" fxLayoutGap="5px" fxShow.md="false" fxShow.sm="false" fxShow.xs="false"
         fxLayoutAlign="start center">
-        <button [disabled]="!renderDone" (click)="getRandomArt(true)" class="float-left inline" mat-raised-button>
+        <button [disabled]="!renderDone" (click)="getRandomArt(true)" class="float-left inline" mat-stroked-button>
           Get New Art</button>
         <a href="#" target="_blank" class="float-left inline" #downloadLink (click)="download(downloadLink)"
           download="art.jpg">

@@ -110,6 +110,8 @@ export class GeneratorComponent implements OnInit {
 
                 darkImage.src = url;
                 this.darkDatabaseList.push(darkImage)
+                // this.patternDatabaseList.push(darkImage)
+
               }.bind(this));
             } else {
               storageRef.child(item["metadata"]["name"]).getDownloadURL().then(function (this, url) {
@@ -551,7 +553,6 @@ export class GeneratorComponent implements OnInit {
               this.ctx.lineWidth = Math.random() * 10;
             } else {
               this.ctx.lineWidth = Math.random() * 7;
-
             }
           }
           //   console.log('TRAP');
@@ -570,8 +571,13 @@ export class GeneratorComponent implements OnInit {
     if (this.genType === 'transPattern') {
       objNum = Math.floor(Math.random() * 23) + 19;
     }
-    this.getMainLayer(objNum, norm, rand, trapTrans);
+    if(recurseStep !== undefined) {
+    this.getMainLayer(objNum, norm, rand, trapTrans, recurseStep);
 
+    } else {
+      this.getMainLayer(objNum, norm, rand, trapTrans);
+
+    }
     this.resetForNewLayer();
 
     // second small layer
@@ -777,7 +783,7 @@ export class GeneratorComponent implements OnInit {
     this.shapeArr = ['Rectangle', 'Triangle', 'Circle', 'Line'];
   }
 
-  getMainLayer(objNum, norm, rand, trapTrans) {
+  getMainLayer(objNum, norm, rand, trapTrans, recurseStep?) {
     this.shapeArr = ['Rectangle', 'Triangle', 'Line'];
     if (this.genType !== 'random') {
       this.patternFill = false;
@@ -828,7 +834,10 @@ export class GeneratorComponent implements OnInit {
       if (this.singleLayer) {
         this.ctx.globalAlpha = this.layerCounter / objNum + .1;
       } else {
-        this.ctx.globalAlpha = 1;
+        // if(this.utilities.randomlyChooseTrueOrFalse()) {
+        this.ctx.globalAlpha = this.layerCounter / objNum + .1;
+
+        // }
       }
 
       var randomShape = this.shapeArr[Math.floor(Math.random() * this.shapeArr.length)];
@@ -852,8 +861,30 @@ export class GeneratorComponent implements OnInit {
       let newLineWidth = Math.random() * 5 + 1;
       if (this.layerCounter < (objNum / 4) || (this.layerCounter > (objNum * .5) && this.layerCounter < (objNum * .6))) {
         newLineWidth = Math.random() * 20 + 16;
-      }
 
+
+        if (this.layerCounter === (objNum - 1) || this.layerCounter === (objNum)) {
+          newLineWidth = Math.random() * 20 + 16;
+          this.ctx.globalAlpha = 1;
+
+        }
+        if (this.layerCounter === (objNum - 2)) {
+          newLineWidth = Math.random() * 20 + 16;
+          this.ctx.globalAlpha = 1;
+
+        }
+        if(!this.singleLayer && recurseStep === 1 ) {
+          if (this.layerCounter === (objNum - 3)) {
+            newLineWidth = Math.random() * 20 + 16;
+
+          }
+        }
+        if(recurseStep < 3) {
+          this.ctx.globalAlpha = 1;
+
+        }
+      }
+      console.log('IS SINGLE LAYER', this.singleLayer);
       this.ctx.lineWidth = newLineWidth;
 
       if (this.singleLayer) {
@@ -871,6 +902,9 @@ export class GeneratorComponent implements OnInit {
         // console.log('strokestyle', this.ctx.strokeStyle);
       }
       this.drawShape(randomShape, false, true);
+
+
+
       this.layerCounter++;
     }
   }
@@ -1021,7 +1055,10 @@ leftmostPoint = 0;
           }
 
         } else {
+          const dontBeginPath = this.utilities.randomlyChooseTrueOrFalse10Real();
+         if(dontBeginPath) {
           this.ctx.beginPath();
+         }
         }
 
         if (!this.utilities.randomlyChooseTrueOrFalseThird()) {
@@ -1035,25 +1072,30 @@ leftmostPoint = 0;
         }
 
         let rand1 = (Math.random() * this.canvasSize) + ((this.fullCanvasSize - this.canvasSize) / 2);
-        const y1 = (Math.random() * this.canvasSize) + ((this.fullCanvasSize - this.canvasSize) / 2);
+        let y1 = (Math.random() * this.canvasSize) + ((this.fullCanvasSize - this.canvasSize) / 2);
 
-        
+        if (y1  > this.fullCanvasSize) {
+          y1 = (this.fullCanvasSize - 10);
+       }
         this.setXYExtremes(rand1, y1, small);
 
         //first point
         this.ctx.moveTo(rand1, y1);
         let rand2 = (Math.random() * this.canvasSize) + ((this.fullCanvasSize - this.canvasSize) / 2);
-
         //second point completes first side
         let y2 = (Math.random() * this.canvasSize) + ((this.fullCanvasSize - this.canvasSize) / 2);
+        if (y2  > this.fullCanvasSize) {
+          y2 = (this.fullCanvasSize - 10);
+       }
         this.ctx.lineTo(rand2, y2);
 
         this.setXYExtremes(rand2, y2, small);
 
         let rand3 = (Math.random() * this.canvasSize) + ((this.fullCanvasSize - this.canvasSize) / 2);
-
         let y3 = (Math.random() * this.canvasSize) + ((this.fullCanvasSize - this.canvasSize) / 2);
-
+        if(y3  > this.fullCanvasSize) {
+          y3 = (this.fullCanvasSize - 10);
+       }
         this.setXYExtremes(rand3, y3, small);
 
         // third point completes second side
@@ -1073,7 +1115,9 @@ leftmostPoint = 0;
           y4 = y1 + Math.random() * this.canvasSize;
         }
 
-
+        if(y4  > this.fullCanvasSize) {
+          y4 = (this.fullCanvasSize - 10);
+       }
         this.setXYExtremes(rand4, y4, small);
 
         this.ctx.lineTo(rand4, y4);
@@ -1105,57 +1149,35 @@ leftmostPoint = 0;
         }
         rand1 = xPos;
         rand2 = yPos;
-        const ty1 = (Math.random() * this.canvasSize) +  ((this.fullCanvasSize - this.canvasSize) / 2);
-        const ty2 = (Math.random() * this.canvasSize) +  ((this.fullCanvasSize - this.canvasSize) / 2);
-
-
-     
+        let ty1 = (Math.random() * this.canvasSize) +  ((this.fullCanvasSize - this.canvasSize) / 2);
+        let  ty2 = (Math.random() * this.canvasSize) +  ((this.fullCanvasSize - this.canvasSize) / 2);
 
         // vertex one
         this.ctx.moveTo(rand1, ty1);
-
+        if(ty1  > this.fullCanvasSize) {
+           ty1 = (this.fullCanvasSize - 10);
+        }
         this.setXYExtremes(0, ty1, small);
 
         // vertex two
         this.ctx.lineTo(rand2, rand1);
         // this.ctx.stroke();
+        if(rand1  > this.fullCanvasSize) {
+          rand1 = (this.fullCanvasSize - 10);
+       }
         this.setXYExtremes(0, rand1, small);
 
 
         // vertex three
         this.ctx.lineTo(rand2, ty2);
-
+        if(ty2  > this.fullCanvasSize) {
+          ty2 = (this.fullCanvasSize - 10);
+       }
         this.setXYExtremes(0, ty2, small);
 
         this.ctx.stroke();
 
         this.ctx.lineTo(rand1, ty1);
-
-
-        // const set y diff
-
-        //  const yDiff = 50;
-        //  this.ctx.lineTo(rand1, ty1-yDiff);
-        //  this.ctx.stroke();
-
-        //  this.ctx.lineTo(rand2, rand1-yDiff);
-        //  this.ctx.stroke();
-
-        //  this.ctx.lineTo(rand2, rand1);
-        //  this.ctx.moveTo(rand2, rand1-yDiff);
-
-        //  this.ctx.stroke();
-
-        //  this.ctx.lineTo(rand2, ty2-yDiff);
-        //  this.ctx.stroke();
-
-        //  this.ctx.lineTo(rand2, ty2);
-        //  this.ctx.moveTo(rand2, ty2-yDiff);
-        //  this.ctx.stroke();
-
-        //  this.ctx.lineTo(rand1, ty1-yDiff);
-
-        //  this.ctx.stroke();
 
         this.ctx.fill();
         currObjArea = this.calcPolygonArea([{ x: rand1, y: ty1 }, { x: rand2, y: rand1 }, { x: rand2, y: ty2 }]);
@@ -1203,7 +1225,6 @@ leftmostPoint = 0;
         this.ctx.fill();
         this.ctx.stroke();
 
-        
         this.setXYExtremes(width + xPos, width + yPos, small);
 
         currObjArea = Math.PI * Math.pow(radius, 2);
@@ -1228,7 +1249,6 @@ leftmostPoint = 0;
   }
 
   renderImage(index?: number, favorites?: boolean) {
-
     // if((this.fullCanvasSize - this.rightmostPoint) < (this.fullCanvasSize - (this.canvasSize * 1.5)/2)) {
     let overflowX = this.rightmostPoint - (this.canvasSize + ((this.fullCanvasSize - this.canvasSize) / 2));
     let overflowY = this.lowestPoint - (this.canvasSize + ((this.fullCanvasSize - this.canvasSize) / 2));
@@ -1254,7 +1274,6 @@ leftmostPoint = 0;
     }
    
     // this.ctx.translate((-overflowX/2), (overflowY/2))
-    
 
     if (index !== undefined) {
       this.currImageIndex = index;
@@ -1356,7 +1375,7 @@ leftmostPoint = 0;
     }
 
     this.currImageIndex = this.savedImageArr.length - 1;
-    this.saveImageFirebase.emit(imgObj);
+    // this.saveImageFirebase.emit(imgObj);
 
     this.loader.nativeElement.style.visibility = "hidden";
     this.renderDone = true;

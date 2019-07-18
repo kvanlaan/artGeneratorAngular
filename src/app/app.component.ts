@@ -53,7 +53,7 @@ export class AppComponent {
 
   login: boolean = false;
   newUser: boolean = false;
-  suffix: string  = '';
+  suffix: string = '';
   ready: boolean = false;
   renderDone: boolean = false;
   shapeArr = ['Rectangle', 'Triangle', 'Circle', 'Line'];
@@ -131,7 +131,26 @@ export class AppComponent {
       this.user ? await this.handleSignedInUser() : await this.handleSignedOutUser();
     }.bind(this));
   }
+  showMobileNextImageArrow() {
+    if (this.isMainPhotoView) {
+      if (!this.showFavorites) {
+        if (this.currImageIndex < this.savedImageArr.length - 1) {
+          return true;
+        }
 
+      }
+    }
+    return false;
+  }
+
+  showMobilePreviousImageArrow() {
+    if (this.isMainPhotoView) {
+      if (this.currImageIndex > 0) {
+        return true;
+      }
+    }
+    return false;
+  }
   openLoginDialog() {
     this.dialogRef = this.dialog.open(LoginDialogComponent, {
       width: '300px'
@@ -336,10 +355,10 @@ export class AppComponent {
       ];
   }
   toggleImages() {
-    if(!this.customImagesActive) {
-    // this.resetImages();
-    this.setCustomImages();
-   this.customImagesActive = true;
+    if (!this.customImagesActive) {
+      // this.resetImages();
+      this.setCustomImages();
+      this.customImagesActive = true;
     } else {
       this.customImagesActive = false;
       this.generator.initiatePatterns();
@@ -398,10 +417,12 @@ export class AppComponent {
   }
 
   renderImage(index?: number) {
+    this.isMainPhotoView = true;
+
     // if(this.showFavorites) {
-      if (index !== undefined) {
-        this.currImageIndex = index;
-      } 
+    if (index !== undefined) {
+      this.currImageIndex = index;
+    }
     this.generator.renderImage(index, this.showFavorites)
     // } else {
 
@@ -410,17 +431,25 @@ export class AppComponent {
   updateCurrentIndex(index: number) {
     this.currImageIndex = index;
   }
+  incrementCurrentIndex() {
+    this.currImageIndex++;
+    this.renderImage();
+  }
+  decrementCurrentIndex() {
+    this.currImageIndex--;
+    this.renderImage();
+  }
   setRenderDone(bool: boolean) {
     this.renderDone = bool;
     this.ready = bool;
   }
   setCustomImages() {
     this.generator.setCustomImages(true);
-     this.customImagesActive = true;
+    this.customImagesActive = true;
   }
 
   async getRandomArt(clear, recurseStep?) {
-   this.generator.getRandomArt(clear);
+    this.generator.getRandomArt(clear);
   }
 
   filterFavorites() {

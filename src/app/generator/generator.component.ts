@@ -1,8 +1,7 @@
-import { Component, OnInit, ViewChild, Output, EventEmitter, Input, ViewChildren } from '@angular/core';
+import { Component, OnInit, ViewChild, Output, EventEmitter, Input } from '@angular/core';
 import { Utilities } from './utilities';
 import { HttpClient } from '@angular/common/http';
 import * as firebase from 'firebase';
-import { start } from 'repl';
 
 @Component({
   selector: 'generator',

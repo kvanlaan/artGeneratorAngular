@@ -2,12 +2,11 @@ import { Component, HostListener, ViewChild, ViewChildren } from '@angular/core'
 import { Location } from '@angular/common';
 import * as firebase from 'firebase';
 import * as firebaseui from 'firebaseui';
-import { MatDialog, MatSlideToggle } from '@angular/material';
+import { MatDialog } from '@angular/material';
 import { LocationStrategy, PathLocationStrategy } from '../../node_modules/@angular/common';
 import { GeneratorComponent } from './generator/generator.component';
 import { Utilities } from './generator/utilities';
 import 'hammerjs';
-import * as gcs from '@google-cloud/storage';
 import { HttpClient } from '@angular/common/http';
 
 @Component({
@@ -213,6 +212,7 @@ export class AppComponent {
           let numerator = (parseInt(img) + 1);
           await storageRef.child(trimmedName + '/customImages/uploadCustom' + numerator).getDownloadURL().then((url) => {
             if (url) {
+              this.customImagesActive = true;
               this.customImages[parseInt(img)].src = url;
             }
           }).catch(function (error) {
@@ -275,6 +275,7 @@ export class AppComponent {
               let numerator = (parseInt(img) + 1);
               await storageRef.child(guid + '/customImages/uploadCustom' + numerator).getDownloadURL().then((url) => {
                 if (url) {
+                  this.customImagesActive = true;
                   this.customImages[parseInt(img)].src = url;
                 }
               }).catch(function (error) {
@@ -412,6 +413,7 @@ export class AppComponent {
         this.customImages.push({ 'name': fileName, 'crossOrigin': "Anonymous", 'src': fileUrl, 'ready': true, 'fileTooBig': false });
       }
       this.setCustomImages();
+      this.customImagesActive = true;
       this.fileInputs._results[fileIndex].value = '';
     }
   }
@@ -445,7 +447,6 @@ export class AppComponent {
   }
   setCustomImages() {
     this.generator.setCustomImages(true);
-    this.customImagesActive = true;
   }
 
   async getRandomArt(clear, recurseStep?) {

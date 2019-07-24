@@ -547,7 +547,7 @@ export class AppComponent {
   }
 
   download(element) {
-    element.href = this.generator.canvas.toDataURL();
+    element.href = this.generator.canvasTwo.toDataURL();
     return;
   }
 }

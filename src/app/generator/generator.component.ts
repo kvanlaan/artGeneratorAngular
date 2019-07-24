@@ -266,9 +266,10 @@ export class GeneratorComponent implements OnInit {
       this.patternSix = this.customImagesLoaded[5];
     }
     if (recurseStep === undefined) {
-      this.offset_x = Math.floor(Math.random() * this.canvasSize / 2.5) - this.canvasSize / 2.5;
-      this.offset_y = Math.floor(Math.random() * this.canvasSize / 2.5) - this.canvasSize / 2.5;
-      //  this.ctx.translate(this.offset_x, this.offset_y);
+      // this.offset_x = Math.floor(Math.random() * this.canvasSize / 2.5) - this.canvasSize / 2.5;
+      // this.offset_y = Math.floor(Math.random() * this.canvasSize / 2.5) - this.canvasSize / 2.5;
+      this.offset_x = (Math.random() * 50) - 50;
+      this.offset_y = (Math.random() * 50) - 50;
 
       this.genType = this.genTypeArr[Math.floor(Math.random() * this.genTypeArr.length)];
       this.patternFill = this.utilities.randomlyChooseTrueOrFalse();
@@ -277,6 +278,7 @@ export class GeneratorComponent implements OnInit {
       this.ctx.clearRect(0, 0, this.fullCanvasSize, this.fullCanvasSize);
       this.ctx.fillStyle = 'white';
       this.ctx.fillRect(0, 0, this.fullCanvasSize, this.fullCanvasSize);
+      this.ctx.translate(this.offset_x, this.offset_y);
       recurse = this.utilities.randomlyChooseTrueOrFalse();
       this.singleLayer = true;
 
@@ -596,6 +598,7 @@ export class GeneratorComponent implements OnInit {
       this.getRandomArt(clear, recurseStep);
     } else {
       this.saveCurrentArt(clear);
+      this.ctx.translate(-this.offset_x, -this.offset_y);
     }
   }
   getSecondSmallLayer(norm) {
@@ -998,16 +1001,12 @@ leftmostPoint = 0;
 
     switch (shape) {
       case 'Rectangle':
-        if((xPos + width) > this.fullCanvasSize) {
-          width = (this.fullCanvasSize - xPos - 10);
+        if((xPos + width + this.offset_x) > this.fullCanvasSize) {
+          width = (this.fullCanvasSize - xPos - this.offset_x - 2);
         }
-        if((yPos + height) > this.fullCanvasSize) {
-          height = (this.fullCanvasSize - yPos - 10);
+        if((yPos + height + this.offset_y) > this.fullCanvasSize) {
+          height = (this.fullCanvasSize - yPos - this.offset_y - 2);
         }
-
-        if((xPos + width) > this.fullCanvasSize) {
-          console.log('XPOS + width', xPos + width);
-          }
           this.setXYExtremes(width + xPos, height + yPos, small);
 
 
@@ -1187,7 +1186,20 @@ leftmostPoint = 0;
         } else {
           this.ctx.beginPath();
         }
-
+        if((xPos - radius + this.offset_x  - this.ctx.lineWidth) < 0){
+          if(this.offset_x < 0) {
+            xPos = radius - this.offset_x + this.ctx.lineWidth;
+          } else {
+            xPos = radius + this.ctx.lineWidth;
+          }
+        }
+        if((yPos - radius + this.offset_y - this.ctx.lineWidth) < 0) {
+          if(this.offset_y < 0) {
+            yPos = radius - this.offset_y + this.ctx.lineWidth;
+          } else {
+            yPos = radius + this.ctx.lineWidth;
+          }
+        }
         this.ctx.arc(xPos, yPos, radius, 0, 2 * Math.PI, false);
         this.ctx.fill();
         this.ctx.stroke();
@@ -1202,9 +1214,7 @@ leftmostPoint = 0;
       if (!this.patternFillSingleBegun && (this.isFrieze || this.isFriezeTwo || this.isTrunks || this.isArabesque || this.isMexico || this.isBedroom)) {
 
       } else {
-        // this.ctx.translate(-offset_x, -offset_y);
       }
-      // this.ctx.translate(-this.offset_x, -this.offset_y);
     }
 
     this.aggrObjArea += currObjArea;
@@ -1342,7 +1352,7 @@ leftmostPoint = 0;
     }
 
     this.currImageIndex = this.savedImageArr.length - 1;
-    this.saveImageFirebase.emit(imgObj);
+    // this.saveImageFirebase.emit(imgObj);
 
     this.loader.nativeElement.style.visibility = "hidden";
     this.renderDone = true;

@@ -278,7 +278,7 @@ export class GeneratorComponent implements OnInit {
       this.ctx.clearRect(0, 0, this.fullCanvasSize, this.fullCanvasSize);
       this.ctx.fillStyle = 'white';
       this.ctx.fillRect(0, 0, this.fullCanvasSize, this.fullCanvasSize);
-      this.ctx.translate(this.offset_x, this.offset_y);
+      // this.ctx.translate(this.offset_x, this.offset_y);
       recurse = this.utilities.randomlyChooseTrueOrFalse();
       this.singleLayer = true;
 
@@ -598,7 +598,7 @@ export class GeneratorComponent implements OnInit {
       this.getRandomArt(clear, recurseStep);
     } else {
       this.saveCurrentArt(clear);
-      this.ctx.translate(-this.offset_x, -this.offset_y);
+      // this.ctx.translate(-this.offset_x, -this.offset_y);
     }
   }
   getSecondSmallLayer(norm) {
@@ -1352,7 +1352,7 @@ leftmostPoint = 0;
     }
 
     this.currImageIndex = this.savedImageArr.length - 1;
-    this.saveImageFirebase.emit(imgObj);
+    // this.saveImageFirebase.emit(imgObj);
 
     this.loader.nativeElement.style.visibility = "hidden";
     this.renderDone = true;

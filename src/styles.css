@@ -486,6 +486,7 @@ input:hover::before {
   .cdk-overlay-pane {
     left:5% !important;
   }
+
   }
    /* iPhone 6 ----------- */
   @media only screen and (min-device-width: 375px) and (max-device-height: 667px) and (orientation : landscape) and (-webkit-device-pixel-ratio: 2){
@@ -496,6 +497,7 @@ input:hover::before {
   .cdk-overlay-pane {
     left:5% !important;
   }
+  
   }
    @media only screen and (min-device-width: 375px) and (max-device-height: 667px) and (orientation : portrait) and (-webkit-device-pixel-ratio: 2){
   /* Styles */
@@ -504,6 +506,13 @@ input:hover::before {
   }
   .cdk-overlay-pane {
     left:5% !important;
+  }
+  .iphone-6-margin {
+    margin-top: 20px; 
+    margin-bottom: 25px;    
+  }
+  .iphone-6-bottom-margin {
+    margin-bottom: 10px;
   }
   }
    /* iPhone 6+ ----------- */

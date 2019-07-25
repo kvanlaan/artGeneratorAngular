@@ -508,11 +508,14 @@ input:hover::before {
     left:5% !important;
   }
   .iphone-6-margin {
-    margin-top: 20px; 
-    margin-bottom: 25px;    
+    margin-top: 1.5em; 
+    margin-bottom: 1.75em;    
   }
   .iphone-6-bottom-margin {
-    margin-bottom: 10px;
+    margin-bottom: 1em;
+  }
+  .iphone-6-top-margin {
+    margin-top: 1em;
   }
   }
    /* iPhone 6+ ----------- */

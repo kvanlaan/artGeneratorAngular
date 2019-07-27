@@ -467,6 +467,16 @@ input:hover::before {
   .cdk-overlay-pane {
     left:5% !important;
   }
+  .iphone-6-margin {
+    margin-top: 1.5em; 
+    margin-bottom: 1.75em;    
+  }
+  .iphone-6-bottom-margin {
+    margin-bottom: 1em;
+  }
+  .iphone-6-top-margin {
+    margin-top: 1em;
+  }
   }
    /* iPhone 5 ----------- */
   @media only screen and (min-device-width: 320px) and (max-device-height: 568px) and (orientation : landscape) and (-webkit-device-pixel-ratio: 2){
@@ -477,7 +487,17 @@ input:hover::before {
   .cdk-overlay-pane {
     left:5% !important;
   }
+  .iphone-6-margin {
+    margin-top: 1.5em; 
+    margin-bottom: 1.75em;    
   }
+  .iphone-6-bottom-margin {
+    margin-bottom: 1em;
+  }
+  .iphone-6-top-margin {
+    margin-top: 1em;
+  }
+}
    @media only screen and (min-device-width: 320px) and (max-device-height: 568px) and (orientation : portrait) and (-webkit-device-pixel-ratio: 2){
   /* Styles */
   .canvas-height {
@@ -485,6 +505,16 @@ input:hover::before {
   }
   .cdk-overlay-pane {
     left:5% !important;
+  }
+  .iphone-6-margin {
+    margin-top: 1.5em; 
+    margin-bottom: 1.75em;    
+  }
+  .iphone-6-bottom-margin {
+    margin-bottom: 1em;
+  }
+  .iphone-6-top-margin {
+    margin-top: 1em;
   }
 
   }

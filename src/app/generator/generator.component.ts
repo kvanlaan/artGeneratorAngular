@@ -82,6 +82,12 @@ export class GeneratorComponent implements OnInit {
     ];
   artImagesSubscription;
   restoreScale;
+  offset_x: number = 0;
+  offset_y: number = 0;
+  fullCanvasSize: number = 0;
+  forceTrapezoidBeginPath: boolean;
+  lowestPoint: number = 0;
+  rightmostPoint: number = 0;
 
   constructor(public http: HttpClient, public utilities: Utilities) {
     this.utilities = utilities;
@@ -163,40 +169,29 @@ export class GeneratorComponent implements OnInit {
     this.patternOne.onload = function () {
       const pattern = this.ctx.createPattern(this.patternOne, this.repeat);
       this.ctx.fillStyle = pattern;
-      // this.customImages[0].ready = true;
-      // this.customImagesLoaded.push(this.patternOne);
 
       this.patternTwo.src = this.initialImages[1].src;
       this.patternTwo.onload = function () {
         const pattern = this.ctx.createPattern(this.patternTwo, this.repeat);
         this.ctx.fillStyle = pattern;
-        // this.customImages[1].ready = true;
-        // this.customImagesLoaded.push(this.patternTwo);
         this.patternThree.src = this.initialImages[2].src;
         this.patternThree.onload = function () {
           const pattern = this.ctx.createPattern(this.patternThree, this.repeat);
           this.ctx.fillStyle = pattern;
-          // this.customImages[2].ready = true;
-          // this.customImagesLoaded.push(this.patternThree);
 
           this.patternFour.src = this.initialImages[3].src;
           this.patternFour.onload = function () {
             const pattern = this.ctx.createPattern(this.patternFour, this.repeat);
             this.ctx.fillStyle = pattern;
-            // this.customImages[3].ready = true;
-            // this.customImagesLoaded.push(this.patternFour);
+
             this.patternFive.src = this.initialImages[4].src;
             this.patternFive.onload = function () {
               const pattern = this.ctx.createPattern(this.patternFive, this.repeat);
               this.ctx.fillStyle = pattern;
-              // this.customImages[4].ready = true;
-              // this.customImagesLoaded.push(this.patternFive);
               this.patternSix.src = this.initialImages[5].src;
               this.patternSix.onload = async function () {
                 const pattern = this.ctx.createPattern(this.patternSix, this.repeat);
                 this.ctx.fillStyle = pattern;
-                // this.customImages[5].ready = true;
-                // this.customImagesLoaded.push(this.patternSix);
                 await this.getRandomArt(true);
               }.bind(this);
             }.bind(this);
@@ -218,26 +213,14 @@ export class GeneratorComponent implements OnInit {
     this.canvasSizeTwo = this.canvasTwo.clientHeight;
     this.ctxTwo.canvas.width = this.canvasSizeTwo;
     this.ctxTwo.canvas.height = this.canvasSizeTwo;
-    console.log('context height before scale', this.ctx.canvas.height)
     this.ctx.scale(.6, .6)
-    console.log('context height after scale', this.ctx.canvas.height)
-    console.log('canvas size after scale', this.canvasSize)
 
     this.ctxTwo.scale(.6, .6)
     this.restoreScale = 1.667;
     this.fullCanvasSize = this.ctx.canvas.width * this.restoreScale;
     this.leftmostPoint = this.fullCanvasSize
-    console.log('full canva sizee', this.fullCanvasSize)
-
   }
-  offset_x = 0;
-  offset_y = 0;
 
-  fullCanvasSize: number = 0;
-  forceTrapezoidBeginPath: boolean;
-
-  lowestPoint = 0;
-  rightmostPoint = 0;
   async getRandomArt(clear, recurseStep?) {
     this.colorArr = this.getRandomColorArr();
     // hide favorites because we're about to switch to savedimagearr
@@ -257,6 +240,7 @@ export class GeneratorComponent implements OnInit {
     this.isFrieze = false;
     this.isBedroom = false;
     this.isFriezeTwo = false;
+
     if (this.customImagesActive) {
       this.patternOne = this.customImagesLoaded[0];
       this.patternTwo = this.customImagesLoaded[1];
@@ -266,8 +250,6 @@ export class GeneratorComponent implements OnInit {
       this.patternSix = this.customImagesLoaded[5];
     }
     if (recurseStep === undefined) {
-      // this.offset_x = Math.floor(Math.random() * this.canvasSize / 2.5) - this.canvasSize / 2.5;
-      // this.offset_y = Math.floor(Math.random() * this.canvasSize / 2.5) - this.canvasSize / 2.5;
       this.offset_x = (Math.random() * 50) - 50;
       this.offset_y = (Math.random() * 50) - 50;
 
@@ -278,19 +260,12 @@ export class GeneratorComponent implements OnInit {
       this.ctx.clearRect(0, 0, this.fullCanvasSize, this.fullCanvasSize);
       this.ctx.fillStyle = 'white';
       this.ctx.fillRect(0, 0, this.fullCanvasSize, this.fullCanvasSize);
-      // this.ctx.translate(this.offset_x, this.offset_y);
+
       recurse = this.utilities.randomlyChooseTrueOrFalse();
       this.singleLayer = true;
-
       if (!recurse) {
-        // this.ctx.save();
         this.singleLayer = true;
         this.forceTrapezoidBeginPath = this.utilities.randomlyChooseTrueOrFalse();
-        // this.ctx.scale(1.2, 1.2);
-        // this.ctxTwo.scale(1.2, 1.2);
-        // this.restoreScale = 1.282;
-        // this.fullCanvasSize = this.ctx.canvas.width * this.restoreScale;
-        console.log('full canvas size', this.fullCanvasSize);
         this.ctx.clearRect(0, 0, this.fullCanvasSize, this.fullCanvasSize);
         this.ctx.fillStyle = 'white';
         this.ctx.fillRect(0, 0, this.fullCanvasSize, this.fullCanvasSize);
@@ -351,7 +326,6 @@ export class GeneratorComponent implements OnInit {
         const maxDarkIndex = this.darkDatabaseList.length - 1;
 
         var one = Math.floor(Math.random() * maxDarkIndex);
-        var two = Math.floor(Math.random() * maxDarkIndex);
         var three = Math.floor(Math.random() * maxDarkIndex);
         var four = Math.floor(Math.random() * maxDarkIndex);
 
@@ -363,7 +337,6 @@ export class GeneratorComponent implements OnInit {
           this.patternThree = darkThree;
           const darkFour = this.darkDatabaseList[four];
           this.patternFour = darkFour;
-          const darkFive = this.darkDatabaseList[five];
           this.getRandomArtAlg(clear, recurse, recurseStep);
 
 
@@ -377,26 +350,7 @@ export class GeneratorComponent implements OnInit {
     }
 
     if (recurse) {
-      if (!this.customImagesActive && !this.utilities.randomlyChooseTrueOrFalseThirdReal()) {
-        const maxDarkIndex = this.patternDatabaseList.length - 1;
 
-        var one = Math.floor(Math.random() * maxDarkIndex);
-        var two = Math.floor(Math.random() * maxDarkIndex);
-        var three = Math.floor(Math.random() * maxDarkIndex);
-        var four = Math.floor(Math.random() * maxDarkIndex);
-
-        var five = Math.floor(Math.random() * maxDarkIndex);
-        if (this.patternDatabaseList.length >= 6) {
-          const darkOne = this.patternDatabaseList[one];
-          this.patternSix = darkOne;
-          const darkThree = this.patternDatabaseList[three];
-          this.patternThree = darkThree;
-          const darkFour = this.patternDatabaseList[four];
-          this.patternFour = darkFour;
-          const darkFive = this.patternDatabaseList[five];
-          this.patternFive = darkFive;
-        }
-      }
       if (this.genType === 'noPattern' || (this.genType === 'transPattern' && this.singleLayer)) {
         this.isTrunks = this.utilities.randomlyChooseTrueOrFalseThird();
         if (!this.isTrunks) {
@@ -451,6 +405,25 @@ export class GeneratorComponent implements OnInit {
       }
       // because it's fast - we only care about making the load if it's new AND layers
       if (recurse && recurseStep === undefined) {
+        if (!this.customImagesActive) {
+          const maxDarkIndex = this.patternDatabaseList.length - 1;
+  
+          var one = Math.floor(Math.random() * maxDarkIndex);
+          var three = Math.floor(Math.random() * maxDarkIndex);
+          var four = Math.floor(Math.random() * maxDarkIndex);
+          var five = Math.floor(Math.random() * maxDarkIndex);
+  
+          if (this.patternDatabaseList.length >= 6) {
+    
+            const darkThree = this.patternDatabaseList[three];
+            this.patternThree = darkThree;
+            const darkFour = this.patternDatabaseList[four];
+            this.patternFour = darkThree;
+            const darkFive = this.patternDatabaseList[five];
+            this.patternFive = darkFive;
+            this.patternSix =  darkFive;
+          }
+        }
 
         recurseStep = Math.floor(Math.random() * 9) + 4;
         this.startingRecurseStep = recurseStep;
@@ -465,18 +438,11 @@ export class GeneratorComponent implements OnInit {
           this.ctx.drawImage(img, 0, 0, this.fullCanvasSize, this.fullCanvasSize, 0, 0, this.fullCanvasSize, this.fullCanvasSize);
           this.getRandomArtAlg(clear, recurse, recurseStep);
         }.bind(this);
-        // this.ctx.translate(-this.offset_x, -this.offset_y);
-        // console.log('offset end', this.offset_x);
-        // console.log('offset', this.offset_y);
+
       } else {
         this.getRandomArtAlg(clear, recurse, recurseStep);
       }
     } else {
-      // }
-      // this.ctx.translate(-this.offset_x, -this.offset_y);
-      // console.log('offset end', this.offset_x);
-      // console.log('offset', this.offset_y);
-
     }
   }
 
@@ -567,8 +533,8 @@ export class GeneratorComponent implements OnInit {
     if (this.genType === 'transPattern') {
       objNum = Math.floor(Math.random() * 23) + 19;
     }
-    if(recurseStep !== undefined) {
-    this.getMainLayer(objNum, norm, rand, trapTrans, recurseStep);
+    if (recurseStep !== undefined) {
+      this.getMainLayer(objNum, norm, rand, trapTrans, recurseStep);
 
     } else {
       this.getMainLayer(objNum, norm, rand, trapTrans);
@@ -852,7 +818,7 @@ export class GeneratorComponent implements OnInit {
           this.ctx.globalAlpha = 1;
 
         }
-        if(!this.singleLayer && recurseStep === 1 ) {
+        if (!this.singleLayer && recurseStep === 1) {
           if (this.layerCounter === (objNum - 3)) {
             newLineWidth = Math.random() * 20 + 16;
 
@@ -881,15 +847,15 @@ export class GeneratorComponent implements OnInit {
   patternFillSingleBegun = false;
   transform = false;
   repeat: string = 'repeat';
-leftmostPoint = 0;
+  leftmostPoint = 0;
   setXYExtremes(xPos: number, yPos: number, small: boolean) {
-    if(xPos < this.leftmostPoint) {
+    if (xPos < this.leftmostPoint) {
       this.leftmostPoint = xPos;
     }
     if (xPos > this.rightmostPoint) {
       this.rightmostPoint = xPos;
     }
-   
+
     if (yPos > this.rightmostPoint) {
       this.lowestPoint = xPos;
     }
@@ -900,8 +866,8 @@ leftmostPoint = 0;
     var offset_y = 0;
     var xPos = (Math.random() * this.canvasSize) + ((this.fullCanvasSize - this.canvasSize) / 2.5);
     var yPos = (Math.random() * this.canvasSize) + ((this.fullCanvasSize - this.canvasSize) / 2.75);
-    if(xPos > 1500) {
-    console.log('XPOS', xPos);
+    if (xPos > 1500) {
+      console.log('XPOS', xPos);
     }
     // small
     this.setXYExtremes(xPos, yPos, small);
@@ -1001,13 +967,13 @@ leftmostPoint = 0;
 
     switch (shape) {
       case 'Rectangle':
-        if((xPos + width + this.offset_x) > this.fullCanvasSize) {
+        if ((xPos + width + this.offset_x) > this.fullCanvasSize) {
           width = (this.fullCanvasSize - xPos - this.offset_x - 2);
         }
-        if((yPos + height + this.offset_y) > this.fullCanvasSize) {
+        if ((yPos + height + this.offset_y) > this.fullCanvasSize) {
           height = (this.fullCanvasSize - yPos - this.offset_y - 2);
         }
-          this.setXYExtremes(width + xPos, height + yPos, small);
+        this.setXYExtremes(width + xPos, height + yPos, small);
 
 
         this.ctx.fillRect(xPos, yPos, width, height);
@@ -1022,9 +988,9 @@ leftmostPoint = 0;
 
         } else {
           const dontBeginPath = this.utilities.randomlyChooseTrueOrFalse10Real();
-         if(dontBeginPath) {
-          this.ctx.beginPath();
-         }
+          if (dontBeginPath) {
+            this.ctx.beginPath();
+          }
         }
 
         if (!this.utilities.randomlyChooseTrueOrFalseThird()) {
@@ -1040,9 +1006,9 @@ leftmostPoint = 0;
         let rand1 = (Math.random() * this.canvasSize) + ((this.fullCanvasSize - this.canvasSize) / 2);
         let y1 = (Math.random() * this.canvasSize) + ((this.fullCanvasSize - this.canvasSize) / 2);
 
-        if (y1  > this.fullCanvasSize) {
+        if (y1 > this.fullCanvasSize) {
           y1 = (this.fullCanvasSize - 10);
-       }
+        }
         this.setXYExtremes(rand1, y1, small);
 
         //first point
@@ -1050,18 +1016,18 @@ leftmostPoint = 0;
         let rand2 = (Math.random() * this.canvasSize) + ((this.fullCanvasSize - this.canvasSize) / 2);
         //second point completes first side
         let y2 = (Math.random() * this.canvasSize) + ((this.fullCanvasSize - this.canvasSize) / 2);
-        if (y2  > this.fullCanvasSize) {
+        if (y2 > this.fullCanvasSize) {
           y2 = (this.fullCanvasSize - 10);
-       }
+        }
         this.ctx.lineTo(rand2, y2);
 
         this.setXYExtremes(rand2, y2, small);
 
         let rand3 = (Math.random() * this.canvasSize) + ((this.fullCanvasSize - this.canvasSize) / 2);
         let y3 = (Math.random() * this.canvasSize) + ((this.fullCanvasSize - this.canvasSize) / 2);
-        if(y3  > this.fullCanvasSize) {
+        if (y3 > this.fullCanvasSize) {
           y3 = (this.fullCanvasSize - 10);
-       }
+        }
         this.setXYExtremes(rand3, y3, small);
 
         // third point completes second side
@@ -1081,9 +1047,9 @@ leftmostPoint = 0;
           y4 = y1 + Math.random() * this.canvasSize;
         }
 
-        if(y4  > this.fullCanvasSize) {
+        if (y4 > this.fullCanvasSize) {
           y4 = (this.fullCanvasSize - 10);
-       }
+        }
         this.setXYExtremes(rand4, y4, small);
 
         this.ctx.lineTo(rand4, y4);
@@ -1115,30 +1081,30 @@ leftmostPoint = 0;
         }
         rand1 = xPos;
         rand2 = yPos;
-        let ty1 = (Math.random() * this.canvasSize) +  ((this.fullCanvasSize - this.canvasSize) / 2);
-        let  ty2 = (Math.random() * this.canvasSize) +  ((this.fullCanvasSize - this.canvasSize) / 2);
+        let ty1 = (Math.random() * this.canvasSize) + ((this.fullCanvasSize - this.canvasSize) / 2);
+        let ty2 = (Math.random() * this.canvasSize) + ((this.fullCanvasSize - this.canvasSize) / 2);
 
         // vertex one
         this.ctx.moveTo(rand1, ty1);
-        if(ty1  > this.fullCanvasSize) {
-           ty1 = (this.fullCanvasSize - 10);
+        if (ty1 > this.fullCanvasSize) {
+          ty1 = (this.fullCanvasSize - 10);
         }
         this.setXYExtremes(0, ty1, small);
 
         // vertex two
         this.ctx.lineTo(rand2, rand1);
         // this.ctx.stroke();
-        if(rand1  > this.fullCanvasSize) {
+        if (rand1 > this.fullCanvasSize) {
           rand1 = (this.fullCanvasSize - 10);
-       }
+        }
         this.setXYExtremes(0, rand1, small);
 
 
         // vertex three
         this.ctx.lineTo(rand2, ty2);
-        if(ty2  > this.fullCanvasSize) {
+        if (ty2 > this.fullCanvasSize) {
           ty2 = (this.fullCanvasSize - 10);
-       }
+        }
         this.setXYExtremes(0, ty2, small);
 
         this.ctx.stroke();
@@ -1159,16 +1125,16 @@ leftmostPoint = 0;
             }
           }
         }
-        rand1 = (Math.random() * this.canvasSize) +  ((this.fullCanvasSize - this.canvasSize) / 2);
+        rand1 = (Math.random() * this.canvasSize) + ((this.fullCanvasSize - this.canvasSize) / 2);
         var rand = Math.floor(Math.random() * 2) + 1;
         if (rand === 1) {
           rand2 = rand1 + 15;
         } else {
           rand2 = rand1 - 15;
         }
-        let ly1 = (Math.random() * this.canvasSize) +  ((this.fullCanvasSize - this.canvasSize) / 2);
-        let ly2 = (Math.random() * this.canvasSize) +  ((this.fullCanvasSize - this.canvasSize) / 2);
-      
+        let ly1 = (Math.random() * this.canvasSize) + ((this.fullCanvasSize - this.canvasSize) / 2);
+        let ly2 = (Math.random() * this.canvasSize) + ((this.fullCanvasSize - this.canvasSize) / 2);
+
         this.setXYExtremes(rand1, ly1, small);
         this.setXYExtremes(rand2, rand1, small);
         this.setXYExtremes(rand2, ly2, small);
@@ -1186,15 +1152,15 @@ leftmostPoint = 0;
         } else {
           this.ctx.beginPath();
         }
-        if((xPos - radius + this.offset_x  - this.ctx.lineWidth) < 0){
-          if(this.offset_x < 0) {
+        if ((xPos - radius + this.offset_x - this.ctx.lineWidth) < 0) {
+          if (this.offset_x < 0) {
             xPos = radius - this.offset_x + this.ctx.lineWidth;
           } else {
             xPos = radius + this.ctx.lineWidth;
           }
         }
-        if((yPos - radius + this.offset_y - this.ctx.lineWidth) < 0) {
-          if(this.offset_y < 0) {
+        if ((yPos - radius + this.offset_y - this.ctx.lineWidth) < 0) {
+          if (this.offset_y < 0) {
             yPos = radius - this.offset_y + this.ctx.lineWidth;
           } else {
             yPos = radius + this.ctx.lineWidth;
@@ -1230,26 +1196,26 @@ leftmostPoint = 0;
     let overflowX = this.rightmostPoint - (this.canvasSize + ((this.fullCanvasSize - this.canvasSize) / 2));
     let overflowY = this.lowestPoint - (this.canvasSize + ((this.fullCanvasSize - this.canvasSize) / 2));
     overflowY = 0;
-    if(overflowX > ((this.fullCanvasSize - this.canvasSize) / 2)){
+    if (overflowX > ((this.fullCanvasSize - this.canvasSize) / 2)) {
       overflowX = ((this.fullCanvasSize - this.canvasSize) / 2);
     }
 
-    if(overflowX > ((this.fullCanvasSize - this.canvasSize) / 2)){
+    if (overflowX > ((this.fullCanvasSize - this.canvasSize) / 2)) {
       overflowX = ((this.fullCanvasSize - this.canvasSize) / 2);
     }
     console.log('leftmost point', this.leftmostPoint, 'starting point', ((this.fullCanvasSize - this.canvasSize) / 2));
     let startingPointDiff = 0;
-    if(this.leftmostPoint < ((this.fullCanvasSize - this.canvasSize) / 2)) {
-     startingPointDiff = ((this.fullCanvasSize - this.canvasSize) / 2) - this.leftmostPoint;
-     console.log('this.leftmost')
-     if(this.leftmostPoint && startingPointDiff) {
-      //  this.ctx.translate((startingPointDiff), (overflowY/2))
-      //  this.ctxTwo.translate((startingPointDiff), (overflowY/2))
-     }
+    if (this.leftmostPoint < ((this.fullCanvasSize - this.canvasSize) / 2)) {
+      startingPointDiff = ((this.fullCanvasSize - this.canvasSize) / 2) - this.leftmostPoint;
+      console.log('this.leftmost')
+      if (this.leftmostPoint && startingPointDiff) {
+        //  this.ctx.translate((startingPointDiff), (overflowY/2))
+        //  this.ctxTwo.translate((startingPointDiff), (overflowY/2))
+      }
     } else {
-      overflowX =  overflowX - ( (this.leftmostPoint - ((this.fullCanvasSize - this.canvasSize) / 2) ) * 2);
+      overflowX = overflowX - ((this.leftmostPoint - ((this.fullCanvasSize - this.canvasSize) / 2)) * 2);
     }
-   
+
     // this.ctx.translate((-overflowX/2), (overflowY/2))
 
     if (index !== undefined) {
@@ -1269,29 +1235,15 @@ leftmostPoint = 0;
     this.ctxTwo.save();
 
     this.ctxTwo.scale(this.restoreScale, this.restoreScale);
-    if(this.lowestPoint > this.fullCanvasSize) {
-      // this.ctxTwo.translate(0, -(this.lowestPoint - this.fullCanvasSize));
-    }
-    
-    // if(this.leftmostPoint < ((this.fullCanvasSize - this.canvasSize) / 2)) {
-    //   startingPointDiff = ((this.fullCanvasSize - this.canvasSize) / 2) - this.leftmostPoint;
-    //   if(this.leftmostPoint && startingPointDiff) {
-    //     this.ctxTwo.translate((startingPointDiff), (overflowY/2))
-    //   }
-    //  } else {
-    //    overflowX =  overflowX - ( (this.leftmostPoint - ((this.fullCanvasSize - this.canvasSize) / 2) ) * 2);
-    //  }
-    //  this.ctxTwo.translate((-overflowX/2), (overflowY/2))
-
     img.onload = function () {
       this.ctx.drawImage(img, 0, 0, this.canvasSize, this.canvasSize, 0, 0, this.canvasSize, this.canvasSize);
       this.drawImageScaled(img, this.ctxTwo)
       if (this.singleLayer) {
         // this.ctx.restore();
       }
-      
+
       // this.ctxTwo.translate((overflowX/2), (-overflowY/2))
-      if(this.leftmostPoint && startingPointDiff) {
+      if (this.leftmostPoint && startingPointDiff) {
         // this.ctxTwo.translate((-startingPointDiff), (overflowY/2))
       }
 
@@ -1311,13 +1263,6 @@ leftmostPoint = 0;
         this.updateCurrentIndex.emit(this.savedImageArr.length - 1);
       }
       console.log('this.gentype', this.genType, 'is single layer', this.singleLayer);
-      // this.ctx.translate( (overflowX/2), (-overflowY/2))
-
-      if(this.leftmostPoint && startingPointDiff) {
-        // this.ctx.translate((-startingPointDiff), (overflowY/2))
-        // this.ctxTwo.translate((-startingPointDiff), (overflowY/2))
-  
-      }
     }.bind(this);
 
   }
@@ -1352,7 +1297,7 @@ leftmostPoint = 0;
     }
 
     this.currImageIndex = this.savedImageArr.length - 1;
-    // this.saveImageFirebase.emit(imgObj);
+    this.saveImageFirebase.emit(imgObj);
 
     this.loader.nativeElement.style.visibility = "hidden";
     this.renderDone = true;

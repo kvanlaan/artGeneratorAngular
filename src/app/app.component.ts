@@ -305,7 +305,6 @@ export class AppComponent {
 
           }
         }
-        await this.openLoginModal();
       }
     }
   }

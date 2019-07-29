@@ -260,6 +260,7 @@ export class GeneratorComponent implements OnInit {
       this.ctx.clearRect(0, 0, this.fullCanvasSize, this.fullCanvasSize);
       this.ctx.fillStyle = 'white';
       this.ctx.fillRect(0, 0, this.fullCanvasSize, this.fullCanvasSize);
+      this.ctx.translate(this.offset_x, this.offset_y);
 
       recurse = this.utilities.randomlyChooseTrueOrFalse();
       this.singleLayer = true;
@@ -564,7 +565,7 @@ export class GeneratorComponent implements OnInit {
       this.getRandomArt(clear, recurseStep);
     } else {
       this.saveCurrentArt(clear);
-      // this.ctx.translate(-this.offset_x, -this.offset_y);
+      this.ctx.translate(-this.offset_x, -this.offset_y);
     }
   }
   getSecondSmallLayer(norm) {
@@ -967,11 +968,11 @@ export class GeneratorComponent implements OnInit {
 
     switch (shape) {
       case 'Rectangle':
-        if ((xPos + width + this.offset_x) > this.fullCanvasSize) {
-          width = (this.fullCanvasSize - xPos - this.offset_x - 2);
+        if ((xPos + width + this.offset_x+ this.ctx.lineWidth) > this.fullCanvasSize) {
+          width = (this.fullCanvasSize - xPos - this.offset_x - this.ctx.lineWidth - 2);
         }
-        if ((yPos + height + this.offset_y) > this.fullCanvasSize) {
-          height = (this.fullCanvasSize - yPos - this.offset_y - 2);
+        if ((yPos + height + this.offset_y + this.ctx.lineWidth) > this.fullCanvasSize) {
+          height = (this.fullCanvasSize - yPos - this.offset_y - this.ctx.lineWidth - 10);
         }
         this.setXYExtremes(width + xPos, height + yPos, small);
 
@@ -1006,8 +1007,8 @@ export class GeneratorComponent implements OnInit {
         let rand1 = (Math.random() * this.canvasSize) + ((this.fullCanvasSize - this.canvasSize) / 2);
         let y1 = (Math.random() * this.canvasSize) + ((this.fullCanvasSize - this.canvasSize) / 2);
 
-        if (y1 > this.fullCanvasSize) {
-          y1 = (this.fullCanvasSize - 10);
+        if (y1 > this.fullCanvasSize + this.offset_y + this.ctx.lineWidth) {
+          y1 = (this.fullCanvasSize  - this.offset_y - this.ctx.lineWidth- 5);
         }
         this.setXYExtremes(rand1, y1, small);
 
@@ -1085,10 +1086,11 @@ export class GeneratorComponent implements OnInit {
         let ty2 = (Math.random() * this.canvasSize) + ((this.fullCanvasSize - this.canvasSize) / 2);
 
         // vertex one
-        this.ctx.moveTo(rand1, ty1);
-        if (ty1 > this.fullCanvasSize) {
-          ty1 = (this.fullCanvasSize - 10);
+        if (ty1 > this.fullCanvasSize + this.ctx.lineWidth + this.offset_y) {
+          ty1 = (this.fullCanvasSize - this.offset_y - this.ctx.lineWidth - 5);
         }
+        this.ctx.moveTo(rand1, ty1);
+        
         this.setXYExtremes(0, ty1, small);
 
         // vertex two
@@ -1099,12 +1101,12 @@ export class GeneratorComponent implements OnInit {
         }
         this.setXYExtremes(0, rand1, small);
 
-
+        if (ty2 > (this.fullCanvasSize + this.ctx.lineWidth + this.offset_y)) {
+          ty2 = (this.fullCanvasSize - this.ctx.lineWidth - this.offset_y - 5);
+        }
         // vertex three
         this.ctx.lineTo(rand2, ty2);
-        if (ty2 > this.fullCanvasSize) {
-          ty2 = (this.fullCanvasSize - 10);
-        }
+     
         this.setXYExtremes(0, ty2, small);
 
         this.ctx.stroke();
@@ -1154,16 +1156,16 @@ export class GeneratorComponent implements OnInit {
         }
         if ((xPos - radius + this.offset_x - this.ctx.lineWidth) < 0) {
           if (this.offset_x < 0) {
-            xPos = radius - this.offset_x + this.ctx.lineWidth;
+            xPos = radius - this.offset_x + this.ctx.lineWidth + 5;
           } else {
-            xPos = radius + this.ctx.lineWidth;
+            xPos = radius + this.ctx.lineWidth + 5;
           }
         }
         if ((yPos - radius + this.offset_y - this.ctx.lineWidth) < 0) {
           if (this.offset_y < 0) {
-            yPos = radius - this.offset_y + this.ctx.lineWidth;
+            yPos = radius - this.offset_y + this.ctx.lineWidth + 5;
           } else {
-            yPos = radius + this.ctx.lineWidth;
+            yPos = radius + this.ctx.lineWidth + 5;
           }
         }
         this.ctx.arc(xPos, yPos, radius, 0, 2 * Math.PI, false);
@@ -1297,7 +1299,7 @@ export class GeneratorComponent implements OnInit {
     }
 
     this.currImageIndex = this.savedImageArr.length - 1;
-    this.saveImageFirebase.emit(imgObj);
+    // this.saveImageFirebase.emit(imgObj);
 
     this.loader.nativeElement.style.visibility = "hidden";
     this.renderDone = true;
@@ -1382,25 +1384,6 @@ export class GeneratorComponent implements OnInit {
 
   //BBOOK WUZ HERE
   getRandomColorArr() {
-    // let counter = 0;
-    // var colorArr = [];
-    // for (var i = 0; i < 5; i++) {
-    //   var num = Math.round(0xffffff * Math.random());
-    //   var r = num >> 16;
-    //   var g = num >> 8 & 255;
-    //   var b = num & 255;
-    //   const tempRgb = { 'r': r, 'g': g, 'b': b };
-    //   //  var tempRgb = this.getRandomRgb();
-    //   var tempRgbString = 'rgb(' + tempRgb.r + ',' + tempRgb.g + ',' + tempRgb.b + ')';
-    //   colorArr.push(tempRgbString);
-    // }
-    // // while (counter <= this.objNum + 1) {
-    // //   var tempRgb = this.getRandomRgb();
-    // //   var tempRgbString = 'rgb(' + tempRgb.r + ',' + tempRgb.g + ',' + tempRgb.b + ')';
-    // //   colorArr.push(tempRgbString);
-    // //   counter++;
-    // // }
-    // return colorArr;
     var tempRgb = this.getRandomRgb();
     var complementaryColorArr = ['rgb(' + tempRgb.r + ',' + tempRgb.g + ',' + tempRgb.b + ')'];
     var currRgb = tempRgb;
@@ -1470,12 +1453,12 @@ export class GeneratorComponent implements OnInit {
     return rgb;
   }
 
-  //Adding hueShift via Jacob (see comments)
+  //Adding hueShift 
   hueShift(h, s) {
     h += s; while (h >= 360.0) h -= 360.0; while (h < 0.0) h += 360.0; return h;
   }
 
-  //min max via Hairgami_Master (see comments)
+  //min max 
   min3(a, b, c) {
     return (a < b) ? ((a < c) ? a : c) : ((b < c) ? b : c);
   }
@@ -1487,23 +1470,7 @@ export class GeneratorComponent implements OnInit {
     var r = num >> 16;
     var g = num >> 8 & 255;
     var b = num & 255;
-    // if((r + g + b) > 450) {
-    //   const diff = (r + g + b) - 450;
-    //   const sub = diff/3;
-    //   r = r - sub;
-    //   g = g - sub;
-    //   b = b - sub;
-
-    // }
     const retVal = { 'r': r, 'g': g, 'b': b };
-
-    // const rgb = this.colorArr[Math.floor(Math.random() * this.colorArr.length)];
-    // const rgbArr = rgb.split(',')
-    // console.log('rgb', rgb);
-    // const oneEntry= rgbArr[0].substring(4, rgbArr[0].length);
-    // console.log('oneEntry', oneEntry);
-    // const retVal =  { 'r': oneEntry, 'g': rgbArr[1], 'b': rgbArr[2].substring(0, rgbArr[2].length -1) };
-    // console.log('retVAl', retVal);
     return retVal;
   }
 }

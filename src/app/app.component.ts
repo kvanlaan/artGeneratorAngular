@@ -8,11 +8,11 @@ import { GeneratorComponent } from './generator/generator.component';
 import { Utilities } from './generator/utilities';
 import 'hammerjs';
 import { HttpClient } from '@angular/common/http';
+import { CustomImagesDialogComponent } from '../customimagesdialog/customimagesdialog.component';
 
 @Component({
   templateUrl: './login.component.html'
 })
-
 export class LoginDialogComponent {
 }
 @Component({
@@ -69,9 +69,11 @@ export class AppComponent {
   guid;
   database;
   dialogRef;
+  localStorage;
   constructor(public http: HttpClient, public utilities: Utilities, public dialog: MatDialog, public location: Location) {
     this.utilities = utilities;
     this.location = location;
+    this.localStorage = localStorage;
   }
 
   @HostListener('window:keydown', ['$event'])
@@ -150,14 +152,7 @@ export class AppComponent {
     }
     return false;
   }
-  openLoginDialog() {
-    this.dialogRef = this.dialog.open(LoginDialogComponent, {
-      width: '300px'
-    });
 
-    this.dialogRef.afterClosed().subscribe(result => {
-    });
-  }
 
   openDeleteDialog(imgObj, index) {
     if (!document.getElementById('delete')) {
@@ -245,7 +240,12 @@ export class AppComponent {
   }
 
   async openLoginModal() {
-    this.openLoginDialog();
+    this.dialogRef = this.dialog.open(LoginDialogComponent, {
+      width: '300px'
+    });
+
+    this.dialogRef.afterClosed().subscribe(result => {
+    });
     await this.ui.start('#firebaseui-container', this.getUiConfig());
   }
 
@@ -359,11 +359,42 @@ export class AppComponent {
       // this.resetImages();
       this.setCustomImages();
       this.customImagesActive = true;
+      if (!this.getFromLocal(this.disableCustomImagesDialogKey)) {
+        this.openCustomImagesDialog();
+      }
     } else {
       this.customImagesActive = false;
       this.generator.initiatePatterns();
     }
   }
+  disableCustomImagesDialogKey = 'dontShowCustomImagesDialog';
+  openCustomImagesDialog(readOnly?: boolean) {
+      this.dialogRef = this.dialog.open(CustomImagesDialogComponent, {
+        width: '300px',
+        data: {
+        readOnly: readOnly
+        }
+      });
+      this.dialogRef.afterClosed().subscribe(dontShowAgain => {
+        this.saveToLocal(this.disableCustomImagesDialogKey, dontShowAgain);
+      });
+  }
+  getFromLocal(key: string): any {
+    let item = this.localStorage.getItem(key);
+    if (item && item !== "undefined") {
+      return JSON.parse(this.localStorage.getItem(key));
+    }
+
+    return;
+  }
+  saveToLocal(key: string, value: any) {
+    this.localStorage.setItem(key, JSON.stringify(value));
+  }
+
+  deleteFromLocal(key: string) {
+    this.localStorage.removeItem(key);
+  }
+
   uploadCustomImage(fileIndex, event) {
     const fileName = 'uploadCustom' + (fileIndex + 1);
 

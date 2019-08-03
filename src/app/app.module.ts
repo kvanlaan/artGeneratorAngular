@@ -9,6 +9,8 @@ import {
   MatProgressSpinnerModule,
   MatButtonToggleModule,
   MatDividerModule,
+  MatCheckbox,
+  MatCheckboxModule,
 } from '@angular/material';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
@@ -19,20 +21,24 @@ import { GeneratorComponent } from './generator/generator.component';
 import 'hammerjs';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
+import { CustomImagesDialogComponent } from '../customimagesdialog/customimagesdialog.component';
 @NgModule({
   declarations: [
     AppComponent,
     LoginDialogComponent,
     DeleteDialogComponent,
+    CustomImagesDialogComponent,
     GeneratorComponent
   ],
   entryComponents: [
     LoginDialogComponent,
-    DeleteDialogComponent
+    DeleteDialogComponent,
+    CustomImagesDialogComponent
   ],
   imports: [
     MatButtonModule,
     MatDialogModule,
+    MatCheckboxModule,
     FormsModule,
     BrowserAnimationsModule,
     MatButtonToggleModule,

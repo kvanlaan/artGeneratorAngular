@@ -25,7 +25,7 @@
         </button>
         <span *ngIf="login" fxLayoutAlign="horizontal center" fxLayoutGap="5px">
           <span>{{email}}</span>
-          <button fxFlex="5" (click)="signOut()" fxShow.md="false" fxShow.sm="false" fxShow.xs="false"
+          <button (click)="signOut()" fxShow.md="false" fxShow.sm="false" fxShow.xs="false"
             mat-stroked-button>
             <span> Sign Out </span>
           </button>
@@ -42,7 +42,6 @@
       <button *ngIf="login" fxFlex="5" (click)="signOut()" mat-stroked-button>
         <span> Sign Out </span>
       </button>
-
     </div>
   </div>
 
@@ -57,7 +56,6 @@
         </i></mat-button-toggle>
     </mat-button-toggle-group>
   </div>
-  <!-- <mat-divider></mat-divider> -->
   <div style="padding-top: 5px; padding-bottom: 5px" fxFlexOffset="1" fxLayout="row" fxShow="false" fxShow.md="true"
     fxShow.sm="true" fxShow.xs="true" fxLayoutWrap>
     <div fxLayoutAlign="start center" fxLayoutGap="5px" style="padding-right: 5px">
@@ -88,7 +86,7 @@
     </div>
     <div [fxShow.md]="isMainPhotoView" [fxShow.sm]="isMainPhotoView" [fxShow.xs]="isMainPhotoView" fxLayout="row"
       fxLayoutAlign="end center" fxLayoutGap="5px">
-      <mat-slide-toggle matTooltip="Customize Patterns" tool-tip="Customize Patterns" [checked]="customImagesActive"
+      <mat-slide-toggle matTooltip="Lock/Customize Patterns" [checked]="customImagesActive"
         (change)="toggleImages()"></mat-slide-toggle>
       <span *ngIf="ready" fxLayout="row" fxLayoutAlign="start center">
         <span *ngFor="let customImage of customImages; let i = index"
@@ -198,7 +196,7 @@
             favorite_border
           </i>
         </span>
-        <mat-slide-toggle matTooltip="Customize Patterns" tool-tip="Customize Patterns" [checked]="customImagesActive"
+        <mat-slide-toggle matTooltip="Lock/Customize Patterns"  [checked]="customImagesActive"
           (change)="toggleImages()"></mat-slide-toggle>
         <span *ngIf="ready" fxLayout="column" fxLayoutAlign="start center">
           <span *ngFor="let customImage of customImages; let i = index"
@@ -218,7 +216,12 @@
               </i>
             </span>
           </span>
+
+          <i (click)="openCustomImagesDialog(true)" style="margin-top: 4.5px" class="material-icons">
+            info_outline
+            </i>
         </span>
+
       </span>
       <generator [fxShow.md]="isMainPhotoView" [fxShow.sm]="isMainPhotoView" [fxShow.xs]="isMainPhotoView"
         (updateCurrentIndex)="updateCurrentIndex($event)" [currImageIndex]="currImageIndex"

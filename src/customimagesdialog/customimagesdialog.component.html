@@ -1,0 +1,30 @@
+<div  style="z-index: 100">
+
+  <button class="material-text float-right hover" style="min-width: 0px !important; margin-right: -20px !important; margin-top: -20px !important; opacity: .5"
+    mat-icon-button (click)="close()">X</button>
+  <span>
+    <h2 class="material-text" mat-dialog-title> You've Activated Custom Images!
+    </h2>
+    <mat-dialog-content fxLayout="row" class="mat-typography">
+<div fxLayout="column">
+
+  <img src="assets/uploadintstructions.png"/>
+  <!-- <div>
+    <mat-icon  [disabled]="photoIndex > 0" (click)="photoIndex > 0 && decrementPhotoIndex()">navigate_before</mat-icon>
+    <mat-icon  [disabled]="photoIndex < (this.photos.length-1)" (click)="photoIndex < (this.photos.length-1)  && incrementPhotoIndex()">navigate_next</mat-icon>
+  </div> -->
+</div>
+    
+    <p class="mat-typography" style="text-align: left; margin-top: 22.5px">
+      Click on the swatches to upload your custom image to Art Generator.
+      <br>
+      <br>
+      We've started you out with 6 template images.
+      <br>
+      <mat-checkbox [fxShow]="!readOnly" (change)="toggleShowCustomImages($event)">Don't Show this Again</mat-checkbox>
+    </p>
+
+  </mat-dialog-content>
+
+  </span>
+</div>

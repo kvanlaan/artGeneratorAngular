@@ -3,7 +3,7 @@
   <button class="material-text float-right hover" style="min-width: 0px !important; margin-right: -20px !important; margin-top: -20px !important; opacity: .5"
     mat-icon-button (click)="close()">X</button>
   <span>
-    <h2 class="material-text" mat-dialog-title> You've Activated Custom Images!
+    <h2 class="material-text" mat-dialog-title> <span *ngIf="!readOnly">You've Activated</span> Custom Images<span *ngIf="!readOnly">!</span>
     </h2>
     <mat-dialog-content fxLayout="row" class="mat-typography">
 <div fxLayout="column">

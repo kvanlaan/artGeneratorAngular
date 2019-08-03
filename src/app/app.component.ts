@@ -2,6 +2,10 @@ import { Component, HostListener, ViewChild, ViewChildren } from '@angular/core'
 import { Location } from '@angular/common';
 import * as firebase from 'firebase';
 import * as firebaseui from 'firebaseui';
+import 'firebase/firestore';
+import 'firebase/auth';
+import 'firebase/storage';
+
 import { MatDialog } from '@angular/material';
 import { LocationStrategy, PathLocationStrategy } from '../../node_modules/@angular/common';
 import { GeneratorComponent } from './generator/generator.component';
@@ -119,7 +123,6 @@ export class AppComponent {
       messagingSenderId: "858892303412"
     };
     firebase.initializeApp(config);
-
     this.database = firebase.firestore();
     const settings = { timestampsInSnapshots: true };
     this.database.settings(settings);
@@ -128,8 +131,12 @@ export class AppComponent {
     // this.getDarkPatterns();
 
     firebase.auth().onAuthStateChanged(async function (this, user) {
+      if(!this.login && !user && location.href.indexOf('loggedOut') >= 0 )  {
+        this.openLoginModal();
+      } else {
       this.user = user;
       this.user ? await this.handleSignedInUser() : await this.handleSignedOutUser();
+      }
     }.bind(this));
   }
   showMobileNextImageArrow() {
@@ -183,8 +190,8 @@ export class AppComponent {
 
     this.login = true;
     this.email = this.user.email;
-    if (location.hash.split('/') && location.hash.split('/')[1] && location.hash.split('/')[2]) {
-      this.guid = location.hash.split('/')[2];
+    if (location.hash.split('/') && location.hash.split('/')[1]) {
+      this.guid = location.hash.split('/')[1];
     }
 
     let trimmedName = this.email;
@@ -254,7 +261,6 @@ export class AppComponent {
     if (location.hash.split('/') && location.hash.split('/')[1]) {
       this.guid = location.hash.split('/')[1];
       guid = this.guid;
-      guid = location.hash.split('/')[1];
     }
 
     if (!document.getElementById('firebaseui-container')) {

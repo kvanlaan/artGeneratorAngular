@@ -2,6 +2,10 @@ import { Component, OnInit, ViewChild, Output, EventEmitter, Input } from '@angu
 import { Utilities } from './utilities';
 import { HttpClient } from '@angular/common/http';
 import * as firebase from 'firebase';
+import * as firebaseui from 'firebaseui';
+import 'firebase/firestore';
+import 'firebase/auth';
+import 'firebase/storage';
 
 @Component({
   selector: 'generator',

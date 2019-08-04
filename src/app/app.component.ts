@@ -131,11 +131,11 @@ export class AppComponent {
     // this.getDarkPatterns();
 
     firebase.auth().onAuthStateChanged(async function (this, user) {
-      if(!this.login && !user && location.href.indexOf('loggedOut') >= 0 )  {
+      if (!this.login && !user && location.href.indexOf('loggedOut') >= 0 && location.href.indexOf('authenticationTriggered') > - 0) {
         this.openLoginModal();
       } else {
-      this.user = user;
-      this.user ? await this.handleSignedInUser() : await this.handleSignedOutUser();
+        this.user = user;
+        this.user ? await this.handleSignedInUser() : await this.handleSignedOutUser();
       }
     }.bind(this));
   }
@@ -247,6 +247,9 @@ export class AppComponent {
   }
 
   async openLoginModal() {
+    if (location.href.indexOf('authenticationTriggered') < 0) {
+      location.href += '/authenticationTriggered';
+    }
     this.dialogRef = this.dialog.open(LoginDialogComponent, {
       width: '300px'
     });
@@ -375,15 +378,15 @@ export class AppComponent {
   }
   disableCustomImagesDialogKey = 'dontShowCustomImagesDialog';
   openCustomImagesDialog(readOnly?: boolean) {
-      this.dialogRef = this.dialog.open(CustomImagesDialogComponent, {
-        width: '300px',
-        data: {
+    this.dialogRef = this.dialog.open(CustomImagesDialogComponent, {
+      width: '300px',
+      data: {
         readOnly: readOnly
-        }
-      });
-      this.dialogRef.afterClosed().subscribe(dontShowAgain => {
-        this.saveToLocal(this.disableCustomImagesDialogKey, dontShowAgain);
-      });
+      }
+    });
+    this.dialogRef.afterClosed().subscribe(dontShowAgain => {
+      this.saveToLocal(this.disableCustomImagesDialogKey, dontShowAgain);
+    });
   }
   getFromLocal(key: string): any {
     let item = this.localStorage.getItem(key);

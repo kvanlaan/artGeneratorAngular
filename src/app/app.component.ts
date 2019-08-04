@@ -517,6 +517,13 @@ export class AppComponent {
         .catch(function (error) {
           console.error('Error adding document: ', error);
         });
+    } else if(this.guid) {
+      this.database.collection('users/' + this.guid + '/images').doc(imageObj.name).delete().then(function (docRef) {
+        console.log('Successfully deleted');
+      })
+        .catch(function (error) {
+          console.error('Error adding document: ', error);
+        });
     }
 
     this.savedImageArr.splice(index, 1);

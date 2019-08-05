@@ -48,12 +48,16 @@ var core_1 = require("@angular/core");
 var common_1 = require("@angular/common");
 var firebase = require("firebase");
 var firebaseui = require("firebaseui");
+require("firebase/firestore");
+require("firebase/auth");
+require("firebase/storage");
 var material_1 = require("@angular/material");
 var common_2 = require("../../node_modules/@angular/common");
 var generator_component_1 = require("./generator/generator.component");
 var utilities_1 = require("./generator/utilities");
 require("hammerjs");
 var http_1 = require("@angular/common/http");
+var customimagesdialog_component_1 = require("../customimagesdialog/customimagesdialog.component");
 var LoginDialogComponent = /** @class */ (function () {
     function LoginDialogComponent() {
     }
@@ -106,8 +110,10 @@ var AppComponent = /** @class */ (function () {
         this.savedImageArr = [];
         this.darkDatabaseList = [];
         this.customImagesActive = false;
+        this.disableCustomImagesDialogKey = 'dontShowCustomImagesDialog';
         this.utilities = utilities;
         this.location = location;
+        this.localStorage = localStorage;
     }
     AppComponent.prototype.handlekeydown = function (e) {
         var currIndex = this.currImageIndex;
@@ -162,19 +168,24 @@ var AppComponent = /** @class */ (function () {
                         return __generator(this, function (_b) {
                             switch (_b.label) {
                                 case 0:
-                                    this.user = user;
-                                    if (!this.user) return [3 /*break*/, 2];
-                                    return [4 /*yield*/, this.handleSignedInUser()];
+                                    if (!(!this.login && !user && location.href.indexOf('loggedOut') >= 0 && location.href.indexOf('authenticationTriggered') > -0)) return [3 /*break*/, 1];
+                                    this.openLoginModal();
+                                    return [3 /*break*/, 6];
                                 case 1:
+                                    this.user = user;
+                                    if (!this.user) return [3 /*break*/, 3];
+                                    return [4 /*yield*/, this.handleSignedInUser()];
+                                case 2:
                                     _a = _b.sent();
-                                    return [3 /*break*/, 4];
-                                case 2: return [4 /*yield*/, this.handleSignedOutUser()];
-                                case 3:
-                                    _a = _b.sent();
-                                    _b.label = 4;
+                                    return [3 /*break*/, 5];
+                                case 3: return [4 /*yield*/, this.handleSignedOutUser()];
                                 case 4:
+                                    _a = _b.sent();
+                                    _b.label = 5;
+                                case 5:
                                     _a;
-                                    return [2 /*return*/];
+                                    _b.label = 6;
+                                case 6: return [2 /*return*/];
                             }
                         });
                     });
@@ -183,12 +194,23 @@ var AppComponent = /** @class */ (function () {
             });
         });
     };
-    AppComponent.prototype.openLoginDialog = function () {
-        this.dialogRef = this.dialog.open(LoginDialogComponent, {
-            width: '300px'
-        });
-        this.dialogRef.afterClosed().subscribe(function (result) {
-        });
+    AppComponent.prototype.showMobileNextImageArrow = function () {
+        if (this.isMainPhotoView) {
+            if (!this.showFavorites) {
+                if (this.currImageIndex < this.savedImageArr.length - 1) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    };
+    AppComponent.prototype.showMobilePreviousImageArrow = function () {
+        if (this.isMainPhotoView) {
+            if (this.currImageIndex > 0) {
+                return true;
+            }
+        }
+        return false;
     };
     AppComponent.prototype.openDeleteDialog = function (imgObj, index) {
         var _this = this;
@@ -223,8 +245,8 @@ var AppComponent = /** @class */ (function () {
                         this.email = this.user.email;
                         this.login = true;
                         this.email = this.user.email;
-                        if (location.hash.split('/') && location.hash.split('/')[1] && location.hash.split('/')[2]) {
-                            this.guid = location.hash.split('/')[2];
+                        if (location.hash.split('/') && location.hash.split('/')[1]) {
+                            this.guid = location.hash.split('/')[1];
                         }
                         trimmedName = this.email;
                         location.href = '#user/' + this.email + '/' + this.guid;
@@ -251,6 +273,7 @@ var AppComponent = /** @class */ (function () {
                                         numerator = (parseInt(img) + 1);
                                         return [4 /*yield*/, storageRef.child(trimmedName + '/customImages/uploadCustom' + numerator).getDownloadURL().then(function (url) {
                                                 if (url) {
+                                                    _this.customImagesActive = true;
                                                     _this.customImages[parseInt(img)].src = url;
                                                 }
                                             }).catch(function (error) {
@@ -308,7 +331,14 @@ var AppComponent = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        this.openLoginDialog();
+                        if (location.href.indexOf('authenticationTriggered') < 0) {
+                            location.href += '/authenticationTriggered';
+                        }
+                        this.dialogRef = this.dialog.open(LoginDialogComponent, {
+                            width: '300px'
+                        });
+                        this.dialogRef.afterClosed().subscribe(function (result) {
+                        });
                         return [4 /*yield*/, this.ui.start('#firebaseui-container', this.getUiConfig())];
                     case 1:
                         _a.sent();
@@ -328,11 +358,10 @@ var AppComponent = /** @class */ (function () {
                         if (location.hash.split('/') && location.hash.split('/')[1]) {
                             this.guid = location.hash.split('/')[1];
                             guid = this.guid;
-                            guid = location.hash.split('/')[1];
                         }
-                        if (!!document.getElementById('firebaseui-container')) return [3 /*break*/, 9];
+                        if (!!document.getElementById('firebaseui-container')) return [3 /*break*/, 7];
                         this.login = false;
-                        if (!!this.user) return [3 /*break*/, 9];
+                        if (!!this.user) return [3 /*break*/, 7];
                         if (!(location.href.indexOf('loggedOut') < 0)) return [3 /*break*/, 1];
                         this.guid = this.utilities.getGuid();
                         location.href = '#loggedOut/' + this.guid;
@@ -351,6 +380,7 @@ var AppComponent = /** @class */ (function () {
                                         numerator = (parseInt(img) + 1);
                                         return [4 /*yield*/, storageRef.child(guid + '/customImages/uploadCustom' + numerator).getDownloadURL().then(function (url) {
                                                 if (url) {
+                                                    _this.customImagesActive = true;
                                                     _this.customImages[parseInt(img)].src = url;
                                                 }
                                             }).catch(function (error) {
@@ -399,11 +429,7 @@ var AppComponent = /** @class */ (function () {
                     case 6:
                         _c.sent();
                         _c.label = 7;
-                    case 7: return [4 /*yield*/, this.openLoginModal()];
-                    case 8:
-                        _c.sent();
-                        _c.label = 9;
-                    case 9: return [2 /*return*/];
+                    case 7: return [2 /*return*/];
                 }
             });
         });
@@ -458,11 +484,39 @@ var AppComponent = /** @class */ (function () {
             // this.resetImages();
             this.setCustomImages();
             this.customImagesActive = true;
+            if (!this.getFromLocal(this.disableCustomImagesDialogKey)) {
+                this.openCustomImagesDialog();
+            }
         }
         else {
             this.customImagesActive = false;
             this.generator.initiatePatterns();
         }
+    };
+    AppComponent.prototype.openCustomImagesDialog = function (readOnly) {
+        var _this = this;
+        this.dialogRef = this.dialog.open(customimagesdialog_component_1.CustomImagesDialogComponent, {
+            width: '300px',
+            data: {
+                readOnly: readOnly
+            }
+        });
+        this.dialogRef.afterClosed().subscribe(function (dontShowAgain) {
+            _this.saveToLocal(_this.disableCustomImagesDialogKey, dontShowAgain);
+        });
+    };
+    AppComponent.prototype.getFromLocal = function (key) {
+        var item = this.localStorage.getItem(key);
+        if (item && item !== "undefined") {
+            return JSON.parse(this.localStorage.getItem(key));
+        }
+        return;
+    };
+    AppComponent.prototype.saveToLocal = function (key, value) {
+        this.localStorage.setItem(key, JSON.stringify(value));
+    };
+    AppComponent.prototype.deleteFromLocal = function (key) {
+        this.localStorage.removeItem(key);
     };
     AppComponent.prototype.uploadCustomImage = function (fileIndex, event) {
         var _this = this;
@@ -508,10 +562,12 @@ var AppComponent = /** @class */ (function () {
                 this.customImages.push({ 'name': fileName, 'crossOrigin': "Anonymous", 'src': fileUrl, 'ready': true, 'fileTooBig': false });
             }
             this.setCustomImages();
+            this.customImagesActive = true;
             this.fileInputs._results[fileIndex].value = '';
         }
     };
     AppComponent.prototype.renderImage = function (index) {
+        this.isMainPhotoView = true;
         // if(this.showFavorites) {
         if (index !== undefined) {
             this.currImageIndex = index;
@@ -523,13 +579,20 @@ var AppComponent = /** @class */ (function () {
     AppComponent.prototype.updateCurrentIndex = function (index) {
         this.currImageIndex = index;
     };
+    AppComponent.prototype.incrementCurrentIndex = function () {
+        this.currImageIndex++;
+        this.renderImage();
+    };
+    AppComponent.prototype.decrementCurrentIndex = function () {
+        this.currImageIndex--;
+        this.renderImage();
+    };
     AppComponent.prototype.setRenderDone = function (bool) {
         this.renderDone = bool;
         this.ready = bool;
     };
     AppComponent.prototype.setCustomImages = function () {
         this.generator.setCustomImages(true);
-        this.customImagesActive = true;
     };
     AppComponent.prototype.getRandomArt = function (clear, recurseStep) {
         return __awaiter(this, void 0, void 0, function () {
@@ -547,16 +610,32 @@ var AppComponent = /** @class */ (function () {
         });
         this.showFavorites = !this.showFavorites;
     };
-    AppComponent.prototype.delete = function (imageObj, index) {
+    AppComponent.prototype.delete = function (imageObjOld, index) {
         if (index === undefined) {
             index = this.currImageIndex;
         }
         if (index < this.currImageIndex) {
             this.currImageIndex--;
         }
-        if (this.user) {
-            var trimmedName = this.email;
-            this.database.collection('users/' + trimmedName + '/images').doc(imageObj.name).delete().then(function (docRef) {
+        // if (this.user) {
+        //   const trimmedName = this.email;
+        //   this.database.collection('users/' + trimmedName + '/images').doc(imageObj.name).delete().then(function (docRef) {
+        //     console.log('Successfully deleted');
+        //   })
+        //     .catch(function (error) {
+        //       console.error('Error adding document: ', error);
+        //     });
+        // } else if(this.guid) {
+        //   this.database.collection('users/' + this.guid + '/images').doc(imageObj.name).delete().then(function (docRef) {
+        //     console.log('Successfully deleted');
+        //   })
+        //     .catch(function (error) {
+        //       console.error('Error adding document: ', error);
+        //     });
+        // }
+        for (var _i = 0, _a = this.savedImageArr; _i < _a.length; _i++) {
+            var imageObj = _a[_i];
+            this.database.collection('users/' + this.guid + '/images').doc(imageObj.name).delete().then(function (docRef) {
                 console.log('Successfully deleted');
             })
                 .catch(function (error) {
@@ -622,7 +701,7 @@ var AppComponent = /** @class */ (function () {
         });
     };
     AppComponent.prototype.download = function (element) {
-        element.href = this.generator.canvas.toDataURL();
+        element.href = this.generator.canvasTwo.toDataURL();
         return;
     };
     __decorate([

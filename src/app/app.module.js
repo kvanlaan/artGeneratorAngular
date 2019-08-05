@@ -18,6 +18,7 @@ var generator_component_1 = require("./generator/generator.component");
 require("hammerjs");
 var http_1 = require("@angular/common/http");
 var forms_1 = require("@angular/forms");
+var customimagesdialog_component_1 = require("../customimagesdialog/customimagesdialog.component");
 var AppModule = /** @class */ (function () {
     function AppModule() {
     }
@@ -27,15 +28,18 @@ var AppModule = /** @class */ (function () {
                 app_component_1.AppComponent,
                 app_component_1.LoginDialogComponent,
                 app_component_1.DeleteDialogComponent,
+                customimagesdialog_component_1.CustomImagesDialogComponent,
                 generator_component_1.GeneratorComponent
             ],
             entryComponents: [
                 app_component_1.LoginDialogComponent,
-                app_component_1.DeleteDialogComponent
+                app_component_1.DeleteDialogComponent,
+                customimagesdialog_component_1.CustomImagesDialogComponent
             ],
             imports: [
                 material_1.MatButtonModule,
                 material_1.MatDialogModule,
+                material_1.MatCheckboxModule,
                 forms_1.FormsModule,
                 animations_1.BrowserAnimationsModule,
                 material_1.MatButtonToggleModule,

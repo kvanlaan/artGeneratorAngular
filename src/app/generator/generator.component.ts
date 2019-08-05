@@ -217,10 +217,10 @@ export class GeneratorComponent implements OnInit {
     this.canvasSizeTwo = this.canvasTwo.clientHeight;
     this.ctxTwo.canvas.width = this.canvasSizeTwo;
     this.ctxTwo.canvas.height = this.canvasSizeTwo;
-    this.ctx.scale(.6, .6)
+    this.ctx.scale(.5, .5)
 
-    this.ctxTwo.scale(.6, .6)
-    this.restoreScale = 1.667;
+    this.ctxTwo.scale(.5, .5)
+    this.restoreScale = 2;
     this.fullCanvasSize = this.ctx.canvas.width * this.restoreScale;
     this.leftmostPoint = this.fullCanvasSize
   }
@@ -267,6 +267,19 @@ export class GeneratorComponent implements OnInit {
       this.ctx.translate(this.offset_x, this.offset_y);
 
       recurse = this.utilities.randomlyChooseTrueOrFalse();
+      this.ctx.scale(this.restoreScale, this.restoreScale);
+      this.ctxTwo.scale(this.restoreScale,this.restoreScale);
+      if(recurse) {
+        this.ctx.scale(.5, .5)
+        this.ctxTwo.scale(.5, .5)
+                this.restoreScale = 2;
+      } else {
+        this.ctx.scale(.579, .579)
+        this.ctxTwo.scale(.579, .579)
+        this.restoreScale = 1.72711571675;
+        }
+        this.fullCanvasSize = this.ctx.canvas.width * this.restoreScale;
+
       this.singleLayer = true;
       if (!recurse) {
         this.singleLayer = true;
@@ -1303,7 +1316,7 @@ export class GeneratorComponent implements OnInit {
     }
 
     this.currImageIndex = this.savedImageArr.length - 1;
-    this.saveImageFirebase.emit(imgObj);
+    // this.saveImageFirebase.emit(imgObj);
 
     this.loader.nativeElement.style.visibility = "hidden";
     this.renderDone = true;

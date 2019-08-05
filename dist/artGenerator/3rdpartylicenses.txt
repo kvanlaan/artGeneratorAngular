@@ -1,6 +1,6 @@
-core-js@2.5.7
+core-js@2.6.9
 MIT
-Copyright (c) 2014-2018 Denis Pushkarev
+Copyright (c) 2014-2019 Denis Pushkarev
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -44,19 +44,27 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
-@firebase/polyfill@0.3.13
+@firebase/performance@0.2.14
 Apache-2.0
 Apache-2.0
 
-firebase@5.11.1
+firebase@6.3.4
 Apache-2.0
 Apache-2.0
 
-@firebase/app@0.3.17
+@firebase/app@0.4.13
 Apache-2.0
 Apache-2.0
 
-@firebase/auth@0.10.2
+@firebase/util@0.2.24
+Apache-2.0
+Apache-2.0
+
+@firebase/logger@0.1.21
+Apache-2.0
+Apache-2.0
+
+@firebase/auth@0.11.7
 Apache-2.0
 Apache License
                            Version 2.0, January 2004
@@ -260,35 +268,19 @@ Apache License
    See the License for the specific language governing permissions and
    limitations under the License.
 
-@firebase/database@0.3.20
+@firebase/firestore@1.4.8
 Apache-2.0
 Apache-2.0
 
-@firebase/firestore@1.2.2
+@firebase/webchannel-wrapper@0.2.23
 Apache-2.0
 Apache-2.0
 
-@firebase/functions@0.4.6
+@firebase/database@0.4.11
 Apache-2.0
 Apache-2.0
 
-@firebase/storage@0.2.15
-Apache-2.0
-Apache-2.0
-
-@firebase/performance@0.2.1
-Apache-2.0
-Apache-2.0
-
-@firebase/util@0.2.14
-Apache-2.0
-Apache-2.0
-
-@firebase/installations@0.1.0
-Apache-2.0
-Apache-2.0
-
-@firebase/logger@0.1.13
+@firebase/functions@0.4.14
 Apache-2.0
 Apache-2.0
 
@@ -301,34 +293,7 @@ Permission to use, copy, modify, and/or distribute this software for any purpose
 
 THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-@firebase/webchannel-wrapper@0.2.19
-Apache-2.0
-Apache-2.0
-
-promise-polyfill@8.1.0
-MIT
-Copyright (c) 2014 Taylor Hakes
-Copyright (c) 2014 Forbes Lindesay
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-
-firebaseui@3.1.1
+firebaseui@4.1.0
 Apache-2.0
 Apache License
                            Version 2.0, January 2004
@@ -518,7 +483,7 @@ Apache License
       same "printed page" as the copyright notice for easier
       identification within third-party archives.
 
-   Copyright [yyyy] [name of copyright owner]
+   Copyright 2016 Google Inc
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -609,6 +574,14 @@ BSD
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-@firebase/messaging@0.3.19
+@firebase/storage@0.3.8
+Apache-2.0
+Apache-2.0
+
+@firebase/messaging@0.4.7
+Apache-2.0
+Apache-2.0
+
+@firebase/installations@0.2.3
 Apache-2.0
 Apache-2.0

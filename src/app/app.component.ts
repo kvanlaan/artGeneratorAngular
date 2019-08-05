@@ -540,6 +540,7 @@ export class AppComponent {
 
 
     this.savedImageArr.splice(index, 1);
+    if(this.savedImageArr.length) {
     if (index > this.savedImageArr.length - 1) {
       index--;
       this.renderImage(index);
@@ -548,6 +549,7 @@ export class AppComponent {
     if (index === this.currImageIndex || index === 0) {
       this.renderImage(index);
     }
+  }
   }
 
   saveImageFirebase(imageObj) {

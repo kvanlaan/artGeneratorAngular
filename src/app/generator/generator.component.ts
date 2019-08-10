@@ -217,10 +217,10 @@ export class GeneratorComponent implements OnInit {
     this.canvasSizeTwo = this.canvasTwo.clientHeight;
     this.ctxTwo.canvas.width = this.canvasSizeTwo;
     this.ctxTwo.canvas.height = this.canvasSizeTwo;
-    this.ctx.scale(.5, .5)
+    this.ctx.scale(.5175, .5175)
 
-    this.ctxTwo.scale(.5, .5)
-    this.restoreScale = 2;
+    this.ctxTwo.scale(.5175, .5175)
+    this.restoreScale = 1.932367149758454;
     this.fullCanvasSize = this.ctx.canvas.width * this.restoreScale;
     this.leftmostPoint = this.fullCanvasSize
   }
@@ -270,9 +270,9 @@ export class GeneratorComponent implements OnInit {
       this.ctx.scale(this.restoreScale, this.restoreScale);
       this.ctxTwo.scale(this.restoreScale,this.restoreScale);
       if(recurse) {
-        this.ctx.scale(.5, .5)
-        this.ctxTwo.scale(.5, .5)
-                this.restoreScale = 2;
+        this.ctx.scale(.5175, .5175)
+        this.ctxTwo.scale(.5175, .5175)
+        this.restoreScale = 1.932367149758454;
       } else {
         this.ctx.scale(.579, .579)
         this.ctxTwo.scale(.579, .579)

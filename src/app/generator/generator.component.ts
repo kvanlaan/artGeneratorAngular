@@ -6,6 +6,7 @@ import * as firebaseui from 'firebaseui';
 import 'firebase/firestore';
 import 'firebase/auth';
 import 'firebase/storage';
+import FastAverageColor from 'fast-average-color';
 
 @Component({
   selector: 'generator',
@@ -70,7 +71,8 @@ export class GeneratorComponent implements OnInit {
   isMexico;
   patternDatabaseList = []
   darkDatabaseList = []
-
+  transDatabaseList = []
+  recurse;
   beginPath = false;
   // feature detection
   isSafari = false;
@@ -92,6 +94,8 @@ export class GeneratorComponent implements OnInit {
   forceTrapezoidBeginPath: boolean;
   lowestPoint: number = 0;
   rightmostPoint: number = 0;
+  dark;
+  normalColor;
 
   constructor(public http: HttpClient, public utilities: Utilities) {
     this.utilities = utilities;
@@ -122,7 +126,18 @@ export class GeneratorComponent implements OnInit {
                 // this.patternDatabaseList.push(darkImage)
 
               }.bind(this));
-            } else {
+            } else if (item["metadata"]["name"].indexOf('trans') > -1) {
+              storageRef.child(item["metadata"]["name"]).getDownloadURL().then(function (this, url) {
+                const transImage = new Image();
+                transImage.crossOrigin = "Anonymous";
+
+                transImage.src = url;
+                this.transDatabaseList.push(transImage)
+                // this.patternDatabaseList.push(darkImage)
+
+              }.bind(this));
+            } 
+            else {
               storageRef.child(item["metadata"]["name"]).getDownloadURL().then(function (this, url) {
                 const darkImage = new Image();
                 darkImage.crossOrigin = "Anonymous";
@@ -226,7 +241,7 @@ export class GeneratorComponent implements OnInit {
   }
 
   async getRandomArt(clear, recurseStep?) {
-    this.colorArr = this.getRandomColorArr();
+    this.colorArr = await this.getRandomColorArr();
     // hide favorites because we're about to switch to savedimagearr
     // hiding stuff since a new image is being drawn]
 
@@ -267,6 +282,7 @@ export class GeneratorComponent implements OnInit {
       this.ctx.translate(this.offset_x, this.offset_y);
 
       recurse = this.utilities.randomlyChooseTrueOrFalse();
+      this.recurse = recurse;
       this.ctx.scale(this.restoreScale, this.restoreScale);
       this.ctxTwo.scale(this.restoreScale,this.restoreScale);
       if(recurse) {
@@ -357,7 +373,6 @@ export class GeneratorComponent implements OnInit {
           this.patternFour = darkFour;
           this.getRandomArtAlg(clear, recurse, recurseStep);
 
-
         } else {
           this.getRandomArtAlg(clear, recurse, recurseStep);
         }
@@ -432,10 +447,13 @@ export class GeneratorComponent implements OnInit {
           var five = Math.floor(Math.random() * maxDarkIndex);
   
           if (this.patternDatabaseList.length >= 6) {
-    
+            
             const darkThree = this.patternDatabaseList[three];
+            this.patternOne = darkThree;
+            this.patternTwo = darkThree;
             this.patternThree = darkThree;
             const darkFour = this.patternDatabaseList[four];
+            
             this.patternFour = darkThree;
             const darkFive = this.patternDatabaseList[five];
             this.patternFive = darkFive;
@@ -443,7 +461,7 @@ export class GeneratorComponent implements OnInit {
           }
         }
 
-        recurseStep = Math.floor(Math.random() * 9) + 4;
+        recurseStep = Math.floor(Math.random() * 4) + 4;
         this.startingRecurseStep = recurseStep;
         if (recurseStep > 18) {
           this.largeRecurseStep = true;
@@ -458,7 +476,7 @@ export class GeneratorComponent implements OnInit {
         }.bind(this);
 
       } else {
-        this.getRandomArtAlg(clear, recurse, recurseStep);
+        await this.getRandomArtAlg(clear, recurse, recurseStep);
       }
     } else {
     }
@@ -466,7 +484,8 @@ export class GeneratorComponent implements OnInit {
 
   largeRecurseStep = false;
   forceBeginPath = false;
-  getRandomArtAlg(clear, recurse, recurseStep) {
+
+  async getRandomArtAlg(clear, recurse, recurseStep) {
     this.patternFillSingleBegun = false;
 
     this.beginPath = this.utilities.randomlyChooseTrueOrFalse();
@@ -476,53 +495,51 @@ export class GeneratorComponent implements OnInit {
 
     // first layer of small objects;
     this.resetForNewLayer();
-    this.getFirstSmallLayer();
+    await this.getFirstSmallLayer();
     this.resetForNewLayer();
 
     // layer of transparent objects
+    // if(this.recurse) {
+    //   console.log('SETTING TRANS TO DARK');
+    //   this.dark = true;
+    // }
     let norm = true;
-    rand = Math.floor(Math.random() * 3) + 1;
-    if (rand === 2) {
-      norm = false;
-    }
-    norm = true;
+    // rand = Math.floor(Math.random() * 3) + 1;
+    // if (rand === 2) {
+    //   norm = false;
+    // }
+    // norm = true;
 
-    let trapTrans = 2;
-    if (rand === 2) {
-      trapTrans = this.utilities.randomlyChooseOneOrTwo();
-    }
-    trapTrans = 1;
-    let layerNum = 20;
+    // let trapTrans = 2;
+    // if (rand === 2) {
+    //   trapTrans = this.utilities.randomlyChooseOneOrTwo();
+    // }
+    let trapTrans = 1;
+    let layerNum = 10;
     if (norm || trapTrans === 1) {
       if (trapTrans === 1) {
-        layerNum = 10;
+        if(this.startingRecurseStep === recurseStep) {
+        layerNum = 30;
+        }
         this.backgroundShapeArr = ['Rectangle', 'Circle', 'Line'];
       } else {
         this.backgroundShapeArr = ['Rectangle', 'Triangle', 'Circle', 'Line'];
       }
       while (this.layerCounter < layerNum) {
-        this.randomColor = this.colorArr[Math.floor(Math.random() * this.colorArr.length)];
+        // this.randomColor = this.colorArr[Math.floor(Math.random() * this.colorArr.length)];
+        this.randomColor = await this.getRandomRgb();
+        this.randomColor = 'rgb(' + this.randomColor['r'] + ',' + this.randomColor['g'] + ',' + this.randomColor['b'] + ')';
         this.randomStrokeOpacity = Math.random() * 1;
         this.randomShapeOpacity = Math.random() * 1;
         var randomShape = this.backgroundShapeArr[Math.floor(Math.random() * this.shapeArr.length)];
-        var stroke = this.getRandomRgb();
-        if (this.randomScheme === 'Complementary') {
-          var complStroke = this.colorArr[Math.floor(Math.random() * this.colorArr.length)];
-          this.ctx.strokeStyle = complStroke.substring(0, complStroke.length - 1) + ',' + this.randomStrokeOpacity + ")";
-        } else if (this.randomScheme !== 'Monochromatic') {
-          this.ctx.strokeStyle = 'rgb(' + stroke['r'] + ',' + stroke['g'] + ',' + stroke['b'] + ')';
-        } else {
-          this.ctx.strokeStyle = 'rgb(' + stroke['r'] + ',' + stroke['g'] + ',' + stroke['b'] + ')';
-        }
+        var stroke = await this.getRandomRgb();
+        this.ctx.strokeStyle = 'rgb(' + stroke['r'] + ',' + stroke['g'] + ',' + stroke['b'] + ')';
         rand = this.utilities.randomlyChooseOneOrTwo();
         if (rand === 1) {
           this.ctx.strokeStyle = 'black';
         }
 
-        // if (!this.isSafari) {
         this.randomColor = this.randomColor.substring(0, this.randomColor.length - 1) + ',' + this.randomShapeOpacity + ")";
-        // }
-        //this.ctx.globalAlpha = (Math.random() * .4);
 
         this.ctx.globalAlpha = .4 - (layerNum / this.layerCounter * .01);
         this.ctx.fillStyle = this.randomColor;
@@ -541,7 +558,7 @@ export class GeneratorComponent implements OnInit {
             }
           }
         }
-        this.drawShape(randomShape);
+        await this.drawShape(randomShape);
         this.layerCounter++;
       }
     }
@@ -551,11 +568,14 @@ export class GeneratorComponent implements OnInit {
     if (this.genType === 'transPattern') {
       objNum = Math.floor(Math.random() * 23) + 19;
     }
+    if(this.recurse) {
+      this.normalColor = true;
+    }
     if (recurseStep !== undefined) {
-      this.getMainLayer(objNum, norm, rand, trapTrans, recurseStep);
+      await this.getMainLayer(objNum, norm, rand, trapTrans, recurseStep);
 
     } else {
-      this.getMainLayer(objNum, norm, rand, trapTrans);
+      await this.getMainLayer(objNum, norm, rand, trapTrans);
 
     }
     this.resetForNewLayer();
@@ -563,50 +583,55 @@ export class GeneratorComponent implements OnInit {
     // second small layer
     if (this.singleLayer) {
       // this.getFirstSmallLayer(true);
-      this.getSecondSmallLayer(norm);
+      await this.getSecondSmallLayer(norm);
 
     } else {
-      this.getSecondSmallLayer(norm);
+      await this.getSecondSmallLayer(norm);
     }
     this.resetForNewLayer();
 
     if (this.singleLayer) {
       this.forceBeginPath = true;
-      this.getFirstSmallLayer(true);
+      await this.getFirstSmallLayer(true);
       this.resetForNewLayer();
       this.forceBeginPath = false;
     }
     this.ctx.globalAlpha = 1;
     if (recurse && recurseStep && recurseStep > 1) {
       recurseStep--;
-      this.getRandomArt(clear, recurseStep);
+      await this.getRandomArt(clear, recurseStep);
     } else {
       this.saveCurrentArt(clear);
       this.ctx.translate(-this.offset_x, -this.offset_y);
     }
   }
-  getSecondSmallLayer(norm) {
+  async getSecondSmallLayer(norm) {
     let count = 25;
     // norm = true;
     if (norm) {
       count = 45;
     }
     if (this.singleLayer) {
-      count = 75;
+      count = 60;
     }
     while (this.layerCounter <= count) {
-      this.randomColor = this.colorArr[Math.floor(Math.random() * this.colorArr.length)];
+      // this.randomColor = this.colorArr[Math.floor(Math.random() * this.colorArr.length)];
+      let light = true;
+      if(!this.recurse) {
+        light = this.utilities.randomlyChooseTrueOrFalse();
+      }
+      this.randomColor = await this.getRandomRgb(false, light);
       this.randomStrokeOpacity = Math.random() * 1;
       this.randomShapeOpacity = Math.random() * .5;
       const randomShape = this.smallShapeArr[Math.floor(Math.random() * this.shapeArr.length)];
-      const stroke = this.getRandomRgb();
+      const stroke = await this.getRandomRgb(true);
 
       this.ctx.strokeStyle = 'rgb(' + stroke['r'] + ',' + stroke['g'] + ',' + stroke['b'] + ', 1)';
       const blackStroke = this.utilities.randomlyChooseTrueOrFalse();
-      if (blackStroke) {
+      if (blackStroke && this.recurse) {
         this.ctx.strokeStyle = 'black';
       }
-      this.randomColor = this.randomColor.substring(0, this.randomColor.length - 1) + ',' + this.randomShapeOpacity + ")";
+      this.randomColor = 'rgb(' + this.randomColor['r'] + ',' + this.randomColor['g'] + ',' + this.randomColor['b'] + ',' + this.randomShapeOpacity + ")";
 
       // Safari feature detection
       // if (!this.isSafari) {
@@ -621,29 +646,30 @@ export class GeneratorComponent implements OnInit {
       // }
       this.ctx.fillStyle = this.randomColor;
       this.patternFill = this.utilities.randomlyChooseTrueOrFalse();
+      if(this.recurse) {
+        this.patternFill = true;
+      }
       this.ctx.lineWidth = Math.random() * 10;
 
       if (this.singleLayer) {
         this.ctx.lineWidth = Math.random() * 3.2;
+        if(!this.recurse) {
+          this.ctx.lineWidth = Math.random() * 3.2;
+        }
         const rand = this.utilities.randomlyChooseTrueOrFalse();
         if (rand) {
           if (this.forceTrapezoidBeginPath) {
-            this.ctx.lineWidth = Math.random() * 10;
+            this.ctx.lineWidth = Math.random() * 8;
           } else {
             this.ctx.lineWidth = Math.random() * 7;
           }
         }
-        // console.log('shape opacity', this.randomShapeOpacity);
-        // console.log('random shape ocaicty', this.randomStrokeOpacity);
-        // console.log('linewidth', this.ctx.lineWidth);
-        // console.log('strokestyle', this.ctx.strokeStyle);
-        // console.log('DONE');
       }
-      this.drawShape(randomShape, true);
+      await this.drawShape(randomShape, true);
       this.layerCounter++;
     }
   }
-  getFirstSmallLayer(smallCount?: boolean) {
+  async getFirstSmallLayer(smallCount?: boolean) {
     let smallCounter = 25;
     if (this.singleLayer) {
 
@@ -674,7 +700,7 @@ export class GeneratorComponent implements OnInit {
 
       }
       var randomShape = this.smallShapeArr[Math.floor(Math.random() * this.shapeArr.length)];
-      var stroke = this.getRandomRgb();
+      var stroke = await this.getRandomRgb();
       if (this.randomScheme === 'Complementary') {
         var complStroke = this.colorArr[Math.floor(Math.random() * this.colorArr.length)];
         this.ctx.strokeStyle = complStroke.substring(0, complStroke.length - 1) + ',' + this.randomStrokeOpacity + ")";
@@ -724,8 +750,6 @@ export class GeneratorComponent implements OnInit {
       this.ctx.lineWidth = Math.random() * 10;
       if (this.singleLayer) {
         this.ctx.lineWidth = Math.random() * 3.2;
-
-
         const rand = this.utilities.randomlyChooseTrueOrFalse();
         if (rand) {
           if (this.forceTrapezoidBeginPath) {
@@ -735,7 +759,7 @@ export class GeneratorComponent implements OnInit {
           }
         }
       }
-      this.drawShape(randomShape, true);
+      await this.drawShape(randomShape, true);
       this.layerCounter++;
     }
   }
@@ -743,10 +767,11 @@ export class GeneratorComponent implements OnInit {
     this.layerCounter = 0;
     this.ctx.globalAlpha = 1;
     this.aggrObjArea = 0;
+    this.dark = false;
+    this.normalColor = false;
     this.shapeArr = ['Rectangle', 'Triangle', 'Circle', 'Line'];
   }
-
-  getMainLayer(objNum, norm, rand, trapTrans, recurseStep?) {
+  async getMainLayer(objNum, norm, rand, trapTrans, recurseStep?) {
     this.shapeArr = ['Rectangle', 'Triangle', 'Line'];
     if (this.genType !== 'random') {
       this.patternFill = false;
@@ -757,8 +782,8 @@ export class GeneratorComponent implements OnInit {
       }
     }
 
-    norm = false;
-    if (!norm) {
+    // norm = false;
+    // if (!norm) {
       objNum = Math.floor(Math.random() * 1) + 5;
       this.shapeArr = ['Trapezoid', 'Line'];
 
@@ -777,25 +802,43 @@ export class GeneratorComponent implements OnInit {
           }
         } else {
           this.patternFill = false;
+          if (this.patternFill === false) {
+            this.patternFill = this.utilities.randomlyChooseTrueOrFalse();
+            if (this.patternFill === false) {
+              this.patternFill = this.utilities.randomlyChooseTrueOrFalse();
+            }
+          }
         }
       }
-    }
+    // }
     while (this.layerCounter < objNum) {
-      this.randomColor = this.colorArr[Math.floor(Math.random() * this.colorArr.length)];
+      let light = false;
+      if(this.recurse) {
+        light = true;
+      }
+      this.randomColor = await this.getRandomRgb(false, true);
+      this.randomColor = 'rgb(' + this.randomColor['r'] + ',' + this.randomColor['g'] + ',' + this.randomColor['b'] + ')';
       this.randomShapeOpacity = Math.random();
       if (this.randomShapeOpacity < 0) {
         this.randomShapeOpacity = 0;
       }
-      if (this.layerCounter === (objNum - 1) || this.layerCounter === (objNum)) {
+      if (this.layerCounter === (objNum)) {
         this.randomShapeOpacity = 0;
         this.patternFill = false;
       }
-      if (this.layerCounter === (objNum - 2)) {
+      // if (!this.recurse && this.layerCounter === (objNum - 2)) {
+      //   this.randomShapeOpacity = .1;
+      // }
+       
+      if (!this.recurse && this.layerCounter === (objNum - 1)) {
         this.randomShapeOpacity = .1;
       }
-
       if (this.singleLayer) {
+        if(this.recurse) {
+          this.ctx.globalAlpha = this.layerCounter / objNum + .2;
+        } else {
         this.ctx.globalAlpha = this.layerCounter / objNum + .1;
+        }
       } else {
         // if(this.utilities.randomlyChooseTrueOrFalse()) {
         this.ctx.globalAlpha = this.layerCounter / objNum + .1;
@@ -807,14 +850,17 @@ export class GeneratorComponent implements OnInit {
       // if (this.singleLayer && randomShape !== 'Line') {
       //   var randomShape = this.shapeArr[Math.floor(Math.random() * this.shapeArr.length)];
       // }
-      var stroke = this.getRandomRgb();
-
-      this.ctx.strokeStyle = 'rgb(' + stroke['r'] + ',' + stroke['g'] + ',' + stroke['b'] + ')';
+      // var stroke = await this.getRandomRgb(false, false, dark);
+      // this.ctx.strokeStyle = 'rgb(' + stroke['r'] + ',' + stroke['g'] + ',' + stroke['b'] + ')';
 
 
       rand = Math.floor(Math.random() * 2) + 1;
       if (rand === 1) {
         this.ctx.strokeStyle = 'black';
+      } else {
+      const dark = this.utilities.randomlyChooseOneOrTwo();
+      var stroke = await this.getRandomRgb(false, false, dark);
+      this.ctx.strokeStyle = 'rgb(' + stroke['r'] + ',' + stroke['g'] + ',' + stroke['b'] + ')';
       }
 
       this.randomColor = this.randomColor.substring(0, this.randomColor.length - 1) + ',' + this.randomShapeOpacity + ")";
@@ -846,7 +892,7 @@ export class GeneratorComponent implements OnInit {
           this.ctx.globalAlpha = 1;
         }
       }
-      console.log('IS SINGLE LAYER', this.singleLayer);
+
       this.ctx.lineWidth = newLineWidth;
 
       if (this.singleLayer) {
@@ -857,7 +903,7 @@ export class GeneratorComponent implements OnInit {
           this.ctx.lineWidth = Math.random() * 10;
         }
       }
-      this.drawShape(randomShape, false, true);
+      await this.drawShape(randomShape, false, true);
 
       this.layerCounter++;
     }
@@ -878,8 +924,18 @@ export class GeneratorComponent implements OnInit {
       this.lowestPoint = xPos;
     }
   }
-  drawShape(shape, small?, main?) {
+
+
+ onload2promise(obj): Promise<any> {
+    return new Promise((resolve, reject) => {
+    obj.onload = () => resolve(obj);
+    obj.onerror = reject;
+  });
+ }
+  async drawShape(shape, small?, main?) {
     this.repeat = this.utilities.randomlyChooseTrueOrFalse() ? 'no-repeat' : 'repeat';
+    if(this.recurse) {this.repeat = 'repeat'};
+    this.repeat = 'repeat'
     var offset_x = 0;
     var offset_y = 0;
     var xPos = (Math.random() * this.canvasSize) + ((this.fullCanvasSize - this.canvasSize) / 2.5);
@@ -898,81 +954,141 @@ export class GeneratorComponent implements OnInit {
     if (this.genType === "noPattern" && main) {
       this.patternFill = true;
     }
-    // if (this.largeRecurseStep) {
-    //   this.patternFill = false;
-    // }
-    // if(!this.singleLayer && main && !this.utilities.randomlyChooseTrueOrFalse()) {
-    //   this.transform = true;
 
-    //   //  this.ctx.save();
-    //   if(this.utilities.randomlyChooseTrueOrFalse) {
-
-    // // this.ctx.setTransform(1, .6, .2, 1, 0, 0);
-    //   } else {
-    //     // this.ctx.setTransform(1, .2, .6, 1, 0, 0);
-
-    //   }
-    // } else {
-    //   this.transform = false;
-    // }
     if (this.patternFill) {
       // this.ctx.translate(this.offset_x, this.offset_y);
       if (!this.patternFillSingleBegun && (this.isFrieze || this.isFriezeTwo || this.isTrunks || this.isArabesque || this.isMexico || this.isBedroom)) {
-        this.patternFillSingleBegun = true;
-      } else {
-        offset_x = Math.floor(Math.random() * this.canvasSize / 2.5) - this.canvasSize / 2.5;
-        offset_y = Math.floor(Math.random() * this.canvasSize / 2.5) - this.canvasSize / 2.5;
-        // this.ctx.translate(offset_x, offset_y);
-      }
+      this.patternFillSingleBegun = true;
+           } else {
+      offset_x = Math.floor(Math.random() * this.canvasSize / 2.5) - this.canvasSize / 2.5;
+      offset_y = Math.floor(Math.random() * this.canvasSize / 2.5) - this.canvasSize / 2.5;
+      // this.ctx.translate(offset_x, offset_y);
+           }
       if (this.patternSwitch === 1) {
-        this.ctx.fillStyle = this.ctx.createPattern(this.patternThree, this.repeat);
-      } else if (this.patternSwitch === 2) {
-        if (rand === 1) {
-          this.ctx.fillStyle = this.ctx.createPattern(this.patternTwo, this.repeat);
-        } else if (rand === 2) {
-          this.ctx.fillStyle = this.ctx.createPattern(this.patternFour, this.repeat);
-        }
-      } else if (this.patternSwitch === 3) {
-        this.ctx.fillStyle = this.ctx.createPattern(this.patternSix, this.repeat);
 
-      } else if (this.patternSwitch === 4) {
-        if (rand === 1) {
-
-          this.ctx.fillStyle = this.ctx.createPattern(this.patternFour, this.repeat);
-
-        } else if (rand === 2) {
-          this.ctx.fillStyle = this.ctx.createPattern(this.patternSix, this.repeat);
-        }
-      } else if (this.patternSwitch === 5) {
-        this.ctx.fillStyle = this.ctx.createPattern(this.patternTwo, this.repeat);
-      } else if (this.patternSwitch === 6) {
-        this.ctx.fillStyle = this.ctx.createPattern(this.patternOne, this.repeat);
-      } else if (this.patternSwitch === 7) {
-        this.ctx.fillStyle = this.ctx.createPattern(this.patternFive, this.repeat);
-      } else {
-        this.ctx.fillStyle = this.ctx.createPattern(this.patternFour, this.repeat);
+      this.currentImage = this.patternThree;
+      if(!this.currentImage.complete) {
+        await  this.onload2promise(this.currentImage);
       }
+      this.ctx.fillStyle = this.ctx.createPattern(this.patternThree, this.repeat);
+           } else if (this.patternSwitch === 2) {
+      if (rand === 1) {
+      this.currentImage = this.patternTwo;
+      this.currentImage = this.patternThree;
+      if(!this.currentImage.complete) {
+        await this.onload2promise(this.currentImage);
+      }
+      this.ctx.fillStyle = this.ctx.createPattern(this.patternTwo, this.repeat);
+             } else if (rand === 2) {
+      this.currentImage = this.patternFour;
+      this.currentImage = this.patternThree;
+      if(!this.currentImage.complete) {
+        await this.onload2promise(this.currentImage);
+      }
+      this.ctx.fillStyle = this.ctx.createPattern(this.patternFour, this.repeat);
+             }
+           } else if (this.patternSwitch === 3) {
+      this.currentImage = this.patternSix;
+      this.currentImage = this.patternThree;
+      if(!this.currentImage.complete) {
+        await this.onload2promise(this.currentImage);
+      }
+      this.ctx.fillStyle = this.ctx.createPattern(this.patternSix, this.repeat);
+     
+           } else if (this.patternSwitch === 4) {
+      if (rand === 1) {
+      this.currentImage = this.patternFour;
+      this.currentImage = this.patternThree;
+      if(!this.currentImage.complete) {
+        await this.onload2promise(this.currentImage);
+      }
+      this.ctx.fillStyle = this.ctx.createPattern(this.patternFour, this.repeat);
+     
+             } else if (rand === 2) {
+      this.currentImage = this.patternSix;
+      this.currentImage = this.patternThree;
+      if(!this.currentImage.complete) {
+        await this.onload2promise(this.currentImage);
+      }
+      this.ctx.fillStyle = this.ctx.createPattern(this.patternSix, this.repeat);
+             }
+           } else if (this.patternSwitch === 5) {
+      this.currentImage = this.patternTwo;
+      this.currentImage = this.patternThree;
+      if(!this.currentImage.complete) {
+        await this.onload2promise(this.currentImage);
+      }
+      this.ctx.fillStyle = this.ctx.createPattern(this.patternTwo, this.repeat);
+           } else if (this.patternSwitch === 6) {
+      this.currentImage = this.patternOne;
+      this.currentImage = this.patternThree;
+      if(!this.currentImage.complete) {
+        await this.onload2promise(this.currentImage);
+      }
+      this.ctx.fillStyle = this.ctx.createPattern(this.patternOne, this.repeat);
+           } else if (this.patternSwitch === 7) {
+      this.currentImage = this.patternFive;
+      this.currentImage = this.patternThree;
+      if(!this.currentImage.complete) {
+        await this.onload2promise(this.currentImage);
+      }
+      this.ctx.fillStyle = this.ctx.createPattern(this.patternFive, this.repeat);
+           } else {
+      this.currentImage = this.patternFour;
+      this.currentImage = this.patternThree;
+      if(!this.currentImage.complete) {
+        await this.onload2promise(this.currentImage);
+      }
+      this.ctx.fillStyle = this.ctx.createPattern(this.patternFour, this.repeat);
+           }
       if (this.isFrieze && main) {
-        this.ctx.fillStyle = this.ctx.createPattern(this.patternThree, this.repeat);
+      this.currentImage = this.patternThree;
+      this.currentImage = this.patternThree;
+      if(!this.currentImage.complete) {
+        await this.onload2promise(this.currentImage);
       }
+      this.ctx.fillStyle = this.ctx.createPattern(this.patternThree, this.repeat);
+           }
       if (this.isFriezeTwo && main) {
-        this.ctx.fillStyle = this.ctx.createPattern(this.patternFive, this.repeat);
+      this.currentImage = this.patternFive;
+      this.currentImage = this.patternThree;
+      if(!this.currentImage.complete) {
+        await this.onload2promise(this.currentImage);
       }
+      this.ctx.fillStyle = this.ctx.createPattern(this.patternFive, this.repeat);
+           }
       if (this.isTrunks && main) {
-        this.ctx.fillStyle = this.ctx.createPattern(this.patternSix, this.repeat);
-
+      this.currentImage = this.patternSix;
+      this.currentImage = this.patternThree;
+      if(!this.currentImage.complete) {
+        await this.onload2promise(this.currentImage);
       }
+      this.ctx.fillStyle = this.ctx.createPattern(this.patternSix, this.repeat);
+     
+           }
       if (this.isArabesque && main) {
-        this.ctx.fillStyle = this.ctx.createPattern(this.patternOne, this.repeat);
+      this.currentImage = this.patternOne;
+      this.currentImage = this.patternThree;
+      if(!this.currentImage.complete) {
+        await this.onload2promise(this.currentImage);
       }
-
+      this.ctx.fillStyle = this.ctx.createPattern(this.patternOne, this.repeat);
+           }
+     
       if (this.isMexico && main) {
-        this.ctx.fillStyle = this.ctx.createPattern(this.patternFour, this.repeat);
+      this.currentImage = this.patternFour;
+      this.currentImage = this.patternThree;
+      if(!this.currentImage.complete) {
+        await this.onload2promise(this.currentImage);
       }
-
+      console.log('this.currentImage', this.currentImage);
+      this.ctx.fillStyle = this.ctx.createPattern(this.patternFour, this.repeat);
+           }
+     
       if (this.isBedroom && main) {
-        this.ctx.fillStyle = this.ctx.createPattern(this.patternBedroom, this.repeat);
-      }
+      this.currentImage = this.patternBedroom;
+      this.ctx.fillStyle = this.ctx.createPattern(this.patternBedroom, this.repeat);
+           }
     }
 
     rand = Math.floor(Math.random() * 100) + 1;
@@ -1267,14 +1383,7 @@ export class GeneratorComponent implements OnInit {
       }
 
       this.ctxTwo.restore();
-      if (this.singleLayer) {
-        //  this.ctxTwo.scale(this.restoreScale, this.restoreScale);
-
-
-        // this.restoreScale = 2
-        // this.fullCanvasSize = this.ctx.canvas.width * this.restoreScale;
-        //  this.ctxTwo.scale(.5, .5);
-      }
+    
       this.renderDone = true;
       this.renderDoneEmit.emit(true);
       this.loader.nativeElement.style.visibility = "hidden";
@@ -1400,13 +1509,13 @@ export class GeneratorComponent implements OnInit {
   }
 
   //BBOOK WUZ HERE
-  getRandomColorArr() {
-    var tempRgb = this.getRandomRgb();
+  async getRandomColorArr() {
+    var tempRgb = await this.getRandomRgb();
     var complementaryColorArr = ['rgb(' + tempRgb.r + ',' + tempRgb.g + ',' + tempRgb.b + ')'];
     var currRgb = tempRgb;
 
     for (var i = 0; i < 6; i++) {
-      currRgb = this.getComplementary(currRgb);
+      currRgb = await this.getRandomRgb();      
       complementaryColorArr.push(this.convertToRgbString(currRgb));
     }
 
@@ -1482,11 +1591,74 @@ export class GeneratorComponent implements OnInit {
   max3(a, b, c) {
     return (a > b) ? ((a > c) ? a : c) : ((b > c) ? b : c);
   }
-  getRandomRgb() {
+  lastImageColor;
+  currentImage;
+  async setLastImageColor() {
+    const fac = new FastAverageColor();
+   
+    this.lastImageColor = await fac.getColorAsync(this.currentImage)
+  }
+  async getRandomRgb(isSecondSmallLayer?, light?, dark?) {
     var num = Math.round(0xffffff * Math.random());
     var r = num >> 16;
     var g = num >> 8 & 255;
     var b = num & 255;
+
+    if(isSecondSmallLayer) {
+      await this.setLastImageColor();
+      if((this.lastImageColor.r + this.lastImageColor.g + this.lastImageColor.b) < 400) {
+        while(((r + g + b) < 620)) {
+          num = Math.round(0xffffff * Math.random());
+          r = num >> 16;
+          g = num >> 8 & 255;
+          b = num & 255;
+      }
+    } 
+    else {
+      while(((r + g + b) > 120)) {
+          num = Math.round(0xffffff * Math.random());
+          r = num >> 16;
+          g = num >> 8 & 255;
+          b = num & 255;
+      }
+    } 
+  } else {
+    // if(light) { 
+      if(this.utilities.randomlyChooseTrueOrFalseThirdReal() && !light) {
+  while( ((r + g + b) < 620) )  { 
+      num = Math.round(0xffffff * Math.random());
+      r = num >> 16;
+      g = num >> 8 & 255;
+      b = num & 255;
+  }
+} else {
+  while( ((r + g + b) < 620) && (( ((r + g + b) > 220) || ((r + g + b) < 120)) ))  { 
+    num = Math.round(0xffffff * Math.random());
+    r = num >> 16;
+    g = num >> 8 & 255;
+    b = num & 255;
+}
+}
+if(light) {
+  while( ((r + g + b) < 620) )  { 
+    num = Math.round(0xffffff * Math.random());
+    r = num >> 16;
+    g = num >> 8 & 255;
+    b = num & 255;
+}
+}
+
+if(dark) {
+ while (((r + g + b) > 220) || ((r + g + b) < 120))  { 
+    num = Math.round(0xffffff * Math.random());
+    r = num >> 16;
+    g = num >> 8 & 255;
+    b = num & 255;
+}
+}
+//   }
+}
+
     const retVal = { 'r': r, 'g': g, 'b': b };
     return retVal;
   }

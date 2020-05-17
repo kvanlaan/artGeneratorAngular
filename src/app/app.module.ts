@@ -2,16 +2,39 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { AppComponent, LoginDialogComponent, DeleteDialogComponent } from './app.component';
 import {
-  MatButtonModule,
-  MatDialogModule,
-  MatGridListModule,
-  MatIconModule,
-  MatProgressSpinnerModule,
-  MatButtonToggleModule,
-  MatDividerModule,
-  MatCheckbox,
+  MatDividerModule
+} from '@angular/material/divider';
+
+import {
   MatCheckboxModule,
-} from '@angular/material';
+} from '@angular/material/checkbox';
+
+import {
+  MatDialogModule
+} from '@angular/material/dialog';
+
+import {
+  MatButtonModule,
+} from '@angular/material/button';
+
+
+import {
+  MatButtonToggleModule,
+} from '@angular/material/button-toggle';
+
+import {
+  MatGridListModule
+} from '@angular/material/grid-list';
+
+import {
+  MatIconModule
+} from '@angular/material/icon';
+
+
+import {
+  MatProgressSpinnerModule
+} from '@angular/material/progress-spinner';
+
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';

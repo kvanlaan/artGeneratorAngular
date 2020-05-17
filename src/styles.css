@@ -427,7 +427,7 @@ input:hover::before {
   @media only screen  and (min-width : 1224px) and (max-width :1700px) {
       /* Styles */
       .canvas-height {
-        height: 804.680851px;
+        height: 750.680851px;
       }
     
     }

@@ -44,6 +44,14 @@ export class Utilities {
       return false;
     }
   }   
+  randomlyChooseTrueOrFalseSpecial() {
+    const num = Math.random() * 3;
+    if (num <= 1.77) {
+      return true;
+    } else {
+      return false;
+    }
+  }   
 
   randomlyChooseTrueOrFalse10Real() {
     const num = Math.random() * 10;

@@ -6,7 +6,8 @@ import 'firebase/firestore';
 import 'firebase/auth';
 import 'firebase/storage';
 
-import { MatDialog } from '@angular/material';
+// import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { LocationStrategy, PathLocationStrategy } from '../../node_modules/@angular/common';
 import { GeneratorComponent } from './generator/generator.component';
 import { Utilities } from './generator/utilities';
@@ -162,17 +163,18 @@ export class AppComponent {
 
 
   openDeleteDialog(imgObj, index) {
-    if (!document.getElementById('delete')) {
+    this.delete(imgObj, index);
+    // if (!document.getElementById('delete')) {
 
-      this.dialogRef = this.dialog.open(DeleteDialogComponent, {
-        width: '300px'
-      });
-      this.dialogRef.afterClosed().subscribe(result => {
-        if (result) {
-          this.delete(imgObj, index);
-        }
-      });
-    }
+    //   this.dialogRef = this.dialog.open(DeleteDialogComponent, {
+    //     width: '300px'
+    //   });
+    //   this.dialogRef.afterClosed().subscribe(result => {
+    //     if (result) {
+    //       this.delete(imgObj, index);
+    //     }
+    //   });
+    // }
   }
   signOut() {
     firebase.auth().signOut().then(function () {

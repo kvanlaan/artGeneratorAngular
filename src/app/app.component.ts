@@ -163,18 +163,17 @@ export class AppComponent {
 
 
   openDeleteDialog(imgObj, index) {
-    this.delete(imgObj, index);
-    // if (!document.getElementById('delete')) {
+    if (!document.getElementById('delete')) {
 
-    //   this.dialogRef = this.dialog.open(DeleteDialogComponent, {
-    //     width: '300px'
-    //   });
-    //   this.dialogRef.afterClosed().subscribe(result => {
-    //     if (result) {
-    //       this.delete(imgObj, index);
-    //     }
-    //   });
-    // }
+      this.dialogRef = this.dialog.open(DeleteDialogComponent, {
+        width: '300px'
+      });
+      this.dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          this.delete(imgObj, index);
+        }
+      });
+    }
   }
   signOut() {
     firebase.auth().signOut().then(function () {

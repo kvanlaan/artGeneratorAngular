@@ -9,10 +9,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -51,7 +52,8 @@ var firebaseui = require("firebaseui");
 require("firebase/firestore");
 require("firebase/auth");
 require("firebase/storage");
-var material_1 = require("@angular/material");
+// import { MatDialog } from '@angular/material';
+var dialog_1 = require("@angular/material/dialog");
 var common_2 = require("../../node_modules/@angular/common");
 var generator_component_1 = require("./generator/generator.component");
 var utilities_1 = require("./generator/utilities");
@@ -213,17 +215,17 @@ var AppComponent = /** @class */ (function () {
         return false;
     };
     AppComponent.prototype.openDeleteDialog = function (imgObj, index) {
-        var _this = this;
-        if (!document.getElementById('delete')) {
-            this.dialogRef = this.dialog.open(DeleteDialogComponent, {
-                width: '300px'
-            });
-            this.dialogRef.afterClosed().subscribe(function (result) {
-                if (result) {
-                    _this.delete(imgObj, index);
-                }
-            });
-        }
+        this.delete(imgObj, index);
+        // if (!document.getElementById('delete')) {
+        //   this.dialogRef = this.dialog.open(DeleteDialogComponent, {
+        //     width: '300px'
+        //   });
+        //   this.dialogRef.afterClosed().subscribe(result => {
+        //     if (result) {
+        //       this.delete(imgObj, index);
+        //     }
+        //   });
+        // }
     };
     AppComponent.prototype.signOut = function () {
         firebase.auth().signOut().then(function () {
@@ -643,12 +645,14 @@ var AppComponent = /** @class */ (function () {
             });
         }
         this.savedImageArr.splice(index, 1);
-        if (index > this.savedImageArr.length - 1) {
-            index--;
-            this.renderImage(index);
-        }
-        if (index === this.currImageIndex || index === 0) {
-            this.renderImage(index);
+        if (this.savedImageArr.length) {
+            if (index > this.savedImageArr.length - 1) {
+                index--;
+                this.renderImage(index);
+            }
+            if (index === this.currImageIndex || index === 0) {
+                this.renderImage(index);
+            }
         }
     };
     AppComponent.prototype.saveImageFirebase = function (imageObj) {
@@ -729,7 +733,7 @@ var AppComponent = /** @class */ (function () {
             styleUrls: ['./app.component.css'],
             providers: [common_1.Location, { provide: common_2.LocationStrategy, useClass: common_2.PathLocationStrategy }, utilities_1.Utilities]
         }),
-        __metadata("design:paramtypes", [http_1.HttpClient, utilities_1.Utilities, material_1.MatDialog, common_1.Location])
+        __metadata("design:paramtypes", [http_1.HttpClient, utilities_1.Utilities, dialog_1.MatDialog, common_1.Location])
     ], AppComponent);
     return AppComponent;
 }());

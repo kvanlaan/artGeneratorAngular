@@ -50,6 +50,15 @@ var Utilities = /** @class */ (function () {
             return false;
         }
     };
+    Utilities.prototype.randomlyChooseTrueOrFalseSpecial = function () {
+        var num = Math.random() * 3;
+        if (num <= 1.77) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    };
     Utilities.prototype.randomlyChooseTrueOrFalse10Real = function () {
         var num = Math.random() * 10;
         if (num < 5) {

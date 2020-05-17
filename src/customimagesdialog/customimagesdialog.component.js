@@ -13,7 +13,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
-var material_1 = require("@angular/material");
+var dialog_1 = require("@angular/material/dialog");
 var CustomImagesDialogComponent = /** @class */ (function () {
     function CustomImagesDialogComponent(dialogRef, dialogData) {
         this.dialogRef = dialogRef;
@@ -33,8 +33,8 @@ var CustomImagesDialogComponent = /** @class */ (function () {
             templateUrl: './customimagesdialog.component.html',
             styleUrls: ['./customimagesdialog.component.css']
         }),
-        __param(1, core_1.Inject(material_1.MAT_DIALOG_DATA)),
-        __metadata("design:paramtypes", [material_1.MatDialogRef, Object])
+        __param(1, core_1.Inject(dialog_1.MAT_DIALOG_DATA)),
+        __metadata("design:paramtypes", [dialog_1.MatDialogRef, Object])
     ], CustomImagesDialogComponent);
     return CustomImagesDialogComponent;
 }());

@@ -290,10 +290,10 @@ export class GeneratorComponent implements OnInit {
         this.ctxTwo.scale(.5175, .5175)
         this.restoreScale = 1.932367149758454;
       } else {
-        this.ctx.scale(.579, .579)
-        this.ctxTwo.scale(.579, .579)
-        this.restoreScale = 1.72711571675;
-        }
+        this.ctx.scale(.639, .639)
+        this.ctxTwo.scale(.639, .639)
+        this.restoreScale = 1.56494522692;
+      }
         this.fullCanvasSize = this.ctx.canvas.width * this.restoreScale;
 
       this.singleLayer = true;
@@ -461,7 +461,7 @@ export class GeneratorComponent implements OnInit {
           }
         }
 
-        recurseStep = Math.floor(Math.random() * 4) + 4;
+        recurseStep = Math.floor(Math.random() * 5) + 4;
         this.startingRecurseStep = recurseStep;
         if (recurseStep > 18) {
           this.largeRecurseStep = true;
@@ -934,15 +934,14 @@ export class GeneratorComponent implements OnInit {
  }
   async drawShape(shape, small?, main?) {
     this.repeat = this.utilities.randomlyChooseTrueOrFalse() ? 'no-repeat' : 'repeat';
-    if(this.recurse) {this.repeat = 'repeat'};
-    this.repeat = 'repeat'
+    // if(this.recurse) {this.repeat = 'repeat'};
     var offset_x = 0;
     var offset_y = 0;
     var xPos = (Math.random() * this.canvasSize) + ((this.fullCanvasSize - this.canvasSize) / 2.5);
     var yPos = (Math.random() * this.canvasSize) + ((this.fullCanvasSize - this.canvasSize) / 2.75);
-    if (xPos > 1500) {
-      console.log('XPOS', xPos);
-    }
+    // if (xPos > 1500) {
+    //   console.log('XPOS', xPos);
+    // }
     // small
     this.setXYExtremes(xPos, yPos, small);
     var height = (Math.random() * this.canvasSize) / 2;
@@ -955,6 +954,9 @@ export class GeneratorComponent implements OnInit {
       this.patternFill = true;
     }
 
+    if(this.recurse) {
+      this.patternFill = true;
+    }
     if (this.patternFill) {
       // this.ctx.translate(this.offset_x, this.offset_y);
       if (!this.patternFillSingleBegun && (this.isFrieze || this.isFriezeTwo || this.isTrunks || this.isArabesque || this.isMexico || this.isBedroom)) {
@@ -1089,6 +1091,8 @@ export class GeneratorComponent implements OnInit {
       this.currentImage = this.patternBedroom;
       this.ctx.fillStyle = this.ctx.createPattern(this.patternBedroom, this.repeat);
            }
+    } else {
+      console.log('NOT PATTERN', 'this.recurse', this.recurse);
     }
 
     rand = Math.floor(Math.random() * 100) + 1;

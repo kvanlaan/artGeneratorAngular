@@ -57,8 +57,8 @@
     </mat-button-toggle-group>
   </div>
   <div style="padding-top: 5px; padding-bottom: 5px" fxFlexOffset="1" fxLayout="row" fxShow="false" fxShow.md="true"
-    fxShow.sm="true" fxShow.xs="true" fxLayoutWrap>
-    <div fxLayoutAlign="start center" fxLayoutGap="5px" style="padding-right: 5px">
+    fxShow.sm="true" fxShow.xs="true" fxLayoutWrap fxLayoutAlign="space-between">
+    <div fxLayoutAlign="start center" fxFlexOffset="5" fxLayoutGap="5px" style="padding-right: 5px">
       <button [disabled]="!renderDone" (click)="getRandomArt(true)" class="float-left inline" mat-stroked-button>
         Get New Art</button>
       <a href="#" target="_blank" class="inline" #downloadLinkTwo (click)="!renderDone && download(downloadLinkTwo)"
@@ -111,9 +111,10 @@
   </div>
   <div class="min-height-450 iphone-6-top-margin" fxLayout="row" fxFlexOffset.md="5" fxFlexOffset.sm="2" fxLayout.md="column"
     fxLayout.sm="column" fxLayout.xs="column" fxFlex.md="100" fxFlex.sm="100" fxFlex.xs="100">
-    <div class="relative overflow-scroll" fxFlex="40" fxFlexOffset.xl="5" fxFlexOffset.md="5" fxFlexOffset.lg="5"
+    <div class="relative overflow-scroll" style="margin-left: 5%" fxFlex="40" fxFlexOffset.xl="5" fxFlexOffset.md="5" fxFlexOffset.lg="5"
       fxFlexOffset.md="0" fxFlexOffset.sm="0" [fxShow.md]="!isMainPhotoView" [fxShow.sm]="!isMainPhotoView"
       [fxShow.xs]="!isMainPhotoView" fxFlex.md="100" fxFlex.sm="100" fxFlex.xs="100">
+      
       <mat-grid-list *ngIf="!showFavorites" class="canvas-height" cols="5" rows="5" gutterSize="5px">
         <div [fxShow]="!imagePopulationDone" #loaderCanvas class="absolute margin-auto loader">
         </div>

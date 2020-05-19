@@ -14,6 +14,9 @@ import { Utilities } from './generator/utilities';
 import 'hammerjs';
 import { HttpClient } from '@angular/common/http';
 import { CustomImagesDialogComponent } from '../customimagesdialog/customimagesdialog.component';
+import { MatCheckboxChange} from '@angular/material/checkbox'
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Inject } from '@angular/core';
 
 @Component({
   templateUrl: './login.component.html'
@@ -23,8 +26,17 @@ export class LoginDialogComponent {
 @Component({
   templateUrl: './delete.component.html'
 })
+
 export class DeleteDialogComponent {
-  constructor() {
+  constructor(private dialogRef: MatDialogRef<DeleteDialogComponent>, @Inject(MAT_DIALOG_DATA) dialogData) { 
+  }
+  disable: boolean = false;
+  toggleShowDelete(event: MatCheckboxChange){
+    this.disable = event.checked;
+  }
+
+  close(isDelete: boolean){
+    this.dialogRef.close({ delete: isDelete, disable: this.disable});
   }
 }
 
@@ -75,6 +87,9 @@ export class AppComponent {
   database;
   dialogRef;
   localStorage;
+  disableCustomImagesDialogKey = 'dontShowCustomImagesDialog';
+  disableDeleteDialogKey = 'dontShowDeleteDialog';
+
   constructor(public http: HttpClient, public utilities: Utilities, public dialog: MatDialog, public location: Location) {
     this.utilities = utilities;
     this.location = location;
@@ -161,16 +176,18 @@ export class AppComponent {
   }
 
   openDeleteDialog(imgObj, index) {
-    if (!document.getElementById('delete')) {
-
+    if (!this.getFromLocal(this.disableCustomImagesDialogKey) && !document.getElementById('delete')) {
       this.dialogRef = this.dialog.open(DeleteDialogComponent, {
         width: '300px'
       });
       this.dialogRef.afterClosed().subscribe(result => {
-        if (result) {
+        if (result.delete) {
           this.delete(imgObj, index);
         }
+        this.saveToLocal(this.disableDeleteDialogKey, result.disable);
       });
+    } else {
+        this.delete(imgObj, index);
     }
   }
 
@@ -376,7 +393,7 @@ export class AppComponent {
       this.generator.initiatePatterns();
     }
   }
-  disableCustomImagesDialogKey = 'dontShowCustomImagesDialog';
+
   openCustomImagesDialog(readOnly?: boolean) {
     this.dialogRef = this.dialog.open(CustomImagesDialogComponent, {
       width: '300px',

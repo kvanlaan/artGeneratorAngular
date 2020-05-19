@@ -497,16 +497,21 @@ export class AppComponent {
     this.currImageIndex--;
     this.renderImage();
   }
-  setRenderDone(bool: boolean) {
+  setRenderDone(bool: boolean, ready = true) {
     this.renderDone = bool;
+    if(ready) {
     this.ready = bool;
+    }
   }
   setCustomImages() {
     this.generator.setCustomImages(true);
   }
 
   async getRandomArt(clear, recurseStep?) {
+    if(this.renderDone) {
+      this.setRenderDone(false, false);
     this.generator.getRandomArt(clear);
+    }
   }
 
   filterFavorites() {

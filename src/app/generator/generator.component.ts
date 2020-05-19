@@ -101,7 +101,6 @@ export class GeneratorComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.renderDone = false;
     this.initiatePatterns();
     this.isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
     this.calculateCanvasSize();
@@ -1426,8 +1425,8 @@ export class GeneratorComponent implements OnInit {
     this.saveImageFirebase.emit(imgObj);
 
     this.loader.nativeElement.style.visibility = "hidden";
-    this.renderDone = true;
-    this.renderDoneEmit.emit(true);
+    // this.renderDone = true;
+    // this.renderDoneEmit.emit(true);
     this.renderImage();
   }
 

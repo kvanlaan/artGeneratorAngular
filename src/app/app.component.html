@@ -10,7 +10,7 @@
     <div fxFlex>
       <div fxFlex fxFlexOffset="7" fxShow="true" fxLayoutGap="5px" fxShow.md="false" fxShow.sm="false" fxShow.xs="false"
         fxLayoutAlign="start center">
-        <button [disabled]="!renderDone" (click)="getRandomArt(true)" class="float-left inline" mat-stroked-button>
+        <button [disabled]="!renderDone" (click)="renderDone && getRandomArt(true)" class="float-left inline" mat-stroked-button>
           Get New Art</button>
         <a href="#" target="_blank" class="float-left inline" #downloadLink (click)="download(downloadLink)"
           download="art.jpg">
@@ -59,7 +59,7 @@
   <div style="padding-top: 5px; padding-bottom: 5px" fxFlexOffset="1" fxLayout="row" fxShow="false" fxShow.md="true"
     fxShow.sm="true" fxShow.xs="true" fxLayoutWrap>
     <div fxLayoutAlign="start center" fxFlexOffset="5" fxLayoutGap="5px" style="padding-right: 5px">
-      <button [disabled]="!renderDone" (click)="getRandomArt(true)" class="float-left inline" mat-stroked-button>
+      <button [disabled]="!renderDone" (click)="renderDone && getRandomArt(true)" class="float-left inline" mat-stroked-button>
         Get New Art</button>
       <a href="#" target="_blank" class="inline" #downloadLinkTwo (click)="!renderDone && download(downloadLinkTwo)"
         download="artGenerator.jpg">

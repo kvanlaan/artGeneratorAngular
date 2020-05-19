@@ -112,7 +112,6 @@ export class AppComponent {
   }
 
   async ngOnInit() {
-
     this.renderDone = false;
     // setting up firebase
     var config = {
@@ -129,7 +128,6 @@ export class AppComponent {
     this.database.settings(settings);
     this.ui = new firebaseui.auth.AuthUI(firebase.auth());
     this.user = firebase.auth().currentUser;
-    // this.getDarkPatterns();
 
     firebase.auth().onAuthStateChanged(async function (this, user) {
       if (!this.login && !user && location.href.indexOf('loggedOut') >= 0 && location.href.indexOf('authenticationTriggered') > - 0) {
@@ -140,6 +138,7 @@ export class AppComponent {
       }
     }.bind(this));
   }
+
   showMobileNextImageArrow() {
     if (this.isMainPhotoView) {
       if (!this.showFavorites) {
@@ -161,7 +160,6 @@ export class AppComponent {
     return false;
   }
 
-
   openDeleteDialog(imgObj, index) {
     if (!document.getElementById('delete')) {
 
@@ -175,6 +173,7 @@ export class AppComponent {
       });
     }
   }
+
   signOut() {
     firebase.auth().signOut().then(function () {
     }).catch(function (error) {

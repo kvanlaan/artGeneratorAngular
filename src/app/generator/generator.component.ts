@@ -2,7 +2,6 @@ import { Component, OnInit, ViewChild, Output, EventEmitter, Input } from '@angu
 import { Utilities } from './utilities';
 import { HttpClient } from '@angular/common/http';
 import * as firebase from 'firebase';
-import * as firebaseui from 'firebaseui';
 import 'firebase/firestore';
 import 'firebase/auth';
 import 'firebase/storage';
@@ -102,7 +101,6 @@ export class GeneratorComponent implements OnInit {
   }
 
   ngOnInit() {
-    // this.ready = false;
     this.renderDone = false;
     this.initiatePatterns();
     this.isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
@@ -123,7 +121,6 @@ export class GeneratorComponent implements OnInit {
 
                 darkImage.src = url;
                 this.darkDatabaseList.push(darkImage)
-                // this.patternDatabaseList.push(darkImage)
 
               }.bind(this));
             } else if (item["metadata"]["name"].indexOf('trans') > -1) {
@@ -925,7 +922,6 @@ export class GeneratorComponent implements OnInit {
     }
   }
 
-
  onload2promise(obj): Promise<any> {
     return new Promise((resolve, reject) => {
     obj.onload = () => resolve(obj);
@@ -934,14 +930,12 @@ export class GeneratorComponent implements OnInit {
  }
   async drawShape(shape, small?, main?) {
     this.repeat = this.utilities.randomlyChooseTrueOrFalse() ? 'no-repeat' : 'repeat';
-    // if(this.recurse) {this.repeat = 'repeat'};
+
     var offset_x = 0;
     var offset_y = 0;
     var xPos = (Math.random() * this.canvasSize) + ((this.fullCanvasSize - this.canvasSize) / 2.5);
     var yPos = (Math.random() * this.canvasSize) + ((this.fullCanvasSize - this.canvasSize) / 2.75);
-    // if (xPos > 1500) {
-    //   console.log('XPOS', xPos);
-    // }
+
     // small
     this.setXYExtremes(xPos, yPos, small);
     var height = (Math.random() * this.canvasSize) / 2;

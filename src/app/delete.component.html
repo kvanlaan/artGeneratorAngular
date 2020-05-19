@@ -8,6 +8,6 @@
     <button class="material-text" mat-button (click)="close(true)">Yes</button>
     <br>
     <br>
-    <mat-checkbox [fxShow]="!readOnly" (change)="toggleShowDelete($event)">Don't Show this Again</mat-checkbox>
+    <mat-checkbox (change)="toggleShowDelete($event)">Don't Show this Again</mat-checkbox>
   </span>
 </div>

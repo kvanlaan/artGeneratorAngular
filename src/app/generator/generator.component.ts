@@ -193,8 +193,8 @@ export class GeneratorComponent implements OnInit {
 
     this.patternBedroom.src = 'assets/haystacks.jpg';
 
-    this.patternOne.src = this.initialImages[0].src
-    this.patternOne.crossOrigin = "Anonymous";
+    // this.patternOne.src = this.initialImages[0].src
+    // this.patternOne.crossOrigin = "Anonymous";
     // this.patternOne.onload = function () {
     //   const pattern = this.ctx.createPattern(this.patternOne, this.repeat);
     //   this.ctx.fillStyle = pattern;

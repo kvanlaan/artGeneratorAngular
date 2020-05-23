@@ -106,14 +106,13 @@ export class GeneratorComponent implements OnInit {
     this.isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
     this.calculateCanvasSize();
     this.getLibrary();
-    // await this.getRandomArt(true);
   }
   getLibrary() {
     var storageRef = firebase.storage().ref();
     if (this.darkDatabaseList.length === 0 || this.patternDatabaseList.length === 0) {
       return new Promise(resolve => {
         if (!this.artImagesSubscription) { }
-        this.artImagesSubscription = this.http.get(window.location.origin + '/artImages').subscribe(function (this, res: any) {
+        this.artImagesSubscription = this.http.get(window.location.origin + '/artImages').subscribe(async function (this, res: any) {
           res.forEach(function (this, item) {
             if (item["metadata"]["name"].indexOf('dark') > -1) {
               storageRef.child(item["metadata"]["name"]).getDownloadURL().then(function (this, url) {
@@ -122,6 +121,12 @@ export class GeneratorComponent implements OnInit {
 
                 darkImage.src = url;
                 this.darkDatabaseList.push(darkImage)
+                if(!this.genStarted) {
+                  if(this.darkDatabaseList.length === 6) {
+                    this.genStarted = true;
+                    await this.getRandomArt(true, undefined, true);
+                  }
+                }
 
               }.bind(this));
             } else if (item["metadata"]["name"].indexOf('trans') > -1) {
@@ -145,7 +150,7 @@ export class GeneratorComponent implements OnInit {
                 if(!this.genStarted) {
                   if(this.patternDatabaseList.length === 6) {
                     this.genStarted = true;
-                    await this.getRandomArt(true);
+                    await this.getRandomArt(true, undefined, false);
                   }
                 }
 
@@ -244,7 +249,7 @@ export class GeneratorComponent implements OnInit {
     this.leftmostPoint = this.fullCanvasSize
   }
 
-  async getRandomArt(clear, recurseStep?) {
+  async getRandomArt(clear, recurseStep?, dark?) {
     this.colorArr = await this.getRandomColorArr();
     // hide favorites because we're about to switch to savedimagearr
     // hiding stuff since a new image is being drawn]
@@ -284,8 +289,11 @@ export class GeneratorComponent implements OnInit {
       this.ctx.fillStyle = 'white';
       this.ctx.fillRect(0, 0, this.fullCanvasSize, this.fullCanvasSize);
       this.ctx.translate(this.offset_x, this.offset_y);
-
+      if(!dark) {
       recurse = this.utilities.randomlyChooseTrueOrFalse();
+      } else {
+        recurse = false;
+      }
       this.recurse = recurse;
       this.ctx.scale(this.restoreScale, this.restoreScale);
       this.ctxTwo.scale(this.restoreScale,this.restoreScale);

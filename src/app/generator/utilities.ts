@@ -28,6 +28,15 @@ export class Utilities {
     }
   }
 
+  randomlyChooseTrueOrFalseLessHalf() {
+    const num = Math.random() * 3;
+    if (num < 1.75) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
   randomlyChooseTrueOrFalseThird() {
     const num = Math.random() + 3;
     if (num < 1.5) {

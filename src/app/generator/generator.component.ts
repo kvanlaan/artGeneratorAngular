@@ -115,7 +115,7 @@ export class GeneratorComponent implements OnInit {
         this.artImagesSubscription = this.http.get(window.location.origin + '/artImages').subscribe(async function (this, res: any) {
           res.forEach(function (this, item) {
             if (item["metadata"]["name"].indexOf('dark') > -1) {
-              storageRef.child(item["metadata"]["name"]).getDownloadURL().then(function (this, url) {
+              storageRef.child(item["metadata"]["name"]).getDownloadURL().then(async function (this, url) {
                 const darkImage = new Image();
                 darkImage.crossOrigin = "Anonymous";
 

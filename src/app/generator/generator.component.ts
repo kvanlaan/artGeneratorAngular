@@ -95,18 +95,20 @@ export class GeneratorComponent implements OnInit {
   rightmostPoint: number = 0;
   dark;
   normalColor;
+  genStarted = false;
 
   constructor(public http: HttpClient, public utilities: Utilities) {
     this.utilities = utilities;
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.initiatePatterns();
     this.isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
     this.calculateCanvasSize();
-    this.getDarkPatterns();
+    this.getLibrary();
+    // await this.getRandomArt(true);
   }
-  getDarkPatterns() {
+  getLibrary() {
     var storageRef = firebase.storage().ref();
     if (this.darkDatabaseList.length === 0 || this.patternDatabaseList.length === 0) {
       return new Promise(resolve => {
@@ -134,12 +136,19 @@ export class GeneratorComponent implements OnInit {
               }.bind(this));
             } 
             else {
-              storageRef.child(item["metadata"]["name"]).getDownloadURL().then(function (this, url) {
+              storageRef.child(item["metadata"]["name"]).getDownloadURL().then(async function (this, url) {
                 const darkImage = new Image();
                 darkImage.crossOrigin = "Anonymous";
 
                 darkImage.src = url;
                 this.patternDatabaseList.push(darkImage)
+                if(!this.genStarted) {
+                  if(this.patternDatabaseList.length === 6) {
+                    this.genStarted = true;
+                    await this.getRandomArt(true);
+                  }
+                }
+
               }.bind(this));
             }
           }.bind(this));
@@ -207,7 +216,6 @@ export class GeneratorComponent implements OnInit {
               this.patternSix.onload = async function () {
                 const pattern = this.ctx.createPattern(this.patternSix, this.repeat);
                 this.ctx.fillStyle = pattern;
-                await this.getRandomArt(true);
               }.bind(this);
             }.bind(this);
           }.bind(this);

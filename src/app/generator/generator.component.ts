@@ -232,7 +232,6 @@ export class GeneratorComponent implements OnInit {
   calculateCanvasSize() {
     let dpi = window.devicePixelRatio;
     this.canvas = <HTMLCanvasElement>document.getElementById("myCanvas");
-    this.canvas.clientHeight  = this.canvas.clientHeight * dpi;
     this.canvas.height = this.canvas.clientHeight * dpi;
     this.canvas.width = this.canvas.clientWidth * dpi;
 

@@ -634,9 +634,10 @@ export class GeneratorComponent implements OnInit {
       }
       this.randomColor = await this.getRandomRgb(false, light);
       this.randomStrokeOpacity = Math.random() * 1;
-      if(this.recurse) {
-        this.randomShapeOpacity = Math.random() * .5;
-      } else {
+
+      this.randomShapeOpacity = Math.random() * .5;
+      
+      if(!this.recurse && ((this.randomColor.r + this.randomColor.g + this.randomColor.b)  < 220)) {
         this.randomShapeOpacity = Math.random() * .4;
       }
       const randomShape = this.smallShapeArr[Math.floor(Math.random() * this.shapeArr.length)];

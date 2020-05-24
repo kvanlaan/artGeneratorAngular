@@ -193,41 +193,41 @@ export class GeneratorComponent implements OnInit {
 
     this.patternBedroom.src = 'assets/haystacks.jpg';
 
-    // this.patternOne.src = this.initialImages[0].src
-    // this.patternOne.crossOrigin = "Anonymous";
-    // this.patternOne.onload = function () {
-    //   const pattern = this.ctx.createPattern(this.patternOne, this.repeat);
-    //   this.ctx.fillStyle = pattern;
+    this.patternOne.src = this.initialImages[4].src
+    this.patternOne.crossOrigin = "Anonymous";
+    this.patternOne.onload = function () {
+      const pattern = this.ctx.createPattern(this.patternOne, this.repeat);
+      this.ctx.fillStyle = pattern;
 
-    //   this.patternTwo.src = this.initialImages[1].src;
-    //   this.patternTwo.onload = function () {
-    //     const pattern = this.ctx.createPattern(this.patternTwo, this.repeat);
-    //     this.ctx.fillStyle = pattern;
-    //     this.patternThree.src = this.initialImages[2].src;
-    //     this.patternThree.onload = function () {
-    //       const pattern = this.ctx.createPattern(this.patternThree, this.repeat);
-    //       this.ctx.fillStyle = pattern;
+      this.patternTwo.src = this.initialImages[4].src;
+      this.patternTwo.onload = function () {
+        const pattern = this.ctx.createPattern(this.patternTwo, this.repeat);
+        this.ctx.fillStyle = pattern;
+        this.patternThree.src = this.initialImages[4].src;
+        this.patternThree.onload = function () {
+          const pattern = this.ctx.createPattern(this.patternThree, this.repeat);
+          this.ctx.fillStyle = pattern;
 
-    //       this.patternFour.src = this.initialImages[3].src;
-    //       this.patternFour.onload = function () {
-    //         const pattern = this.ctx.createPattern(this.patternFour, this.repeat);
-    //         this.ctx.fillStyle = pattern;
+          this.patternFour.src = this.initialImages[4].src;
+          this.patternFour.onload = function () {
+            const pattern = this.ctx.createPattern(this.patternFour, this.repeat);
+            this.ctx.fillStyle = pattern;
 
-    //         this.patternFive.src = this.initialImages[4].src;
-    //         this.patternFive.onload = function () {
-    //           const pattern = this.ctx.createPattern(this.patternFive, this.repeat);
-    //           this.ctx.fillStyle = pattern;
-    //           this.patternSix.src = this.initialImages[5].src;
-    //           this.patternSix.onload = async function () {
-    //             const pattern = this.ctx.createPattern(this.patternSix, this.repeat);
-    //             this.ctx.fillStyle = pattern;
-    //           }.bind(this);
-    //         }.bind(this);
-    //       }.bind(this);
-    //     }.bind(this);
+            this.patternFive.src = this.initialImages[4].src;
+            this.patternFive.onload = function () {
+              const pattern = this.ctx.createPattern(this.patternFive, this.repeat);
+              this.ctx.fillStyle = pattern;
+              this.patternSix.src = this.initialImages[4].src;
+              this.patternSix.onload = async function () {
+                const pattern = this.ctx.createPattern(this.patternSix, this.repeat);
+                this.ctx.fillStyle = pattern;
+              }.bind(this);
+            }.bind(this);
+          }.bind(this);
+        }.bind(this);
 
-    //   }.bind(this);
-    // }.bind(this);
+      }.bind(this);
+    }.bind(this);
   }
   calculateCanvasSize() {
     this.canvas = <HTMLCanvasElement>document.getElementById("myCanvas");
@@ -384,7 +384,6 @@ export class GeneratorComponent implements OnInit {
           const darkFour = this.darkDatabaseList[four];
           this.patternFour = darkFour;
           this.getRandomArtAlg(clear, recurse, recurseStep);
-
         } else {
           this.getRandomArtAlg(clear, recurse, recurseStep);
         }

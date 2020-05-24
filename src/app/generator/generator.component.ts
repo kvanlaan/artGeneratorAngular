@@ -236,7 +236,7 @@ export class GeneratorComponent implements OnInit {
     // this.canvas.width = this.canvas.clientWidth;
     console.log('CANVAS HEIGHT', this.canvas.height);
     this.ctx = this.canvas.getContext("2d");
-    this.canvasSize = this.canvas.height;
+    this.canvasSize = this.canvas.clientHeight;
     this.ctx.canvas.width = this.canvasSize;
     this.ctx.canvas.height = this.canvasSize;
 

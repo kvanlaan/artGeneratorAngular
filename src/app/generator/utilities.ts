@@ -30,7 +30,7 @@ export class Utilities {
 
   randomlyChooseTrueOrFalseLessHalf() {
     const num = Math.random() * 3;
-    if (num < 1.75) {
+    if (num < 1.7) {
       return false;
     } else {
       return true;

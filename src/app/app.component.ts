@@ -323,8 +323,6 @@ export class AppComponent {
                 this.renderImage(0);
               } else {
                 this.imagePopulationDone = true;
-
-                // this.getRandomArt(true);
               }
 
             });
@@ -474,17 +472,15 @@ export class AppComponent {
     }
   }
 
-  renderImage(index?: number) {
+  renderImage(index?: number, isDelete?: boolean) {
+    if(!isDelete) {
     this.isMainPhotoView = true;
-
+    }
     // if(this.showFavorites) {
     if (index !== undefined) {
       this.currImageIndex = index;
     }
     this.generator.renderImage(index, this.showFavorites)
-    // } else {
-
-    // }
   }
   updateCurrentIndex(index: number) {
     this.currImageIndex = index;
@@ -510,8 +506,9 @@ export class AppComponent {
   async getRandomArt(clear, recurseStep?) {
     if(this.renderDone) {
       this.setRenderDone(false, false);
-    this.generator.getRandomArt(clear);
-    }
+      this.generator.getRandomArt(clear);
+      this.isMainPhotoView = true;
+  }
   }
 
   filterFavorites() {
@@ -565,11 +562,11 @@ export class AppComponent {
     if(this.savedImageArr.length) {
     if (index > this.savedImageArr.length - 1) {
       index--;
-      this.renderImage(index);
+      this.renderImage(index, true);
     }
 
     if (index === this.currImageIndex || index === 0) {
-      this.renderImage(index);
+      this.renderImage(index, true);
     }
   }
   }

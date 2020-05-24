@@ -232,8 +232,8 @@ export class GeneratorComponent implements OnInit {
   calculateCanvasSize() {
     let dpi = window.devicePixelRatio;
     this.canvas = <HTMLCanvasElement>document.getElementById("myCanvas");
-    this.canvas.height = this.canvas.clientHeight * dpi;
-    this.canvas.width = this.canvas.clientWidth * dpi;
+    this.canvas.height = this.canvas.clientHeight;
+    this.canvas.width = this.canvas.clientWidth;
 
     this.ctx = this.canvas.getContext("2d");
     this.canvasSize = this.canvas.height;
@@ -241,11 +241,12 @@ export class GeneratorComponent implements OnInit {
     this.ctx.canvas.height = this.canvasSize;
 
     this.canvasTwo = <HTMLCanvasElement>document.getElementById("myCanvasTwo");
-    this.canvasTwo.height = this.canvas.height * dpi;
-    this.canvasTwo.width = this.canvas.width * dpi;
+    this.canvasTwo.height = this.canvasTwo.clientHeight
+    this.canvasTwo.width = this.canvasTwo.clientHeight
 
     this.ctxTwo = this.canvasTwo.getContext("2d");
     this.canvasSizeTwo = this.canvasTwo.clientHeight;
+    
     this.ctxTwo.canvas.width = this.canvasSizeTwo;
     this.ctxTwo.canvas.height = this.canvasSizeTwo;
     

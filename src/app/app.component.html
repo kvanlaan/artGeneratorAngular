@@ -1,16 +1,18 @@
-<div fxLayout="column" fxFlexFill>
+<div class="height-100vh" fxLayout="column" fxFlexFill>
   <div fxLayout="row" fxLayoutWrap>
     <div fxFlex="40" fxFlex.md="100" fxFlex.sm="100" fxFlex.xs="100" fxFlexOffset="5" fxFlexOffset.sm="1"
       fxLayoutAlign="start center">
       <div class="material-text iphone-6-bottom-margin" fxFlex fxLayoutAlign="start center">Art Generator</div>
-      <div fxFlex class="material-text" style="font-size: 14px !important; margin-right: -7%" fxShow="true" fxShow.md="false"
-        fxShow.sm="false" fxShow.xs="false" fxLayoutAlign="end center">Each piece is algorithmically unique.</div>
+      <div fxFlex class="material-text" style="font-size: 14px !important; margin-right: -7%" fxShow="true"
+        fxShow.md="false" fxShow.sm="false" fxShow.xs="false" fxLayoutAlign="end center">Each piece is algorithmically
+        unique.</div>
     </div>
 
     <div fxFlex>
       <div fxFlex fxFlexOffset="7" fxShow="true" fxLayoutGap="5px" fxShow.md="false" fxShow.sm="false" fxShow.xs="false"
         fxLayoutAlign="start center">
-        <button [disabled]="!renderDone" (click)="renderDone && getRandomArt(true)" class="float-left inline" mat-stroked-button>
+        <button [disabled]="!renderDone" (click)="renderDone && getRandomArt(true)" class="float-left inline"
+          mat-stroked-button>
           Get New Art</button>
         <a href="#" target="_blank" class="float-left inline" #downloadLink (click)="download(downloadLink)"
           download="art.jpg">
@@ -25,8 +27,7 @@
         </button>
         <span *ngIf="login" fxLayoutAlign="horizontal center" fxLayoutGap="5px">
           <span>{{email}}</span>
-          <button (click)="signOut()" fxShow.md="false" fxShow.sm="false" fxShow.xs="false"
-            mat-stroked-button>
+          <button (click)="signOut()" fxShow.md="false" fxShow.sm="false" fxShow.xs="false" mat-stroked-button>
             <span> Sign Out </span>
           </button>
         </span>
@@ -45,8 +46,8 @@
     </div>
   </div>
 
-  <div style="padding-top: 15px; padding-bottom: 10px;" class="iphone-6-margin" fxLayout="row" fxShow="false" fxShow.md="true"
-    fxShow.sm="true" fxShow.xs="true" fxLayoutWrap fxLayoutAlign="center center">
+  <div style="padding-top: 15px; padding-bottom: 10px;" class="iphone-6-margin" fxLayout="row" fxShow="false"
+    fxShow.md="true" fxShow.sm="true" fxShow.xs="true" fxLayoutWrap fxLayoutAlign="center center">
     <mat-button-toggle-group [(ngModel)]="isMainPhotoView">
       <mat-button-toggle [value]="true"> <i class="material-icons">
           photo
@@ -59,7 +60,8 @@
   <div style="padding-top: 5px; padding-bottom: 5px" fxFlexOffset="1" fxLayout="row" fxShow="false" fxShow.md="true"
     fxShow.sm="true" fxShow.xs="true" fxLayoutWrap>
     <div fxLayoutAlign="start center" fxFlexOffset="5" fxLayoutGap="5px" style="padding-right: 5px">
-      <button [disabled]="!renderDone" (click)="renderDone && getRandomArt(true)" class="float-left inline" mat-stroked-button>
+      <button [disabled]="!renderDone" (click)="renderDone && getRandomArt(true)" class="float-left inline"
+        mat-stroked-button>
         Get New Art</button>
       <a href="#" target="_blank" class="inline" #downloadLinkTwo (click)="!renderDone && download(downloadLinkTwo)"
         download="artGenerator.jpg">
@@ -86,8 +88,8 @@
     </div>
     <div [fxShow.md]="isMainPhotoView" [fxShow.sm]="isMainPhotoView" [fxShow.xs]="isMainPhotoView" fxLayout="row"
       fxLayoutAlign="end center" fxLayoutGap="5px">
-      <mat-slide-toggle matTooltip="Lock/Customize Patterns" [checked]="customImagesActive"
-        (change)="toggleImages()"></mat-slide-toggle>
+      <mat-slide-toggle matTooltip="Lock/Customize Patterns" [checked]="customImagesActive" (change)="toggleImages()">
+      </mat-slide-toggle>
       <span *ngIf="ready" fxLayout="row" fxLayoutAlign="start center">
         <span *ngFor="let customImage of customImages; let i = index"
           [ngStyle]="{'background-image': 'url(' + this.customImages[i]?.src + ')'}" class="tile">
@@ -109,12 +111,14 @@
       </span>
     </div>
   </div>
-  <div class="min-height-450 iphone-6-top-margin" fxLayout="row" fxFlexOffset.md="5" fxFlexOffset.sm="2" fxLayout.md="column"
-    fxLayout.sm="column" fxLayout.xs="column" fxFlex.md="100" fxFlex.sm="100" fxFlex.xs="100">
-    <div class="relative overflow-scroll" style="margin-left: 5%" fxFlex="40" fxFlexOffset.xl="5" fxFlexOffset.md="5" fxFlexOffset.lg="5"
-      fxFlexOffset.md="0" fxFlexOffset.sm="0" [fxShow.md]="!isMainPhotoView" [fxShow.sm]="!isMainPhotoView"
-      [fxShow.xs]="!isMainPhotoView" fxFlex.md="100" fxFlex.sm="100" fxFlex.xs="100">
-      
+
+
+  <div class="min-height-450 iphone-6-top-margin" fxLayout="row" fxFlexOffset.md="5" fxFlexOffset.sm="2"
+    fxLayout.md="column" fxLayout.sm="column" fxLayout.xs="column" fxFlex.md="100" fxFlex.sm="100" fxFlex.xs="100">
+    <div class="relative overflow-scroll" style="margin-left: 5%" fxFlex="40" fxFlexOffset.xl="5" fxFlexOffset.md="5"
+      fxFlexOffset.lg="5" fxFlexOffset.md="0" fxFlexOffset.sm="0" [fxShow.md]="!isMainPhotoView"
+      [fxShow.sm]="!isMainPhotoView" [fxShow.xs]="!isMainPhotoView" fxFlex.md="100" fxFlex.sm="100" fxFlex.xs="100">
+
       <mat-grid-list *ngIf="!showFavorites" class="canvas-height" cols="5" rows="5" gutterSize="5px">
         <div [fxShow]="!imagePopulationDone" #loaderCanvas class="absolute margin-auto loader">
         </div>
@@ -198,8 +202,8 @@
             favorite_border
           </i>
         </span>
-        <mat-slide-toggle matTooltip="Lock/Customize Patterns"  [checked]="customImagesActive"
-          (change)="toggleImages()"></mat-slide-toggle>
+        <mat-slide-toggle matTooltip="Lock/Customize Patterns" [checked]="customImagesActive" (change)="toggleImages()">
+        </mat-slide-toggle>
         <span *ngIf="ready" fxLayout="column" fxLayoutAlign="start center">
           <span *ngFor="let customImage of customImages; let i = index"
             [ngStyle]="{'background-image': 'url(' + this.customImages[i]?.src + ')'}" class="tile">
@@ -221,7 +225,7 @@
 
           <i (click)="openCustomImagesDialog(true)" style="margin-top: 4.5px" class="material-icons">
             info_outline
-            </i>
+          </i>
         </span>
 
       </span>
@@ -233,13 +237,14 @@
     </div>
   </div>
   <div fxLayout="row" fxShow="true" fxShow.md="false" fxShow.sm="false" fxShow.xs="false" fxLayoutAlign="start start">
-    <span fxLayout="row" class="material-text" fxFlexOffset="5" fxLayoutGap="3px" style="font-size: 14px !important; text-align: left"> <span>Art and Code by <a
-        href="https://github.com/kvanlaan" class="name" target="_blank"> Katrina Van Laan</a></span>&nbsp;<span>
-          <!-- QA by <a
+    <span fxLayout="row" class="material-text" fxFlexOffset="5" fxLayoutGap="3px"
+      style="font-size: 14px !important; text-align: left"> <span>Art and Code by <a href="https://github.com/kvanlaan"
+          class="name" target="_blank"> Katrina Van Laan</a></span>&nbsp;<span>
+        <!-- QA by <a
           href="https://www.linkedin.com/in/brian-bookman-353213159" class="name" target="_blank">Brian Bookman.</a>
          -->
-        
-        </span> </span>
+
+      </span> </span>
   </div>
 </div>
 <div [fxShow]="!ready" class="absolute margin-auto loader">

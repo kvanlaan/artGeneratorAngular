@@ -239,7 +239,7 @@ export class GeneratorComponent implements OnInit {
     this.canvasSize = this.canvas.clientHeight;
     this.ctx.canvas.width = this.canvasSize;
     this.ctx.canvas.height = this.canvasSize;
-
+    this.ctx.imageSmoothingEnabled = true;
     this.canvasTwo = <HTMLCanvasElement>document.getElementById("myCanvasTwo");
     this.canvasTwo.height = this.canvasTwo.clientHeight
     this.canvasTwo.width = this.canvasTwo.clientHeight

@@ -1,4 +1,4 @@
-<div class="height-100vh" fxLayout="column" fxFlexFill>
+<div class="height-100vh relative" fxLayout="column" fxFlexFill>
   <div fxLayout="row" fxLayoutWrap>
     <div fxFlex="40" fxFlex.md="100" fxFlex.sm="100" fxFlex.xs="100" fxFlexOffset="5" fxFlexOffset.sm="1"
       fxLayoutAlign="start center">
@@ -184,17 +184,17 @@
             </span>
           </mat-grid-tile>
         </mat-grid-list>
-        <div style="height: 14px; position: absolute; bottom: 2px" fxLayout="row" fxShow="true" fxShow.md="false"
+        <!-- <div style="height: 14px; position: absolute; bottom: 3px" fxLayout="row" fxShow="true" fxShow.md="false"
           fxShow.sm="false" fxShow.xs="false" fxLayoutAlign="start start">
           <span fxLayout="row" class="material-text" fxLayoutGap="3px"
             style="font-size: 14px !important; text-align: left;"> <span>Art and Code by <a
                 href="https://github.com/kvanlaan" class="name" target="_blank"> Katrina Van Laan</a></span>&nbsp;<span>
-              <!-- QA by <a
-              href="https://www.linkedin.com/in/brian-bookman-353213159" class="name" target="_blank">Brian Bookman.</a>
-             -->
+              QA by <a href="https://www.linkedin.com/in/brian-bookman-353213159" class="name" target="_blank">Brian
+                Bookman.</a>
+
 
             </span> </span>
-        </div>
+        </div> -->
       </div>
 
     </div>
@@ -249,16 +249,17 @@
         (renderDoneEmit)="setRenderDone(true)"></generator>
     </div>
   </div>
-  <!-- <div fxLayout="row" fxShow="true" fxShow.md="false" fxShow.sm="false" fxShow.xs="false" fxLayoutAlign="start start">
-    <span fxLayout="row" class="material-text" fxFlexOffset="5" fxLayoutGap="3px"
-      style="font-size: 14px !important; text-align: left"> <span>Art and Code by <a href="https://github.com/kvanlaan"
-          class="name" target="_blank"> Katrina Van Laan</a></span>&nbsp;<span>
-        QA by <a
-          href="https://www.linkedin.com/in/brian-bookman-353213159" class="name" target="_blank">Brian Bookman.</a>
-        
+  <div fxLayout="row" style="position: absolute; left: 5%; bottom: 2.25%;" fxShow="true" fxShow.md="false"
+    fxShow.sm="false" fxShow.xs="false" fxLayoutAlign="start start">
+    <span fxLayout="row" class="material-text" fxLayoutGap="3px" style="font-size: 14px !important; text-align: left">
+      <span>Art and Code by <a href="https://github.com/kvanlaan" class="name" target="_blank"> Katrina Van
+          Laan</a></span>&nbsp;<span>
+        <!-- QA by <a href="https://www.linkedin.com/in/brian-bookman-353213159" class="name" target="_blank">Brian
+          Bookman.</a> -->
+
 
       </span> </span>
-  </div> -->
+  </div>
 </div>
 <div [fxShow]="!ready" class="absolute margin-auto loader">
 </div>

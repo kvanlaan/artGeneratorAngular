@@ -50,7 +50,7 @@ html {
 }
 
 .list-height {
-  height: calc(100% - 14px);
+  height: calc(100%);
 }
 
 .cdk-overlay-pane {
@@ -505,7 +505,7 @@ input:hover::before {
 
   /* Styles */
   .canvas-height {
-    height: 710.680851px;
+    height: 715.680851px;
   }
 
 }

@@ -306,7 +306,8 @@ export class GeneratorComponent implements OnInit {
       this.ctx.clearRect(0, 0, this.fullCanvasSize, this.fullCanvasSize);
       this.ctx.fillStyle = 'white';
       this.ctx.fillRect(0, 0, this.fullCanvasSize, this.fullCanvasSize);
-      this.ctx.translate(this.offset_x, this.offset_y);
+      // this.ctx.translate(this.offset_x, this.offset_y);
+      let wasRecurse = this.recurse;
       if(!dark) {
       recurse = this.utilities.randomlyChooseTrueOrFalseLessHalf();
       } else {
@@ -320,11 +321,11 @@ export class GeneratorComponent implements OnInit {
         this.ctxTwo.scale(.5175, .5175)
         this.restoreScale = 1.932367149758454;
       } else {
-        this.ctx.scale(.639, .639)
-        this.ctxTwo.scale(.639, .639)
-        this.restoreScale = 1.56494522692;
+        this.ctx.scale(.625, .625)
+        this.ctxTwo.scale(.625, .625)
+        this.restoreScale = 1.6;
       }
-        this.fullCanvasSize = this.ctx.canvas.width * this.restoreScale;
+      this.fullCanvasSize = this.ctx.canvas.width * this.restoreScale;
 
       this.singleLayer = true;
       if (!recurse) {
@@ -387,25 +388,36 @@ export class GeneratorComponent implements OnInit {
           }
         }
         this.beginPath = false;
-        const maxDarkIndex = this.darkDatabaseList.length - 1;
 
-        var one = Math.floor(Math.random() * maxDarkIndex);
-        var three = Math.floor(Math.random() * maxDarkIndex);
-        var four = Math.floor(Math.random() * maxDarkIndex);
-
-        var five = Math.floor(Math.random() * maxDarkIndex);
         if (!this.customImagesActive && this.darkDatabaseList.length >= 6) {
-          const darkOne = this.darkDatabaseList[one];
-          this.patternSix = darkOne;
-          const darkThree = this.darkDatabaseList[three];
-          this.patternThree = darkThree;
-          const darkFour = this.darkDatabaseList[four];
-          this.patternFour = darkFour;
+          const maxDarkIndex = this.darkDatabaseList.length - 1;
 
-          // this.patternFive = darkOne;
-          // this.patternTwo = darkThree;
-          // this.patternOne = darkFour;
+          var one = Math.floor(Math.random() * maxDarkIndex);
+          var two = Math.floor(Math.random() * maxDarkIndex);
+          var three = Math.floor(Math.random() * maxDarkIndex);
+          var four = Math.floor(Math.random() * maxDarkIndex);
+          var five = Math.floor(Math.random() * maxDarkIndex);
+          var six  = Math.floor(Math.random() * maxDarkIndex);
+          this.patternSix = this.darkDatabaseList[one];
 
+          this.patternThree = this.darkDatabaseList[three];
+
+          this.patternFour  = this.darkDatabaseList[four];
+
+          this.patternOne = this.darkDatabaseList[two];
+          this.patternTwo = this.darkDatabaseList[five];
+          this.patternFive = this.darkDatabaseList[six];
+
+
+          if(wasRecurse) { 
+          const maxRegIndex = this.patternDatabaseList.length - 1;
+          var oneReg = Math.floor(Math.random() * maxRegIndex);
+          var twoReg = Math.floor(Math.random() * maxRegIndex);
+          var threeReg = Math.floor(Math.random() * maxRegIndex);
+          this.patternOne = this.patternDatabaseList[oneReg];
+          this.patternTwo = this.patternDatabaseList[twoReg];
+          this.patternFive = this.patternDatabaseList[threeReg];
+          }
           this.getRandomArtAlg(clear, recurse, recurseStep);
         } else {
           this.getRandomArtAlg(clear, recurse, recurseStep);
@@ -636,7 +648,7 @@ export class GeneratorComponent implements OnInit {
       await this.getRandomArt(clear, recurseStep);
     } else {
       this.saveCurrentArt(clear);
-      this.ctx.translate(-this.offset_x, -this.offset_y);
+      // this.ctx.translate(-this.offset_x, -this.offset_y);
     }
   }
   async getSecondSmallLayer(norm) {

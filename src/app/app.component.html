@@ -118,72 +118,85 @@
     <div class="relative overflow-scroll" style="margin-left: 5%" fxFlex="40" fxFlexOffset.xl="5" fxFlexOffset.md="5"
       fxFlexOffset.lg="5" fxFlexOffset.md="0" fxFlexOffset.sm="0" [fxShow.md]="!isMainPhotoView"
       [fxShow.sm]="!isMainPhotoView" [fxShow.xs]="!isMainPhotoView" fxFlex.md="100" fxFlex.sm="100" fxFlex.xs="100">
-
-      <mat-grid-list *ngIf="!showFavorites" class="canvas-height" cols="5" rows="5" gutterSize="5px">
-        <div [fxShow]="!imagePopulationDone" #loaderCanvas class="absolute margin-auto loader">
-        </div>
-        <mat-grid-tile fxLayout="row" *ngFor="let savedImg of savedImageArr; let i = index;">
-          <img class="on-hover-outline height-100 width-100 float-left" [ngClass]="{'selected': i === currImageIndex}"
-            (click)="renderImage(i)" [(src)]="savedImageArr[i]['src']" />
-          <span class="img-action-buttons" fxLayout="row">
-            <span [fxShow.lg]="true" [fxShow.md]="true" [fxShow.sm]="false" [fxShow.xs]="false">
-              <i (click)="openDeleteDialog(savedImg, i)" class="material-icons on-hover-trash heart">
-                delete
-              </i>
-              <i (click)="saveToFavorites(savedImg, i)" class="material-icons on-hover-trash heart" [ngClass]="{
+      <div class="canvas-height">
+        <mat-grid-list class="list-height" *ngIf="!showFavorites" cols="5" rows="5" gutterSize="5px">
+          <div [fxShow]="!imagePopulationDone" #loaderCanvas class="absolute margin-auto loader">
+          </div>
+          <mat-grid-tile fxLayout="row" *ngFor="let savedImg of savedImageArr; let i = index;">
+            <img class="on-hover-outline height-100 width-100 float-left" [ngClass]="{'selected': i === currImageIndex}"
+              (click)="renderImage(i)" [(src)]="savedImageArr[i]['src']" />
+            <span class="img-action-buttons" fxLayout="row">
+              <span [fxShow.lg]="true" [fxShow.md]="true" [fxShow.sm]="false" [fxShow.xs]="false">
+                <i (click)="openDeleteDialog(savedImg, i)" class="material-icons on-hover-trash heart">
+                  delete
+                </i>
+                <i (click)="saveToFavorites(savedImg, i)" class="material-icons on-hover-trash heart" [ngClass]="{
                   'show': savedImg.favorite 
                 }">
-                favorite
-              </i>
+                  favorite
+                </i>
+              </span>
+
+              <span [fxShow.xl]="false" [fxShow.lg]="false" [fxShow.md]="false" [fxShow.sm]="true" [fxShow.xs]="true">
+                <i (click)="openDeleteDialog(savedImg, i)" class="material-icons heart">
+                  delete_outline
+                </i>
+                <i (click)="saveToFavorites(savedImg, i)" class="material-icons heart">
+                  {{ savedImg.favorite ? 'favorite' : 'favorite_border'}}
+                </i>
+              </span>
             </span>
+          </mat-grid-tile>
 
-            <span [fxShow.xl]="false" [fxShow.lg]="false" [fxShow.md]="false" [fxShow.sm]="true" [fxShow.xs]="true">
-              <i (click)="openDeleteDialog(savedImg, i)" class="material-icons heart">
-                delete_outline
-              </i>
-              <i (click)="saveToFavorites(savedImg, i)" class="material-icons heart">
-                {{ savedImg.favorite ? 'favorite' : 'favorite_border'}}
-              </i>
-            </span>
-          </span>
-        </mat-grid-tile>
+        </mat-grid-list>
 
-      </mat-grid-list>
+        <mat-grid-list class="list-height" *ngIf="showFavorites" [ngClass]="{'no-click': !showFavorites}" cols="5"
+          rows="5" gutterSize="5px">
+          <mat-grid-tile *ngFor="let savedImg of favoritesArr; let i = index;">
 
-      <mat-grid-list *ngIf="showFavorites" [ngClass]="{'no-click': !showFavorites}" class="canvas-height" cols="5"
-        rows="5" gutterSize="5px">
-        <mat-grid-tile *ngFor="let savedImg of favoritesArr; let i = index;">
-
-          <img class="on-hover-outline height-100 width-100 float-left" [ngClass]="{
+            <img class="on-hover-outline height-100 width-100 float-left" [ngClass]="{
                   'selected': i === currImageIndex
                 }" (click)="renderImage(i)" [(src)]="savedImg.src" />
-          <span class="img-action-buttons" fxLayout="row">
+            <span class="img-action-buttons" fxLayout="row">
 
-            <span [fxShow.lg]="true" [fxShow.md]="true" [fxShow.sm]="false" [fxShow.xs]="false">
+              <span [fxShow.lg]="true" [fxShow.md]="true" [fxShow.sm]="false" [fxShow.xs]="false">
 
-              <!-- <i (click)="openDeleteDialog(savedImg, i)" class="material-icons on-hover-trash">
+                <!-- <i (click)="openDeleteDialog(savedImg, i)" class="material-icons on-hover-trash">
                 delete
               </i> -->
-              <i (click)="saveToFavoritesFromFavorite(savedImg, i)" class="material-icons on-hover-trash heart"
-                [ngClass]="{
+                <i (click)="saveToFavoritesFromFavorite(savedImg, i)" class="material-icons on-hover-trash heart"
+                  [ngClass]="{
                           'show': savedImg.favorite 
                         }">
-                favorite
-              </i>
-            </span>
+                  favorite
+                </i>
+              </span>
 
 
-            <span [fxShow.lg]="false" [fxShow.md]="false" [fxShow.sm]="true" [fxShow.xs]="true">
-              <i (click)="openDeleteDialog(savedImg, i)" class="material-icons">
-                delete_outline
-              </i>
-              <i (click)="saveToFavorites(savedImg, i)" class="material-icons heart">
-                {{ savedImg.favorite ? 'favorite' : 'favorite_border'}}
-              </i>
+              <span [fxShow.lg]="false" [fxShow.md]="false" [fxShow.sm]="true" [fxShow.xs]="true">
+                <i (click)="openDeleteDialog(savedImg, i)" class="material-icons">
+                  delete_outline
+                </i>
+                <i (click)="saveToFavorites(savedImg, i)" class="material-icons heart">
+                  {{ savedImg.favorite ? 'favorite' : 'favorite_border'}}
+                </i>
+              </span>
             </span>
-          </span>
-        </mat-grid-tile>
-      </mat-grid-list>
+          </mat-grid-tile>
+        </mat-grid-list>
+        <div style="height: 14px" fxLayout="row" fxShow="true" fxShow.md="false" fxShow.sm="false" fxShow.xs="false"
+          fxLayoutAlign="start start">
+          <span fxLayout="row" class="material-text" fxLayoutGap="3px"
+            style="font-size: 14px !important; text-align: left"> <span>Art and Code by <a
+                href="https://github.com/kvanlaan" class="name" target="_blank"> Katrina Van Laan</a></span>&nbsp;<span>
+              <!-- QA by <a
+              href="https://www.linkedin.com/in/brian-bookman-353213159" class="name" target="_blank">Brian Bookman.</a>
+             -->
+
+            </span> </span>
+        </div>
+      </div>
+
     </div>
     <div fxFlex>
       <span class="text-align-left" fxFlex="7" fxShow.md="false" fxShow.sm="false" fxShow.xs="false" [fxShow]="ready"
@@ -236,16 +249,16 @@
         (renderDoneEmit)="setRenderDone(true)"></generator>
     </div>
   </div>
-  <div fxLayout="row" fxShow="true" fxShow.md="false" fxShow.sm="false" fxShow.xs="false" fxLayoutAlign="start start">
+  <!-- <div fxLayout="row" fxShow="true" fxShow.md="false" fxShow.sm="false" fxShow.xs="false" fxLayoutAlign="start start">
     <span fxLayout="row" class="material-text" fxFlexOffset="5" fxLayoutGap="3px"
       style="font-size: 14px !important; text-align: left"> <span>Art and Code by <a href="https://github.com/kvanlaan"
           class="name" target="_blank"> Katrina Van Laan</a></span>&nbsp;<span>
-        <!-- QA by <a
+        QA by <a
           href="https://www.linkedin.com/in/brian-bookman-353213159" class="name" target="_blank">Brian Bookman.</a>
-         -->
+        
 
       </span> </span>
-  </div>
+  </div> -->
 </div>
 <div [fxShow]="!ready" class="absolute margin-auto loader">
 </div>

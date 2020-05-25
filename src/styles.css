@@ -49,6 +49,10 @@ html {
   color: red;
 }
 
+.list-height {
+  height: calc(100% - 14px);
+}
+
 .cdk-overlay-pane {
   position: fixed !important;
   margin: auto !important;
@@ -501,7 +505,7 @@ input:hover::before {
 
   /* Styles */
   .canvas-height {
-    height: 750.680851px;
+    height: 710.680851px;
   }
 
 }

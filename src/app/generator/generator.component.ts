@@ -96,6 +96,10 @@ export class GeneratorComponent implements OnInit {
   dark;
   normalColor;
   genStarted = false;
+  transWithRecurse = false;  
+  largeRecurseStep = false;
+  forceBeginPath = false;
+  wasRecurse = false;
 
   constructor(public http: HttpClient, public utilities: Utilities) {
     this.utilities = utilities;
@@ -117,6 +121,7 @@ export class GeneratorComponent implements OnInit {
             if (item["metadata"]["name"].indexOf('dark') > -1) {
               storageRef.child(item["metadata"]["name"]).getDownloadURL().then(async function (this, url) {
                 const darkImage = new Image();
+                darkImage.name = item["metadata"]["name"];
                 darkImage.crossOrigin = "Anonymous";
 
                 darkImage.src = url;
@@ -133,18 +138,17 @@ export class GeneratorComponent implements OnInit {
               storageRef.child(item["metadata"]["name"]).getDownloadURL().then(function (this, url) {
                 const transImage = new Image();
                 transImage.crossOrigin = "Anonymous";
-
+                transImage.name = item["metadata"]["name"];
                 transImage.src = url;
                 this.transDatabaseList.push(transImage)
                 // this.patternDatabaseList.push(darkImage)
-
               }.bind(this));
             } 
             else {
               storageRef.child(item["metadata"]["name"]).getDownloadURL().then(async function (this, url) {
                 const darkImage = new Image();
                 darkImage.crossOrigin = "Anonymous";
-
+                darkImage.name = item["metadata"]["name"];
                 darkImage.src = url;
                 this.patternDatabaseList.push(darkImage)
                 if(!this.genStarted) {
@@ -296,6 +300,7 @@ export class GeneratorComponent implements OnInit {
       this.patternSix = this.customImagesLoaded[5];
     }
     if (recurseStep === undefined) {
+      this.transWithRecurse = this.utilities.randomlyChooseTrueOrFalse();
       this.offset_x = (Math.random() * 50) - 50;
       this.offset_y = (Math.random() * 50) - 50;
 
@@ -307,7 +312,7 @@ export class GeneratorComponent implements OnInit {
       this.ctx.fillStyle = 'white';
       this.ctx.fillRect(0, 0, this.fullCanvasSize, this.fullCanvasSize);
       // this.ctx.translate(this.offset_x, this.offset_y);
-      let wasRecurse = this.recurse;
+      this.wasRecurse = this.recurse;
       if(!dark) {
       recurse = this.utilities.randomlyChooseTrueOrFalseLessHalf();
       } else {
@@ -409,7 +414,7 @@ export class GeneratorComponent implements OnInit {
           this.patternFive = this.darkDatabaseList[six];
 
 
-          if(wasRecurse) { 
+          if(this.wasRecurse) { 
           const maxRegIndex = this.patternDatabaseList.length - 1;
           var oneReg = Math.floor(Math.random() * maxRegIndex);
           var twoReg = Math.floor(Math.random() * maxRegIndex);
@@ -528,9 +533,6 @@ export class GeneratorComponent implements OnInit {
     }
   }
 
-  largeRecurseStep = false;
-  forceBeginPath = false;
-
   async getRandomArtAlg(clear, recurse, recurseStep) {
     this.patternFillSingleBegun = false;
 
@@ -604,7 +606,8 @@ export class GeneratorComponent implements OnInit {
             }
           }
         }
-        await this.drawShape(randomShape);
+        const transPattern = ((recurseStep === this.startingRecurseStep) && this.recurse && this.transWithRecurse && this.utilities.randomlyChooseTrueOrFalse() ) ? true : false;
+        await this.drawShape(randomShape, false, false, transPattern);
         this.layerCounter++;
       }
     }
@@ -651,6 +654,7 @@ export class GeneratorComponent implements OnInit {
       // this.ctx.translate(-this.offset_x, -this.offset_y);
     }
   }
+
   async getSecondSmallLayer(norm) {
     let count = 25;
     // norm = true;
@@ -953,7 +957,8 @@ export class GeneratorComponent implements OnInit {
         if (rand) {
           this.ctx.lineWidth = Math.random() * 10;
         }
-      }
+      } 
+
       await this.drawShape(randomShape, false, true);
 
       this.layerCounter++;
@@ -983,7 +988,7 @@ export class GeneratorComponent implements OnInit {
   });
  }
 
-  async drawShape(shape, small?, main?) {
+  async drawShape(shape, small?, main?, trans?) {
     this.repeat = this.utilities.randomlyChooseTrueOrFalse() ? 'no-repeat' : 'repeat';
 
     var offset_x = 0;
@@ -1006,6 +1011,7 @@ export class GeneratorComponent implements OnInit {
     if(this.recurse) {
       this.patternFill = true;
     }
+    let currImage = null;
     if (this.patternFill) {
       // this.ctx.translate(this.offset_x, this.offset_y);
       if (!this.patternFillSingleBegun && (this.isFrieze || this.isFriezeTwo || this.isTrunks || this.isArabesque || this.isMexico || this.isBedroom)) {
@@ -1018,6 +1024,7 @@ export class GeneratorComponent implements OnInit {
       if (this.patternSwitch === 1) {
 
       this.currentImage = this.patternThree;
+      currImage = this.patternThree;
       if(!this.currentImage.complete) {
         await  this.onload2promise(this.currentImage);
       }
@@ -1026,6 +1033,7 @@ export class GeneratorComponent implements OnInit {
       if (rand === 1) {
       this.currentImage = this.patternTwo;
       this.currentImage = this.patternThree;
+      currImage = this.patternTwo;
       if(!this.currentImage.complete) {
         await this.onload2promise(this.currentImage);
       }
@@ -1033,6 +1041,7 @@ export class GeneratorComponent implements OnInit {
              } else if (rand === 2) {
       this.currentImage = this.patternFour;
       this.currentImage = this.patternThree;
+      currImage = this.patternFour;
       if(!this.currentImage.complete) {
         await this.onload2promise(this.currentImage);
       }
@@ -1041,6 +1050,7 @@ export class GeneratorComponent implements OnInit {
            } else if (this.patternSwitch === 3) {
       this.currentImage = this.patternSix;
       this.currentImage = this.patternThree;
+      currImage = this.patternSix;
       if(!this.currentImage.complete) {
         await this.onload2promise(this.currentImage);
       }
@@ -1050,6 +1060,7 @@ export class GeneratorComponent implements OnInit {
       if (rand === 1) {
       this.currentImage = this.patternFour;
       this.currentImage = this.patternThree;
+      currImage = this.patternFour;
       if(!this.currentImage.complete) {
         await this.onload2promise(this.currentImage);
       }
@@ -1058,6 +1069,7 @@ export class GeneratorComponent implements OnInit {
              } else if (rand === 2) {
       this.currentImage = this.patternSix;
       this.currentImage = this.patternThree;
+      currImage = this.patternSix;
       if(!this.currentImage.complete) {
         await this.onload2promise(this.currentImage);
       }
@@ -1066,6 +1078,7 @@ export class GeneratorComponent implements OnInit {
            } else if (this.patternSwitch === 5) {
       this.currentImage = this.patternTwo;
       this.currentImage = this.patternThree;
+      currImage = this.patternTwo;
       if(!this.currentImage.complete) {
         await this.onload2promise(this.currentImage);
       }
@@ -1073,6 +1086,7 @@ export class GeneratorComponent implements OnInit {
            } else if (this.patternSwitch === 6) {
       this.currentImage = this.patternOne;
       this.currentImage = this.patternThree;
+      currImage = this.patternOne;
       if(!this.currentImage.complete) {
         await this.onload2promise(this.currentImage);
       }
@@ -1080,6 +1094,7 @@ export class GeneratorComponent implements OnInit {
            } else if (this.patternSwitch === 7) {
       this.currentImage = this.patternFive;
       this.currentImage = this.patternThree;
+      currImage = this.patternFive;
       if(!this.currentImage.complete) {
         await this.onload2promise(this.currentImage);
       }
@@ -1087,6 +1102,7 @@ export class GeneratorComponent implements OnInit {
            } else {
       this.currentImage = this.patternFour;
       this.currentImage = this.patternThree;
+      currImage = this.patternFour;
       if(!this.currentImage.complete) {
         await this.onload2promise(this.currentImage);
       }
@@ -1095,6 +1111,7 @@ export class GeneratorComponent implements OnInit {
       if (this.isFrieze && main) {
       this.currentImage = this.patternThree;
       this.currentImage = this.patternThree;
+      currImage = this.patternThree;
       if(!this.currentImage.complete) {
         await this.onload2promise(this.currentImage);
       }
@@ -1103,6 +1120,7 @@ export class GeneratorComponent implements OnInit {
       if (this.isFriezeTwo && main) {
       this.currentImage = this.patternFive;
       this.currentImage = this.patternThree;
+      currImage = this.patternFive;
       if(!this.currentImage.complete) {
         await this.onload2promise(this.currentImage);
       }
@@ -1111,6 +1129,7 @@ export class GeneratorComponent implements OnInit {
       if (this.isTrunks && main) {
       this.currentImage = this.patternSix;
       this.currentImage = this.patternThree;
+      currImage = this.patternSix;
       if(!this.currentImage.complete) {
         await this.onload2promise(this.currentImage);
       }
@@ -1120,6 +1139,7 @@ export class GeneratorComponent implements OnInit {
       if (this.isArabesque && main) {
       this.currentImage = this.patternOne;
       this.currentImage = this.patternThree;
+      currImage = this.patternOne;
       if(!this.currentImage.complete) {
         await this.onload2promise(this.currentImage);
       }
@@ -1129,6 +1149,7 @@ export class GeneratorComponent implements OnInit {
       if (this.isMexico && main) {
       this.currentImage = this.patternFour;
       this.currentImage = this.patternThree;
+      currImage = this.patternFour;
       if(!this.currentImage.complete) {
         await this.onload2promise(this.currentImage);
       }
@@ -1142,6 +1163,14 @@ export class GeneratorComponent implements OnInit {
            }
     } else {
       console.log('NOT PATTERN', 'this.recurse', this.recurse);
+    }
+    if(trans && this.transDatabaseList.length > 1) {
+      const transIndex = Math.floor(Math.random() * (this.transDatabaseList.length - 1));
+      this.currentImage = this.transDatabaseList[transIndex];
+      if(!this.currentImage.complete) {
+        await this.onload2promise(this.currentImage);
+      }
+      this.ctx.fillStyle = this.ctx.createPattern(this.currentImage, this.repeat);
     }
 
     rand = Math.floor(Math.random() * 100) + 1;
@@ -1376,7 +1405,6 @@ export class GeneratorComponent implements OnInit {
 
     // this.ctx.setTransform(1, 0, 0, 1, 0, 0);
     // this.ctx.restore();    // }
-
   }
 
   renderImage(index?: number, favorites?: boolean) {

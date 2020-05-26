@@ -320,7 +320,6 @@ export class GeneratorComponent implements OnInit {
         recurse = false;
       }
       this.recurse = recurse;
-      this.ctx.filter = this.recurse ? 'sepia(6%)': 'sepia(9%)';
       this.ctx.scale(this.restoreScale, this.restoreScale);
       this.ctxTwo.scale(this.restoreScale,this.restoreScale);
       if(recurse) {
@@ -1451,7 +1450,6 @@ export class GeneratorComponent implements OnInit {
       img.src = this.canvas.toDataURL();
     }
     this.ctxTwo.save();
-    this.ctx.filter = 'sepia(0%)';
 
     this.ctxTwo.scale(this.restoreScale, this.restoreScale);
     img.onload = function () {

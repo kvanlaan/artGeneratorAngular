@@ -2,7 +2,7 @@
   <div fxLayout="row" fxLayoutWrap>
     <div fxFlex="40" fxFlex.md="100" fxFlex.sm="100" fxFlex.xs="100" fxFlexOffset="5" fxFlexOffset.sm="1"
       fxLayoutAlign="start center">
-      <div class="material-text iphone-6-bottom-margin" fxFlex fxLayoutAlign="start center">Art Generator</div>
+      <div class="material-text iphone-6-bottom-margin" fxFlex fxLayoutAlign="start center">Art Generator<span>&nbsp; by Katrina Van Laan</span></div>
       <div fxFlex class="material-text" style="font-size: 14px !important; margin-right: -7%" fxShow="true"
         fxShow.md="false" fxShow.sm="false" fxShow.xs="false" fxLayoutAlign="end center">Each piece is algorithmically
         unique.</div>
@@ -38,7 +38,7 @@
   <div fxFlexOffset="2" fxLayout="row" fxShow="false" fxShow.md="true" fxShow.sm="true" fxShow.xs="true" fxLayoutWrap>
     <div fxFlex fxFlexOffset="5" fxFlexOffset.sm="1" class="material-text"
       style="font-size: 14px !important; text-align: left" fxLayoutAlign="start center"> Each piece is algorithmically
-      unique.</div>
+      unique. By Katrina Van Laan.</div>
     <div fxFlex="20" fxLayoutAlign="end center">
       <button *ngIf="login" fxFlex="5" (click)="signOut()" mat-stroked-button>
         <span> Sign Out </span>
@@ -63,7 +63,7 @@
       <button [disabled]="!renderDone" (click)="renderDone && getRandomArt(true)" class="float-left inline"
         mat-stroked-button>
         Get New Art</button>
-      <a href="#" target="_blank" class="inline" #downloadLinkTwo (click)="!renderDone && download(downloadLinkTwo)"
+      <a href="#" target="_blank" class="inline" #downloadLinkTwo (click)="renderDone && download(downloadLinkTwo)"
         download="artGenerator.jpg">
         <i class="material-icons">
           save_alt

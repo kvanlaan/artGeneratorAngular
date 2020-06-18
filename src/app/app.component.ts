@@ -521,7 +521,7 @@ export class AppComponent {
     this.showFavorites = !this.showFavorites;
   }
 
-  delete(imageObjOld, index?: number) {
+  delete(imageObj, index?: number) {
 
     if (index === undefined) {
       index = this.currImageIndex;

@@ -131,7 +131,7 @@ export class AppComponent {
     // setting up firebase
     var config = {
       apiKey: "AIzaSyD98GbUHORmW3-C9nxvqboQLapTXxnSMM0",
-      authDomain: "artgenerator-8008a.firebaseapp.com",
+      authDomain: "artgenerator.herokuapp.com",
       databaseURL: "https://artgenerator-8008a.firebaseio.com",
       projectId: "artgenerator-8008a",
       storageBucket: "artgenerator-8008a.appspot.com",

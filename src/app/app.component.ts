@@ -135,7 +135,8 @@ export class AppComponent {
       databaseURL: "https://artgenerator-8008a.firebaseio.com",
       projectId: "artgenerator-8008a",
       storageBucket: "artgenerator-8008a.appspot.com",
-      messagingSenderId: "858892303412"
+      messagingSenderId: "858892303412",
+      appId: "1:858892303412:web:98aab2867ce380d60e5e61",
     };
     firebase.initializeApp(config);
     this.database = firebase.firestore();

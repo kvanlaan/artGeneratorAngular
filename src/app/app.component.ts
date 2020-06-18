@@ -529,32 +529,32 @@ export class AppComponent {
     if (index < this.currImageIndex) {
       this.currImageIndex--;
     }
-    // if (this.user) {
-    //   const trimmedName = this.email;
-    //   this.database.collection('users/' + trimmedName + '/images').doc(imageObj.name).delete().then(function (docRef) {
-    //     console.log('Successfully deleted');
-    //   })
-    //     .catch(function (error) {
-    //       console.error('Error adding document: ', error);
-    //     });
-    // } else if(this.guid) {
-    //   this.database.collection('users/' + this.guid + '/images').doc(imageObj.name).delete().then(function (docRef) {
-    //     console.log('Successfully deleted');
-    //   })
-    //     .catch(function (error) {
-    //       console.error('Error adding document: ', error);
-    //     });
-    // }
-
-    for(var imageObj of this.savedImageArr) {
-
-    this.database.collection('users/' + this.guid + '/images').doc(imageObj.name).delete().then(function (docRef) {
-      console.log('Successfully deleted');
-    })
-      .catch(function (error) {
-        console.error('Error adding document: ', error);
-      });
+    if (this.user) {
+      const trimmedName = this.email;
+      this.database.collection('users/' + trimmedName + '/images').doc(imageObj.name).delete().then(function (docRef) {
+        console.log('Successfully deleted');
+      })
+        .catch(function (error) {
+          console.error('Error adding document: ', error);
+        });
+    } else if(this.guid) {
+      this.database.collection('users/' + this.guid + '/images').doc(imageObj.name).delete().then(function (docRef) {
+        console.log('Successfully deleted');
+      })
+        .catch(function (error) {
+          console.error('Error adding document: ', error);
+        });
     }
+
+    // for(var imageObj of this.savedImageArr) {
+
+    // this.database.collection('users/' + this.guid + '/images').doc(imageObj.name).delete().then(function (docRef) {
+    //   console.log('Successfully deleted');
+    // })
+    //   .catch(function (error) {
+    //     console.error('Error adding document: ', error);
+    //   });
+    // }
 
 
 

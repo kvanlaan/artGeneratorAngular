@@ -177,7 +177,7 @@ export class AppComponent {
   }
 
   openDeleteDialog(imgObj, index) {
-    if (!this.getFromLocal(this.disableCustomImagesDialogKey) && !document.getElementById('delete')) {
+    if (!this.getFromLocal(this.disableDeleteDialogKey) && !document.getElementById('delete')) {
       this.dialogRef = this.dialog.open(DeleteDialogComponent, {
         width: '300px'
       });
@@ -545,18 +545,6 @@ export class AppComponent {
           console.error('Error adding document: ', error);
         });
     }
-
-    // for(var imageObj of this.savedImageArr) {
-
-    // this.database.collection('users/' + this.guid + '/images').doc(imageObj.name).delete().then(function (docRef) {
-    //   console.log('Successfully deleted');
-    // })
-    //   .catch(function (error) {
-    //     console.error('Error adding document: ', error);
-    //   });
-    // }
-
-
 
 
     this.savedImageArr.splice(index, 1);

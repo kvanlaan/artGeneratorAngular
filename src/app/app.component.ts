@@ -146,7 +146,7 @@ export class AppComponent {
     this.user = firebase.auth().currentUser;
 
     firebase.auth().onAuthStateChanged(async function (this, user) {
-      if (!this.login && !user && location.href.indexOf('loggedOut') >= 0 && location.href.indexOf('authenticationTriggered') > - 0) {
+      if (!this.login && !user && location.href.indexOf('loggedOut') >= 0) {
         this.openLoginModal();
       } else {
         this.user = user;
@@ -265,9 +265,6 @@ export class AppComponent {
   }
 
   async openLoginModal() {
-    if (location.href.indexOf('authenticationTriggered') < 0) {
-      location.href += '/authenticationTriggered';
-    }
     this.dialogRef = this.dialog.open(LoginDialogComponent, {
       width: '300px'
     });

@@ -9,7 +9,7 @@
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = ("<div fxLayout=\"column\" fxFlexFill>\n  <div fxLayout=\"row\" fxLayoutWrap>\n    <div fxFlex=\"40\" fxFlex.md=\"100\" fxFlex.sm=\"100\" fxFlex.xs=\"100\" fxFlexOffset=\"5\" fxFlexOffset.sm=\"1\"\n      fxLayoutAlign=\"start center\">\n      <div class=\"material-text iphone-6-bottom-margin\" fxFlex fxLayoutAlign=\"start center\">Art Generator</div>\n      <div fxFlex class=\"material-text\" style=\"font-size: 14px !important\" fxShow=\"true\" fxShow.md=\"false\"\n        fxShow.sm=\"false\" fxShow.xs=\"false\" fxLayoutAlign=\"end center\">Each piece is algorithmically unique.</div>\n    </div>\n\n    <div fxFlex>\n      <div fxFlex fxFlexOffset=\"7\" fxShow=\"true\" fxLayoutGap=\"5px\" fxShow.md=\"false\" fxShow.sm=\"false\" fxShow.xs=\"false\"\n        fxLayoutAlign=\"start center\">\n        <button [disabled]=\"!renderDone\" (click)=\"getRandomArt(true)\" class=\"float-left inline\" mat-stroked-button>\n          Get New Art</button>\n        <a href=\"#\" target=\"_blank\" class=\"float-left inline\" #downloadLink (click)=\"download(downloadLink)\"\n          download=\"art.jpg\">\n          <button [disabled]=\"!renderDone\" mat-stroked-button>\n            Save this art\n          </button>\n        </a>\n      </div>\n      <div fxFlex fxShow=\"true\" fxLayoutAlign=\"end center\">\n        <button [fxShow]=\"!login\" (click)=\"openLoginModal()\" mat-stroked-button>\n          <span> Sign In </span>\n        </button>\n        <span *ngIf=\"login\" fxLayoutAlign=\"horizontal center\" fxLayoutGap=\"5px\">\n          <span>{{email}}</span>\n          <button (click)=\"signOut()\" fxShow.md=\"false\" fxShow.sm=\"false\" fxShow.xs=\"false\"\n            mat-stroked-button>\n            <span> Sign Out </span>\n          </button>\n        </span>\n      </div>\n      <div fxFlex=\"6\" fxShow.md=\"false\" fxShow.sm=\"false\" fxShow.xs=\"false\"></div>\n    </div>\n  </div>\n  <div fxFlexOffset=\"2\" fxLayout=\"row\" fxShow=\"false\" fxShow.md=\"true\" fxShow.sm=\"true\" fxShow.xs=\"true\" fxLayoutWrap>\n    <div fxFlex fxFlexOffset=\"5\" fxFlexOffset.sm=\"1\" class=\"material-text\"\n      style=\"font-size: 14px !important; text-align: left\" fxLayoutAlign=\"start center\"> Each piece is algorithmically\n      unique.</div>\n    <div fxFlex=\"20\" fxLayoutAlign=\"end center\">\n      <button *ngIf=\"login\" fxFlex=\"5\" (click)=\"signOut()\" mat-stroked-button>\n        <span> Sign Out </span>\n      </button>\n    </div>\n  </div>\n\n  <div style=\"padding-top: 15px; padding-bottom: 10px;\" class=\"iphone-6-margin\" fxLayout=\"row\" fxShow=\"false\" fxShow.md=\"true\"\n    fxShow.sm=\"true\" fxShow.xs=\"true\" fxLayoutWrap fxLayoutAlign=\"center center\">\n    <mat-button-toggle-group [(ngModel)]=\"isMainPhotoView\">\n      <mat-button-toggle [value]=\"true\"> <i class=\"material-icons\">\n          photo\n        </i></mat-button-toggle>\n      <mat-button-toggle [value]=\"false\"> <i class=\"material-icons\">\n          view_module\n        </i></mat-button-toggle>\n    </mat-button-toggle-group>\n  </div>\n  <div style=\"padding-top: 5px; padding-bottom: 5px\" fxFlexOffset=\"1\" fxLayout=\"row\" fxShow=\"false\" fxShow.md=\"true\"\n    fxShow.sm=\"true\" fxShow.xs=\"true\" fxLayoutWrap>\n    <div fxLayoutAlign=\"start center\" fxLayoutGap=\"5px\" style=\"padding-right: 5px\">\n      <button [disabled]=\"!renderDone\" (click)=\"getRandomArt(true)\" class=\"float-left inline\" mat-stroked-button>\n        Get New Art</button>\n      <a href=\"#\" target=\"_blank\" class=\"inline\" #downloadLinkTwo (click)=\"!renderDone && download(downloadLinkTwo)\"\n        download=\"artGenerator.jpg\">\n        <i class=\"material-icons\">\n          save_alt\n        </i>\n      </a>\n    </div>\n\n    <div [fxShow.md]=\"!isMainPhotoView\" [fxShow.sm]=\"!isMainPhotoView\" [fxShow.xs]=\"!isMainPhotoView\" fxLayout=\"row\"\n      fxFlex fxLayoutAlign=\"end center\">\n      <span (click)=\"filterFavorites()\" class=\"hover-red\">\n        <i class=\"material-icons\">\n          filter_list\n        </i>\n\n        <i [fxShow]=\"showFavorites\" class=\"material-icons\">\n          favorite\n        </i>\n        <i [fxShow]=\"!showFavorites\" class=\"material-icons\">\n          favorite_border\n        </i>\n      </span>\n    </div>\n    <div [fxShow.md]=\"isMainPhotoView\" [fxShow.sm]=\"isMainPhotoView\" [fxShow.xs]=\"isMainPhotoView\" fxLayout=\"row\"\n      fxLayoutAlign=\"end center\" fxLayoutGap=\"5px\">\n      <mat-slide-toggle matTooltip=\"Lock/Customize Patterns\" [checked]=\"customImagesActive\"\n        (change)=\"toggleImages()\"></mat-slide-toggle>\n      <span *ngIf=\"ready\" fxLayout=\"row\" fxLayoutAlign=\"start center\">\n        <span *ngFor=\"let customImage of customImages; let i = index\"\n          [ngStyle]=\"{'background-image': 'url(' + this.customImages[i]?.src + ')'}\" class=\"tile\">\n          <input #fileInput class=\"file-input\" type=\"file\" multiple (change)=\"uploadCustomImage(i, $event)\">\n          <span class=\"upload hover\" fxLayoutAlign=\"center end\">\n            <i [fxShow]=\"customImage.ready\" class=\"material-icons heart margin-top-auto bottom-0\">\n              arrow_upward\n            </i>\n          </span>\n          <span [fxShow]=\"!customImage.ready\" class=\"upload\" fxLayoutAlign=\"center end\">\n            <div class=\"margin-auto loader small\"></div>\n          </span>\n          <span [fxShow]=\"customImage.fileTooBig\" class=\"upload warning\" fxLayoutAlign=\"end center\" fxLayout=\"column\">\n            <i class=\"material-icons heart margin-top-auto bottom-0\">\n              warning\n            </i>\n          </span>\n        </span>\n      </span>\n    </div>\n  </div>\n  <div class=\"min-height-450 iphone-6-top-margin\" fxLayout=\"row\" fxFlexOffset.md=\"5\" fxFlexOffset.sm=\"2\" fxLayout.md=\"column\"\n    fxLayout.sm=\"column\" fxLayout.xs=\"column\" fxFlex.md=\"100\" fxFlex.sm=\"100\" fxFlex.xs=\"100\">\n    <div class=\"relative overflow-scroll\" fxFlex=\"40\" fxFlexOffset.xl=\"5\" fxFlexOffset.md=\"5\" fxFlexOffset.lg=\"5\"\n      fxFlexOffset.md=\"0\" fxFlexOffset.sm=\"0\" [fxShow.md]=\"!isMainPhotoView\" [fxShow.sm]=\"!isMainPhotoView\"\n      [fxShow.xs]=\"!isMainPhotoView\" fxFlex.md=\"100\" fxFlex.sm=\"100\" fxFlex.xs=\"100\">\n      <mat-grid-list *ngIf=\"!showFavorites\" class=\"canvas-height\" cols=\"5\" rows=\"5\" gutterSize=\"5px\">\n        <div [fxShow]=\"!imagePopulationDone\" #loaderCanvas class=\"absolute margin-auto loader\">\n        </div>\n        <mat-grid-tile fxLayout=\"row\" *ngFor=\"let savedImg of savedImageArr; let i = index;\">\n          <img class=\"on-hover-outline height-100 width-100 float-left\" [ngClass]=\"{'selected': i === currImageIndex}\"\n            (click)=\"renderImage(i)\" [(src)]=\"savedImageArr[i]['src']\" />\n          <span class=\"img-action-buttons\" fxLayout=\"row\">\n            <span [fxShow.lg]=\"true\" [fxShow.md]=\"true\" [fxShow.sm]=\"false\" [fxShow.xs]=\"false\">\n              <i (click)=\"openDeleteDialog(savedImg, i)\" class=\"material-icons on-hover-trash heart\">\n                delete\n              </i>\n              <i (click)=\"saveToFavorites(savedImg, i)\" class=\"material-icons on-hover-trash heart\" [ngClass]=\"{\n                  'show': savedImg.favorite \n                }\">\n                favorite\n              </i>\n            </span>\n\n            <span [fxShow.xl]=\"false\" [fxShow.lg]=\"false\" [fxShow.md]=\"false\" [fxShow.sm]=\"true\" [fxShow.xs]=\"true\">\n              <i (click)=\"openDeleteDialog(savedImg, i)\" class=\"material-icons heart\">\n                delete_outline\n              </i>\n              <i (click)=\"saveToFavorites(savedImg, i)\" class=\"material-icons heart\">\n                {{ savedImg.favorite ? 'favorite' : 'favorite_border'}}\n              </i>\n            </span>\n          </span>\n        </mat-grid-tile>\n\n      </mat-grid-list>\n\n      <mat-grid-list *ngIf=\"showFavorites\" [ngClass]=\"{'no-click': !showFavorites}\" class=\"canvas-height\" cols=\"5\"\n        rows=\"5\" gutterSize=\"5px\">\n        <mat-grid-tile *ngFor=\"let savedImg of favoritesArr; let i = index;\">\n\n          <img class=\"on-hover-outline height-100 width-100 float-left\" [ngClass]=\"{\n                  'selected': i === currImageIndex\n                }\" (click)=\"renderImage(i)\" [(src)]=\"savedImg.src\" />\n          <span class=\"img-action-buttons\" fxLayout=\"row\">\n\n            <span [fxShow.lg]=\"true\" [fxShow.md]=\"true\" [fxShow.sm]=\"false\" [fxShow.xs]=\"false\">\n\n              <!-- <i (click)=\"openDeleteDialog(savedImg, i)\" class=\"material-icons on-hover-trash\">\n                delete\n              </i> -->\n              <i (click)=\"saveToFavoritesFromFavorite(savedImg, i)\" class=\"material-icons on-hover-trash heart\"\n                [ngClass]=\"{\n                          'show': savedImg.favorite \n                        }\">\n                favorite\n              </i>\n            </span>\n\n\n            <span [fxShow.lg]=\"false\" [fxShow.md]=\"false\" [fxShow.sm]=\"true\" [fxShow.xs]=\"true\">\n              <i (click)=\"openDeleteDialog(savedImg, i)\" class=\"material-icons\">\n                delete_outline\n              </i>\n              <i (click)=\"saveToFavorites(savedImg, i)\" class=\"material-icons heart\">\n                {{ savedImg.favorite ? 'favorite' : 'favorite_border'}}\n              </i>\n            </span>\n          </span>\n        </mat-grid-tile>\n      </mat-grid-list>\n    </div>\n    <div fxFlex>\n      <span class=\"text-align-left\" fxFlex=\"7\" fxShow.md=\"false\" fxShow.sm=\"false\" fxShow.xs=\"false\" [fxShow]=\"ready\"\n        fxLayout=\"column\" fxLayoutAlign=\"start center\" fxLayoutGap=\"9px\">\n\n        <span class=\"material-text float-left text-align-center\" fxShow.lg=\"true\" fxShow.md=\"false\" fxShow.sm=\"false\"\n          fxShow.xs=\"false\" (click)=\"filterFavorites()\"><i class=\"material-icons\">\n            filter_list\n          </i>\n\n          <i [fxShow]=\"showFavorites\" class=\"material-icons\">\n            favorite\n          </i>\n          <i [fxShow]=\"!showFavorites\" class=\"material-icons\">\n            favorite_border\n          </i>\n        </span>\n        <mat-slide-toggle matTooltip=\"Lock/Customize Patterns\"  [checked]=\"customImagesActive\"\n          (change)=\"toggleImages()\"></mat-slide-toggle>\n        <span *ngIf=\"ready\" fxLayout=\"column\" fxLayoutAlign=\"start center\">\n          <span *ngFor=\"let customImage of customImages; let i = index\"\n            [ngStyle]=\"{'background-image': 'url(' + this.customImages[i]?.src + ')'}\" class=\"tile\">\n            <input #fileInput class=\"file-input\" type=\"file\" multiple (change)=\"uploadCustomImage(i, $event)\">\n            <span class=\"upload hover\" fxLayoutAlign=\"center end\">\n              <i [fxShow]=\"customImage.ready\" class=\"material-icons heart margin-top-auto bottom-0\">\n                arrow_upward\n              </i>\n            </span>\n            <span [fxShow]=\"!customImage.ready\" class=\"upload\" fxLayoutAlign=\"center end\">\n              <div class=\"margin-auto loader small\"></div>\n            </span>\n            <span [fxShow]=\"customImage.fileTooBig\" class=\"upload warning\" fxLayoutAlign=\"end center\" fxLayout=\"column\">\n              <i class=\"material-icons heart margin-top-auto bottom-0\">\n                warning\n              </i>\n            </span>\n          </span>\n\n          <i (click)=\"openCustomImagesDialog(true)\" style=\"margin-top: 4.5px\" class=\"material-icons\">\n            info_outline\n            </i>\n        </span>\n\n      </span>\n      <generator [fxShow.md]=\"isMainPhotoView\" [fxShow.sm]=\"isMainPhotoView\" [fxShow.xs]=\"isMainPhotoView\"\n        (updateCurrentIndex)=\"updateCurrentIndex($event)\" [currImageIndex]=\"currImageIndex\"\n        [customImagesActive]=\"customImagesActive\" [customImages]=\"customImages\" [savedImageArr]=\"savedImageArr\"\n        [favoritesArr]=\"favoritesArr\" (saveImageFirebase)=\"saveImageFirebase($event)\"\n        (renderDoneEmit)=\"setRenderDone(true)\"></generator>\n    </div>\n  </div>\n  <div fxLayout=\"row\" fxShow=\"true\" fxShow.md=\"false\" fxShow.sm=\"false\" fxShow.xs=\"false\" fxLayoutAlign=\"start start\">\n    <span fxLayout=\"row\" class=\"material-text\" fxFlexOffset=\"5\" fxLayoutGap=\"3px\" style=\"font-size: 14px !important; text-align: left\"> <span>Art and Code by <a\n        href=\"https://github.com/kvanlaan\" class=\"name\" target=\"_blank\"> Katrina Van Laan</a></span>&nbsp;<span>\n          <!-- QA by <a\n          href=\"https://www.linkedin.com/in/brian-bookman-353213159\" class=\"name\" target=\"_blank\">Brian Bookman.</a>\n         -->\n        \n        </span> </span>\n  </div>\n</div>\n<div [fxShow]=\"!ready\" class=\"absolute margin-auto loader\">\n</div>");
+/* harmony default export */ __webpack_exports__["default"] = ("<div class=\"height-100vh relative\" fxLayout=\"column\" fxFlexFill>\n  <div fxLayout=\"row\" fxLayoutWrap>\n    <div fxFlex=\"40\" fxFlex.md=\"100\" fxFlex.sm=\"100\" fxFlex.xs=\"100\" fxFlexOffset=\"5\" fxFlexOffset.sm=\"1\"\n      fxLayoutAlign=\"start center\">\n      <div class=\"material-text iphone-6-bottom-margin\" fxFlex fxLayoutAlign=\"start center\">Art Generator<span fxShow=\"false\" fxShow.md=\"true\" fxShow.sm=\"true\" fxShow.xs=\"true\">&nbsp;by Katrina Van Laan</span></div>\n      <div fxFlex class=\"material-text\" style=\"font-size: 14px !important; margin-right: -7%\" fxShow=\"true\"\n        fxShow.md=\"false\" fxShow.sm=\"false\" fxShow.xs=\"false\" fxLayoutAlign=\"end center\">Each piece is algorithmically\n        unique.</div>\n    </div>\n\n    <div fxFlex>\n      <div fxFlex fxFlexOffset=\"7\" fxShow=\"true\" fxLayoutGap=\"5px\" fxShow.md=\"false\" fxShow.sm=\"false\" fxShow.xs=\"false\"\n        fxLayoutAlign=\"start center\">\n        <button [disabled]=\"!renderDone\" (click)=\"renderDone && getRandomArt(true)\" class=\"float-left inline\"\n          mat-stroked-button>\n          Get New Art</button>\n        <a href=\"#\" target=\"_blank\" class=\"float-left inline\" #downloadLink (click)=\"download(downloadLink)\"\n          download=\"art.jpg\">\n          <button [disabled]=\"!renderDone\" mat-stroked-button>\n            Save this art\n          </button>\n        </a>\n      </div>\n      <div fxFlex fxShow=\"true\" fxLayoutAlign=\"end center\">\n        <button [fxShow]=\"!login\" (click)=\"openLoginModal()\" mat-stroked-button>\n          <span> Sign In </span>\n        </button>\n        <span *ngIf=\"login\" fxLayoutAlign=\"horizontal center\" fxLayoutGap=\"5px\">\n          <span>{{email}}</span>\n          <button (click)=\"signOut()\" fxShow.md=\"false\" fxShow.sm=\"false\" fxShow.xs=\"false\" mat-stroked-button>\n            <span> Sign Out </span>\n          </button>\n        </span>\n      </div>\n      <div fxFlex=\"6\" fxShow.md=\"false\" fxShow.sm=\"false\" fxShow.xs=\"false\"></div>\n    </div>\n  </div>\n  <div fxFlexOffset=\"2\" fxLayout=\"row\" fxShow=\"false\" fxShow.md=\"true\" fxShow.sm=\"true\" fxShow.xs=\"true\" fxLayoutWrap>\n    <div fxFlex fxFlexOffset=\"5\" fxFlexOffset.sm=\"1\" class=\"material-text\"\n      style=\"font-size: 14px !important; text-align: left\" fxLayoutAlign=\"start center\"> Each piece is algorithmically\n      unique.</div>\n    <div fxFlex=\"20\" fxLayoutAlign=\"end center\">\n      <button *ngIf=\"login\" fxFlex=\"5\" (click)=\"signOut()\" mat-stroked-button>\n        <span> Sign Out </span>\n      </button>\n    </div>\n  </div>\n\n  <div style=\"padding-top: 15px; padding-bottom: 10px;\" class=\"iphone-6-margin\" fxLayout=\"row\" fxShow=\"false\"\n    fxShow.md=\"true\" fxShow.sm=\"true\" fxShow.xs=\"true\" fxLayoutWrap fxLayoutAlign=\"center center\">\n    <mat-button-toggle-group [(ngModel)]=\"isMainPhotoView\">\n      <mat-button-toggle [value]=\"true\"> <i class=\"material-icons\">\n          photo\n        </i></mat-button-toggle>\n      <mat-button-toggle [value]=\"false\"> <i class=\"material-icons\">\n          view_module\n        </i></mat-button-toggle>\n    </mat-button-toggle-group>\n  </div>\n  <div style=\"padding-top: 5px; padding-bottom: 5px\" fxFlexOffset=\"1\" fxLayout=\"row\" fxShow=\"false\" fxShow.md=\"true\"\n    fxShow.sm=\"true\" fxShow.xs=\"true\" fxLayoutWrap>\n    <div fxLayoutAlign=\"start center\" fxFlexOffset=\"5\" fxLayoutGap=\"5px\" style=\"padding-right: 5px\">\n      <button [disabled]=\"!renderDone\" (click)=\"renderDone && getRandomArt(true)\" class=\"float-left inline\"\n        mat-stroked-button>\n        Get New Art</button>\n      <a href=\"#\" target=\"_blank\" class=\"inline\" #downloadLinkTwo (click)=\"renderDone && download(downloadLinkTwo)\"\n        download=\"artGenerator.jpg\">\n        <i class=\"material-icons\">\n          save_alt\n        </i>\n      </a>\n    </div>\n\n    <div [fxShow.md]=\"!isMainPhotoView\" [fxShow.sm]=\"!isMainPhotoView\" [fxShow.xs]=\"!isMainPhotoView\" fxLayout=\"row\"\n      fxFlex fxLayoutAlign=\"end center\">\n      <span (click)=\"filterFavorites()\" class=\"hover-red\">\n        <i class=\"material-icons\">\n          filter_list\n        </i>\n\n        <i [fxShow]=\"showFavorites\" class=\"material-icons\">\n          favorite\n        </i>\n        <i [fxShow]=\"!showFavorites\" class=\"material-icons\">\n          favorite_border\n        </i>\n      </span>\n    </div>\n    <div [fxShow.md]=\"isMainPhotoView\" [fxShow.sm]=\"isMainPhotoView\" [fxShow.xs]=\"isMainPhotoView\" fxLayout=\"row\"\n      fxLayoutAlign=\"end center\" fxLayoutGap=\"5px\">\n      <mat-slide-toggle matTooltip=\"Lock/Customize Patterns\" [checked]=\"customImagesActive\" (change)=\"toggleImages()\">\n      </mat-slide-toggle>\n      <span *ngIf=\"ready\" fxLayout=\"row\" fxLayoutAlign=\"start center\">\n        <span *ngFor=\"let customImage of customImages; let i = index\"\n          [ngStyle]=\"{'background-image': 'url(' + this.customImages[i]?.src + ')'}\" class=\"tile\">\n          <input #fileInput class=\"file-input\" type=\"file\" multiple (change)=\"uploadCustomImage(i, $event)\">\n          <span class=\"upload hover\" fxLayoutAlign=\"center end\">\n            <i [fxShow]=\"customImage.ready\" class=\"material-icons heart margin-top-auto bottom-0\">\n              arrow_upward\n            </i>\n          </span>\n          <span [fxShow]=\"!customImage.ready\" class=\"upload\" fxLayoutAlign=\"center end\">\n            <div class=\"margin-auto loader small\"></div>\n          </span>\n          <span [fxShow]=\"customImage.fileTooBig\" class=\"upload warning\" fxLayoutAlign=\"end center\" fxLayout=\"column\">\n            <i class=\"material-icons heart margin-top-auto bottom-0\">\n              warning\n            </i>\n          </span>\n        </span>\n      </span>\n    </div>\n  </div>\n\n\n  <div class=\"min-height-450 iphone-6-top-margin\" fxLayout=\"row\"\n    fxLayout.md=\"column\" fxLayout.sm=\"column\" fxLayout.xs=\"column\" fxFlex.md=\"100\" fxFlex.sm=\"100\" fxFlex.xs=\"100\">\n    <div class=\"relative overflow-scroll\" style=\"margin-left: 5%\" fxFlex=\"40\" fxFlexOffset.xl=\"5\" fxFlexOffset.md=\"5\"\n      fxFlexOffset.lg=\"5\" fxFlexOffset.md=\"0\" fxFlexOffset.sm=\"0\" [fxShow.md]=\"!isMainPhotoView\"\n      [fxShow.sm]=\"!isMainPhotoView\" [fxShow.xs]=\"!isMainPhotoView\" fxFlex.md=\"100\" fxFlex.sm=\"100\" fxFlex.xs=\"100\">\n      <div class=\"canvas-height\">\n        <mat-grid-list class=\"list-height\" *ngIf=\"!showFavorites\" cols=\"5\" rows=\"5\" gutterSize=\"5px\">\n          <div [fxShow]=\"!imagePopulationDone\" #loaderCanvas class=\"absolute margin-auto loader\">\n          </div>\n          <mat-grid-tile fxLayout=\"row\" *ngFor=\"let savedImg of savedImageArr; let i = index;\">\n            <img class=\"on-hover-outline height-100 width-100 float-left\" [ngClass]=\"{'selected': i === currImageIndex}\"\n              (click)=\"renderImage(i)\" [(src)]=\"savedImageArr[i]['src']\" />\n            <span class=\"img-action-buttons\" fxLayout=\"row\">\n              <span [fxShow.lg]=\"true\" [fxShow.md]=\"true\" [fxShow.sm]=\"false\" [fxShow.xs]=\"false\">\n                <i (click)=\"openDeleteDialog(savedImg, i)\" class=\"material-icons on-hover-trash heart\">\n                  delete\n                </i>\n                <i (click)=\"saveToFavorites(savedImg, i)\" class=\"material-icons on-hover-trash heart\" [ngClass]=\"{\n                  'show': savedImg.favorite \n                }\">\n                  favorite\n                </i>\n              </span>\n\n              <span [fxShow.xl]=\"false\" [fxShow.lg]=\"false\" [fxShow.md]=\"false\" [fxShow.sm]=\"true\" [fxShow.xs]=\"true\">\n                <i (click)=\"openDeleteDialog(savedImg, i)\" class=\"material-icons heart\">\n                  delete_outline\n                </i>\n                <i (click)=\"saveToFavorites(savedImg, i)\" class=\"material-icons heart\">\n                  {{ savedImg.favorite ? 'favorite' : 'favorite_border'}}\n                </i>\n              </span>\n            </span>\n          </mat-grid-tile>\n\n        </mat-grid-list>\n\n        <mat-grid-list class=\"list-height\" *ngIf=\"showFavorites\" [ngClass]=\"{'no-click': !showFavorites}\" cols=\"5\"\n          rows=\"5\" gutterSize=\"5px\">\n          <mat-grid-tile *ngFor=\"let savedImg of favoritesArr; let i = index;\">\n\n            <img class=\"on-hover-outline height-100 width-100 float-left\" [ngClass]=\"{\n                  'selected': i === currImageIndex\n                }\" (click)=\"renderImage(i)\" [(src)]=\"savedImg.src\" />\n            <span class=\"img-action-buttons\" fxLayout=\"row\">\n\n              <span [fxShow.lg]=\"true\" [fxShow.md]=\"true\" [fxShow.sm]=\"false\" [fxShow.xs]=\"false\">\n\n                <!-- <i (click)=\"openDeleteDialog(savedImg, i)\" class=\"material-icons on-hover-trash\">\n                delete\n              </i> -->\n                <i (click)=\"saveToFavoritesFromFavorite(savedImg, i)\" class=\"material-icons on-hover-trash heart\"\n                  [ngClass]=\"{\n                          'show': savedImg.favorite \n                        }\">\n                  favorite\n                </i>\n              </span>\n\n\n              <span [fxShow.lg]=\"false\" [fxShow.md]=\"false\" [fxShow.sm]=\"true\" [fxShow.xs]=\"true\">\n                <i (click)=\"openDeleteDialog(savedImg, i)\" class=\"material-icons\">\n                  delete_outline\n                </i>\n                <i (click)=\"saveToFavorites(savedImg, i)\" class=\"material-icons heart\">\n                  {{ savedImg.favorite ? 'favorite' : 'favorite_border'}}\n                </i>\n              </span>\n            </span>\n          </mat-grid-tile>\n        </mat-grid-list>\n        <!-- <div style=\"height: 14px; position: absolute; bottom: 3px\" fxLayout=\"row\" fxShow=\"true\" fxShow.md=\"false\"\n          fxShow.sm=\"false\" fxShow.xs=\"false\" fxLayoutAlign=\"start start\">\n          <span fxLayout=\"row\" class=\"material-text\" fxLayoutGap=\"3px\"\n            style=\"font-size: 14px !important; text-align: left;\"> <span>Art and Code by <a\n                href=\"https://github.com/kvanlaan\" class=\"name\" target=\"_blank\"> Katrina Van Laan</a></span>&nbsp;<span>\n              QA by <a href=\"https://www.linkedin.com/in/brian-bookman-353213159\" class=\"name\" target=\"_blank\">Brian\n                Bookman.</a>\n\n\n            </span> </span>\n        </div> -->\n      </div>\n\n    </div>\n    <div fxFlex>\n      <span class=\"text-align-left\" fxFlex=\"7\" fxShow.md=\"false\" fxShow.sm=\"false\" fxShow.xs=\"false\" [fxShow]=\"ready\"\n        fxLayout=\"column\" fxLayoutAlign=\"start center\" fxLayoutGap=\"9px\">\n\n        <span class=\"material-text text-align-center\" fxShow.lg=\"true\" fxShow.md=\"false\" fxShow.sm=\"false\"\n          fxShow.xs=\"false\" (click)=\"filterFavorites()\">\n          <i class=\"material-icons\" style=\"display: flex\">\n            filter_list\n          </i>\n\n          <i [fxShow]=\"showFavorites\" class=\"material-icons\">\n            favorite\n          </i>\n          <i [fxShow]=\"!showFavorites\" class=\"material-icons\">\n            favorite_border\n          </i>\n        </span>\n        <mat-slide-toggle matTooltip=\"Lock/Customize Patterns\" [checked]=\"customImagesActive\" (change)=\"toggleImages()\">\n        </mat-slide-toggle>\n        <span *ngIf=\"ready\" fxLayout=\"column\" fxLayoutAlign=\"start center\">\n          <span *ngFor=\"let customImage of customImages; let i = index\"\n            [ngStyle]=\"{'background-image': 'url(' + this.customImages[i]?.src + ')'}\" class=\"tile\">\n            <input #fileInput class=\"file-input\" type=\"file\" multiple (change)=\"uploadCustomImage(i, $event)\">\n            <span class=\"upload hover\" fxLayoutAlign=\"center end\">\n              <i [fxShow]=\"customImage.ready\" class=\"material-icons heart margin-top-auto bottom-0\">\n                arrow_upward\n              </i>\n            </span>\n            <span [fxShow]=\"!customImage.ready\" class=\"upload\" fxLayoutAlign=\"center end\">\n              <div class=\"margin-auto loader small\"></div>\n            </span>\n            <span [fxShow]=\"customImage.fileTooBig\" class=\"upload warning\" fxLayoutAlign=\"end center\" fxLayout=\"column\">\n              <i class=\"material-icons heart margin-top-auto bottom-0\">\n                warning\n              </i>\n            </span>\n          </span>\n\n          <i (click)=\"openCustomImagesDialog(true)\" style=\"margin-top: 4.5px\" class=\"material-icons\">\n            info_outline\n          </i>\n        </span>\n\n      </span>\n      <generator [fxShow.md]=\"isMainPhotoView\" [fxShow.sm]=\"isMainPhotoView\" [fxShow.xs]=\"isMainPhotoView\"\n        (updateCurrentIndex)=\"updateCurrentIndex($event)\" [currImageIndex]=\"currImageIndex\"\n        [customImagesActive]=\"customImagesActive\" [customImages]=\"customImages\" [savedImageArr]=\"savedImageArr\"\n        [favoritesArr]=\"favoritesArr\" (saveImageFirebase)=\"saveImageFirebase($event)\"\n        (renderDoneEmit)=\"setRenderDone(true)\"></generator>\n    </div>\n  </div>\n  <div fxLayout=\"row\" style=\"position: absolute; background: white !important; left: 5%; bottom: 2.25%;\" fxShow=\"true\" fxShow.md=\"false\"\n    fxShow.sm=\"false\" fxShow.xs=\"false\" fxLayoutAlign=\"start start\">\n    <span fxLayout=\"row\" class=\"material-text\" fxLayoutGap=\"3px\" style=\"font-size: 14px !important; text-align: left\">\n      <span style=\"background: white !important;\">Art and Code by <a href=\"https://github.com/kvanlaan\" class=\"name\" target=\"_blank\"> Katrina Van\n          Laan</a></span>&nbsp;<span>\n        <!-- QA by <a href=\"https://www.linkedin.com/in/brian-bookman-353213159\" class=\"name\" target=\"_blank\">Brian\n          Bookman.</a> -->\n\n\n      </span> </span>\n  </div>\n</div>\n<div [fxShow]=\"!ready\" class=\"absolute margin-auto loader\">\n</div>");
 
 /***/ }),
 
@@ -22,7 +22,7 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = ("<div #delete id='delete' class=\"margin-auto\" style=\"z-index: 100\">\n\n  <button class=\"material-text float-right hover\" style=\"min-width: 0px !important; margin-right: -20px !important; margin-top: -20px !important; opacity: .5\"\n    mat-icon-button [mat-dialog-close]=\"false\">X</button>\n  <span>\n    <h2 class=\"material-text\" mat-dialog-title> Are you sure you want to delete this image?\n    </h2>\n    <button class=\"material-text\" mat-button [mat-dialog-close]=\"true\">Yes</button>\n  </span>\n</div>");
+/* harmony default export */ __webpack_exports__["default"] = ("<div #delete id='delete' class=\"margin-auto\" style=\"z-index: 100\">\n\n  <button class=\"material-text float-right hover\" style=\"min-width: 0px !important; margin-right: -20px !important; margin-top: -20px !important; opacity: .5\"\n    mat-icon-button (click)=\"close(false)\">X</button>\n  <span>\n    <h2 class=\"material-text\" mat-dialog-title> Are you sure you want to delete this image?\n    </h2>\n    <button class=\"material-text\" mat-button (click)=\"close(true)\">Yes</button>\n    <br>\n    <br>\n    <mat-checkbox (change)=\"toggleShowDelete($event)\">Don't Show this Again</mat-checkbox>\n  </span>\n</div>");
 
 /***/ }),
 
@@ -35,7 +35,7 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = ("<div class=\"relative\" fxLayout=\"start start\">\n \n  <canvas #myCanvasTwo id=\"myCanvasTwo\" class=\"canvas-height\">\n    Your browser does not support the canvas element.\n  </canvas>\n\n   \n  <canvas #myCanvasThree id=\"myCanvasThree\" class=\"canvas-height-2\">\n    Your browser does not support the canvas element.\n  </canvas>\n\n  <canvas fxShow=\"false\" #myCanvas id=\"myCanvas\" class=\"hidden full-height\">\n    Your browser does not support the canvas element.\n  </canvas>\n\n  <div [fxShow]=\"renderDone\" #loaderCanvas class=\"absolute margin-auto loader\">\n  </div>\n</div>");
+/* harmony default export */ __webpack_exports__["default"] = ("<div class=\"relative\" fxLayout=\"start start\">\n  <canvas #myCanvasTwo id=\"myCanvasTwo\" class=\"canvas-height\">\n    Your browser does not support the canvas element.\n  </canvas>\n  <canvas fxShow=\"false\" #myCanvas id=\"myCanvas\" class=\"hidden full-height\">\n    Your browser does not support the canvas element.\n  </canvas>\n\n  <div [fxShow]=\"renderDone\" #loaderCanvas class=\"absolute margin-auto loader\">\n  </div>\n</div>");
 
 /***/ }),
 
@@ -61,7 +61,7 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = ("<div  style=\"z-index: 100\">\n\n  <button class=\"material-text float-right hover\" style=\"min-width: 0px !important; margin-right: -20px !important; margin-top: -20px !important; opacity: .5\"\n    mat-icon-button (click)=\"close()\">X</button>\n  <span>\n    <h2 class=\"material-text\" mat-dialog-title> <span *ngIf=\"!readOnly\">You've Activated</span> Custom Images<span *ngIf=\"!readOnly\">!</span>\n    </h2>\n    <mat-dialog-content fxLayout=\"row\" class=\"mat-typography\">\n<div fxLayout=\"column\">\n\n  <img src=\"assets/uploadintstructions.png\"/>\n  <!-- <div>\n    <mat-icon  [disabled]=\"photoIndex > 0\" (click)=\"photoIndex > 0 && decrementPhotoIndex()\">navigate_before</mat-icon>\n    <mat-icon  [disabled]=\"photoIndex < (this.photos.length-1)\" (click)=\"photoIndex < (this.photos.length-1)  && incrementPhotoIndex()\">navigate_next</mat-icon>\n  </div> -->\n</div>\n    \n    <p class=\"mat-typography\" style=\"text-align: left; margin-top: 22.5px\">\n      Click on the swatches to upload your custom image to Art Generator.\n      <br>\n      <br>\n      We've started you out with 6 template images.\n      <br>\n      <mat-checkbox [fxShow]=\"!readOnly\" (change)=\"toggleShowCustomImages($event)\">Don't Show this Again</mat-checkbox>\n    </p>\n\n  </mat-dialog-content>\n\n  </span>\n</div>");
+/* harmony default export */ __webpack_exports__["default"] = ("<div  style=\"z-index: 100\">\n\n  <button class=\"material-text float-right hover\" style=\"min-width: 0px !important; margin-right: -20px !important; margin-top: -20px !important; opacity: .5\"\n    mat-icon-button (click)=\"close()\">X</button>\n  <span>\n    <h2 class=\"material-text\" mat-dialog-title> <span *ngIf=\"!readOnly\">You've Activated</span> Custom Images<span *ngIf=\"!readOnly\">!</span>\n    </h2>\n    <mat-dialog-content fxLayout=\"row\" class=\"mat-typography\">\n<div fxLayout=\"column\">\n\n  <img src=\"assets/uploadintstructions.png\"/>\n  <!-- <div>\n    <mat-icon  [disabled]=\"photoIndex > 0\" (click)=\"photoIndex > 0 && decrementPhotoIndex()\">navigate_before</mat-icon>\n    <mat-icon  [disabled]=\"photoIndex < (this.photos.length-1)\" (click)=\"photoIndex < (this.photos.length-1)  && incrementPhotoIndex()\">navigate_next</mat-icon>\n  </div> -->\n</div>\n    \n    <p class=\"mat-typography\" style=\"text-align: left; margin-top: 22.5px\">\n      Click on the swatches to upload your custom image to Art Generator.\n      <br>\n      <br>\n      We've started you out with 6 template images.\n      <br>\n      <br>\n      (image size cannot exceed 1mb)\n      <br>\n      <mat-checkbox [fxShow]=\"!readOnly\" (change)=\"toggleShowCustomImages($event)\">Don't Show this Again</mat-checkbox>\n    </p>\n\n  </mat-dialog-content>\n\n  </span>\n</div>");
 
 /***/ }),
 
@@ -137,6 +137,9 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
 var __metadata = (undefined && undefined.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __param = (undefined && undefined.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -191,6 +194,8 @@ var __importDefault = (undefined && undefined.__importDefault) || function (mod)
 
 
 
+
+
 var LoginDialogComponent = /** @class */ (function () {
     function LoginDialogComponent() {
     }
@@ -203,13 +208,26 @@ var LoginDialogComponent = /** @class */ (function () {
 }());
 
 var DeleteDialogComponent = /** @class */ (function () {
-    function DeleteDialogComponent() {
+    function DeleteDialogComponent(dialogRef, dialogData) {
+        this.dialogRef = dialogRef;
+        this.disable = false;
     }
+    DeleteDialogComponent.prototype.toggleShowDelete = function (event) {
+        this.disable = event.checked;
+    };
+    DeleteDialogComponent.prototype.close = function (isDelete) {
+        this.dialogRef.close({ delete: isDelete, disable: this.disable });
+    };
+    DeleteDialogComponent.ctorParameters = function () { return [
+        { type: _angular_material_dialog__WEBPACK_IMPORTED_MODULE_7__["MatDialogRef"] },
+        { type: undefined, decorators: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Inject"], args: [_angular_material_dialog__WEBPACK_IMPORTED_MODULE_7__["MAT_DIALOG_DATA"],] }] }
+    ]; };
     DeleteDialogComponent = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"])({
             template: __importDefault(__webpack_require__(/*! raw-loader!./delete.component.html */ "./node_modules/raw-loader/dist/cjs.js!./src/app/delete.component.html")).default
         }),
-        __metadata("design:paramtypes", [])
+        __param(1, Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Inject"])(_angular_material_dialog__WEBPACK_IMPORTED_MODULE_7__["MAT_DIALOG_DATA"])),
+        __metadata("design:paramtypes", [_angular_material_dialog__WEBPACK_IMPORTED_MODULE_7__["MatDialogRef"], Object])
     ], DeleteDialogComponent);
     return DeleteDialogComponent;
 }());
@@ -244,6 +262,7 @@ var AppComponent = /** @class */ (function () {
         this.darkDatabaseList = [];
         this.customImagesActive = false;
         this.disableCustomImagesDialogKey = 'dontShowCustomImagesDialog';
+        this.disableDeleteDialogKey = 'dontShowDeleteDialog';
         this.utilities = utilities;
         this.location = location;
         this.localStorage = localStorage;
@@ -286,7 +305,8 @@ var AppComponent = /** @class */ (function () {
                     databaseURL: "https://artgenerator-8008a.firebaseio.com",
                     projectId: "artgenerator-8008a",
                     storageBucket: "artgenerator-8008a.appspot.com",
-                    messagingSenderId: "858892303412"
+                    messagingSenderId: "858892303412",
+                    appId: "1:858892303412:web:98aab2867ce380d60e5e61",
                 };
                 firebase__WEBPACK_IMPORTED_MODULE_2__["initializeApp"](config);
                 this.database = firebase__WEBPACK_IMPORTED_MODULE_2__["firestore"]();
@@ -294,14 +314,13 @@ var AppComponent = /** @class */ (function () {
                 this.database.settings(settings);
                 this.ui = new firebaseui__WEBPACK_IMPORTED_MODULE_3__["auth"].AuthUI(firebase__WEBPACK_IMPORTED_MODULE_2__["auth"]());
                 this.user = firebase__WEBPACK_IMPORTED_MODULE_2__["auth"]().currentUser;
-                // this.getDarkPatterns();
                 firebase__WEBPACK_IMPORTED_MODULE_2__["auth"]().onAuthStateChanged(function (user) {
                     return __awaiter(this, void 0, void 0, function () {
                         var _a;
                         return __generator(this, function (_b) {
                             switch (_b.label) {
                                 case 0:
-                                    if (!(!this.login && !user && location.href.indexOf('loggedOut') >= 0 && location.href.indexOf('authenticationTriggered') > -0)) return [3 /*break*/, 1];
+                                    if (!(!this.login && !user && location.href.indexOf('loggedOut') >= 0)) return [3 /*break*/, 1];
                                     this.openLoginModal();
                                     return [3 /*break*/, 6];
                                 case 1:
@@ -346,17 +365,21 @@ var AppComponent = /** @class */ (function () {
         return false;
     };
     AppComponent.prototype.openDeleteDialog = function (imgObj, index) {
-        this.delete(imgObj, index);
-        // if (!document.getElementById('delete')) {
-        //   this.dialogRef = this.dialog.open(DeleteDialogComponent, {
-        //     width: '300px'
-        //   });
-        //   this.dialogRef.afterClosed().subscribe(result => {
-        //     if (result) {
-        //       this.delete(imgObj, index);
-        //     }
-        //   });
-        // }
+        var _this = this;
+        if (!this.getFromLocal(this.disableDeleteDialogKey) && !document.getElementById('delete')) {
+            this.dialogRef = this.dialog.open(DeleteDialogComponent, {
+                width: '300px'
+            });
+            this.dialogRef.afterClosed().subscribe(function (result) {
+                if (result.delete) {
+                    _this.delete(imgObj, index);
+                }
+                _this.saveToLocal(_this.disableDeleteDialogKey, result.disable);
+            });
+        }
+        else {
+            this.delete(imgObj, index);
+        }
     };
     AppComponent.prototype.signOut = function () {
         firebase__WEBPACK_IMPORTED_MODULE_2__["auth"]().signOut().then(function () {
@@ -464,9 +487,6 @@ var AppComponent = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        if (location.href.indexOf('authenticationTriggered') < 0) {
-                            location.href += '/authenticationTriggered';
-                        }
                         this.dialogRef = this.dialog.open(LoginDialogComponent, {
                             width: '300px'
                         });
@@ -556,7 +576,6 @@ var AppComponent = /** @class */ (function () {
                                 }
                                 else {
                                     _this.imagePopulationDone = true;
-                                    // this.getRandomArt(true);
                                 }
                             })];
                     case 6:
@@ -699,15 +718,15 @@ var AppComponent = /** @class */ (function () {
             this.fileInputs._results[fileIndex].value = '';
         }
     };
-    AppComponent.prototype.renderImage = function (index) {
-        this.isMainPhotoView = true;
+    AppComponent.prototype.renderImage = function (index, isDelete) {
+        if (!isDelete) {
+            this.isMainPhotoView = true;
+        }
         // if(this.showFavorites) {
         if (index !== undefined) {
             this.currImageIndex = index;
         }
         this.generator.renderImage(index, this.showFavorites);
-        // } else {
-        // }
     };
     AppComponent.prototype.updateCurrentIndex = function (index) {
         this.currImageIndex = index;
@@ -720,9 +739,12 @@ var AppComponent = /** @class */ (function () {
         this.currImageIndex--;
         this.renderImage();
     };
-    AppComponent.prototype.setRenderDone = function (bool) {
+    AppComponent.prototype.setRenderDone = function (bool, ready) {
+        if (ready === void 0) { ready = true; }
         this.renderDone = bool;
-        this.ready = bool;
+        if (ready) {
+            this.ready = bool;
+        }
     };
     AppComponent.prototype.setCustomImages = function () {
         this.generator.setCustomImages(true);
@@ -730,7 +752,11 @@ var AppComponent = /** @class */ (function () {
     AppComponent.prototype.getRandomArt = function (clear, recurseStep) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                this.generator.getRandomArt(clear);
+                if (this.renderDone) {
+                    this.setRenderDone(false, false);
+                    this.generator.getRandomArt(clear);
+                    this.isMainPhotoView = true;
+                }
                 return [2 /*return*/];
             });
         });
@@ -743,31 +769,23 @@ var AppComponent = /** @class */ (function () {
         });
         this.showFavorites = !this.showFavorites;
     };
-    AppComponent.prototype.delete = function (imageObjOld, index) {
+    AppComponent.prototype.delete = function (imageObj, index) {
         if (index === undefined) {
             index = this.currImageIndex;
         }
         if (index < this.currImageIndex) {
             this.currImageIndex--;
         }
-        // if (this.user) {
-        //   const trimmedName = this.email;
-        //   this.database.collection('users/' + trimmedName + '/images').doc(imageObj.name).delete().then(function (docRef) {
-        //     console.log('Successfully deleted');
-        //   })
-        //     .catch(function (error) {
-        //       console.error('Error adding document: ', error);
-        //     });
-        // } else if(this.guid) {
-        //   this.database.collection('users/' + this.guid + '/images').doc(imageObj.name).delete().then(function (docRef) {
-        //     console.log('Successfully deleted');
-        //   })
-        //     .catch(function (error) {
-        //       console.error('Error adding document: ', error);
-        //     });
-        // }
-        for (var _i = 0, _a = this.savedImageArr; _i < _a.length; _i++) {
-            var imageObj = _a[_i];
+        if (this.user) {
+            var trimmedName = this.email;
+            this.database.collection('users/' + trimmedName + '/images').doc(imageObj.name).delete().then(function (docRef) {
+                console.log('Successfully deleted');
+            })
+                .catch(function (error) {
+                console.error('Error adding document: ', error);
+            });
+        }
+        else if (this.guid) {
             this.database.collection('users/' + this.guid + '/images').doc(imageObj.name).delete().then(function (docRef) {
                 console.log('Successfully deleted');
             })
@@ -779,10 +797,10 @@ var AppComponent = /** @class */ (function () {
         if (this.savedImageArr.length) {
             if (index > this.savedImageArr.length - 1) {
                 index--;
-                this.renderImage(index);
+                this.renderImage(index, true);
             }
             if (index === this.currImageIndex || index === 0) {
-                this.renderImage(index);
+                this.renderImage(index, true);
             }
         }
     };
@@ -1077,94 +1095,182 @@ var GeneratorComponent = /** @class */ (function () {
         this.renderDoneEmit = new _angular_core__WEBPACK_IMPORTED_MODULE_0__["EventEmitter"]();
         this.savedImageArr = [];
         this.favoritesArr = [];
+        this.currImageIndex = 0;
         this.customImagesActive = false;
         this.updateCurrentIndex = new _angular_core__WEBPACK_IMPORTED_MODULE_0__["EventEmitter"]();
         this.aggrObjArea = 0;
-        this.backgroundShapeArr = ['Rectangle', 'Triangle', 'Circle', 'Line'];
+        this.backgroundShapeArr = ["Rectangle", "Triangle", "Circle", "Line"];
         this.canvasSize = 700;
         this.canvasSizeTwo = 700;
         this.colorArr = [];
-        this.currImageIndex = 0;
         this.genTypeArr = ["noPattern", "transPattern", "random"];
         this.layerCounter = 0;
-        this.objNum = 23;
         this.patternFill = false;
-        this.shapeArr = ['Rectangle', 'Triangle', 'Circle', 'Line'];
-        this.smallShapeArr = ['Rectangle', 'Circle'];
+        this.shapeArr = ["Rectangle", "Triangle", "Circle", "Line"];
+        this.smallShapeArr = ["Rectangle", "Circle"];
         this.renderDone = false;
-        this.isBedroom = false;
+        // isTrunks;
+        // isFrieze;
+        // isFriezeTwo;
+        // isArabesque;
+        // isMexico;
         this.patternDatabaseList = [];
         this.darkDatabaseList = [];
         this.transDatabaseList = [];
-        this.beginPath = false;
         // feature detection
-        this.isSafari = false;
         this.startingRecurseStep = 0;
         this.customImagesLoaded = [];
-        this.initialImages = [{ 'name': 'uploadCustom1', 'crossOrigin': "Anonymous", 'src': 'assets/arabesque_pattern.jpg', 'ready': true, 'fileTooBig': false },
-            { 'name': 'uploadCustom2', 'crossOrigin': "Anonymous", 'src': 'assets/kosovo_map.jpg', 'ready': true, 'fileTooBig': false },
-            { 'name': 'uploadCustom3', 'crossOrigin': "Anonymous", 'src': 'assets/frieze.jpg', 'ready': true, 'fileTooBig': false },
-            { 'name': 'uploadCustom4', 'crossOrigin': "Anonymous", 'src': 'assets/mexico_flag.jpg', 'ready': true, 'fileTooBig': false },
-            { 'name': 'uploadCustom5', 'crossOrigin': "Anonymous", 'src': 'assets/van.jpg', 'ready': true, 'fileTooBig': false },
-            { 'name': 'uploadCustom6', 'crossOrigin': "Anonymous", 'src': 'assets/trunks.png', 'ready': true, 'fileTooBig': false }
+        this.initialImages = [
+            {
+                name: "uploadCustom1",
+                crossOrigin: "Anonymous",
+                src: "assets/arabesque_pattern.jpg",
+                ready: true,
+                fileTooBig: false,
+            },
+            {
+                name: "uploadCustom2",
+                crossOrigin: "Anonymous",
+                src: "assets/kosovo_map.jpg",
+                ready: true,
+                fileTooBig: false,
+            },
+            {
+                name: "uploadCustom3",
+                crossOrigin: "Anonymous",
+                src: "assets/frieze.jpg",
+                ready: true,
+                fileTooBig: false,
+            },
+            {
+                name: "uploadCustom4",
+                crossOrigin: "Anonymous",
+                src: "assets/mexico_flag.jpg",
+                ready: true,
+                fileTooBig: false,
+            },
+            {
+                name: "uploadCustom5",
+                crossOrigin: "Anonymous",
+                src: "assets/van.jpg",
+                ready: true,
+                fileTooBig: false,
+            },
+            {
+                name: "uploadCustom6",
+                crossOrigin: "Anonymous",
+                src: "assets/trunks.png",
+                ready: true,
+                fileTooBig: false,
+            },
         ];
         this.offset_x = 0;
         this.offset_y = 0;
         this.fullCanvasSize = 0;
-        this.lowestPoint = 0;
-        this.rightmostPoint = 0;
-        this.largeRecurseStep = false;
+        this.genStarted = false;
+        this.transWithRecurse = false;
         this.forceBeginPath = false;
-        this.patternFillSingleBegun = false;
-        this.transform = false;
-        this.repeat = 'repeat';
-        this.leftmostPoint = 0;
+        this.wasRecurse = false;
+        this.repeat = "repeat";
         this.utilities = utilities;
     }
     GeneratorComponent.prototype.ngOnInit = function () {
-        // this.ready = false;
-        this.renderDone = false;
-        this.initiatePatterns();
-        this.isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-        this.calculateCanvasSize();
-        this.getDarkPatterns();
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                this.initiatePatterns();
+                this.calculateCanvasSize();
+                this.getLibrary();
+                return [2 /*return*/];
+            });
+        });
     };
-    GeneratorComponent.prototype.getDarkPatterns = function () {
+    GeneratorComponent.prototype.getLibrary = function () {
         var _this = this;
         var storageRef = firebase__WEBPACK_IMPORTED_MODULE_3__["storage"]().ref();
-        if (this.darkDatabaseList.length === 0 || this.patternDatabaseList.length === 0) {
+        if (this.darkDatabaseList.length === 0 ||
+            this.patternDatabaseList.length === 0) {
             return new Promise(function (resolve) {
-                if (!_this.artImagesSubscription) { }
-                _this.artImagesSubscription = _this.http.get(window.location.origin + '/artImages').subscribe(function (res) {
-                    res.forEach(function (item) {
-                        if (item["metadata"]["name"].indexOf('dark') > -1) {
-                            storageRef.child(item["metadata"]["name"]).getDownloadURL().then(function (url) {
-                                var darkImage = new Image();
-                                darkImage.crossOrigin = "Anonymous";
-                                darkImage.src = url;
-                                this.darkDatabaseList.push(darkImage);
-                                // this.patternDatabaseList.push(darkImage)
+                if (!_this.artImagesSubscription) {
+                }
+                _this.artImagesSubscription = _this.http
+                    .get(window.location.origin + "/artImages")
+                    .subscribe(function (res) {
+                    return __awaiter(this, void 0, void 0, function () {
+                        return __generator(this, function (_a) {
+                            res.forEach(function (item) {
+                                if (item["metadata"]["name"].indexOf("dark") > -1) {
+                                    storageRef
+                                        .child(item["metadata"]["name"])
+                                        .getDownloadURL()
+                                        .then(function (url) {
+                                        return __awaiter(this, void 0, void 0, function () {
+                                            var darkImage;
+                                            return __generator(this, function (_a) {
+                                                switch (_a.label) {
+                                                    case 0:
+                                                        darkImage = new Image();
+                                                        darkImage.name = item["metadata"]["name"];
+                                                        darkImage.crossOrigin = "Anonymous";
+                                                        darkImage.src = url;
+                                                        this.darkDatabaseList.push(darkImage);
+                                                        if (!!this.genStarted) return [3 /*break*/, 2];
+                                                        if (!(this.darkDatabaseList.length === 6)) return [3 /*break*/, 2];
+                                                        this.genStarted = true;
+                                                        return [4 /*yield*/, this.getRandomArt(true, undefined, true)];
+                                                    case 1:
+                                                        _a.sent();
+                                                        _a.label = 2;
+                                                    case 2: return [2 /*return*/];
+                                                }
+                                            });
+                                        });
+                                    }.bind(this));
+                                }
+                                else if (item["metadata"]["name"].indexOf("trans") > -1) {
+                                    storageRef
+                                        .child(item["metadata"]["name"])
+                                        .getDownloadURL()
+                                        .then(function (url) {
+                                        var transImage = new Image();
+                                        transImage.crossOrigin = "Anonymous";
+                                        transImage.name = item["metadata"]["name"];
+                                        transImage.src = url;
+                                        this.transDatabaseList.push(transImage);
+                                    }.bind(this));
+                                }
+                                else {
+                                    storageRef
+                                        .child(item["metadata"]["name"])
+                                        .getDownloadURL()
+                                        .then(function (url) {
+                                        return __awaiter(this, void 0, void 0, function () {
+                                            var darkImage;
+                                            return __generator(this, function (_a) {
+                                                switch (_a.label) {
+                                                    case 0:
+                                                        darkImage = new Image();
+                                                        darkImage.crossOrigin = "Anonymous";
+                                                        darkImage.name = item["metadata"]["name"];
+                                                        darkImage.src = url;
+                                                        this.patternDatabaseList.push(darkImage);
+                                                        if (!!this.genStarted) return [3 /*break*/, 2];
+                                                        if (!(this.patternDatabaseList.length === 6)) return [3 /*break*/, 2];
+                                                        this.genStarted = true;
+                                                        return [4 /*yield*/, this.getRandomArt(true, undefined, false)];
+                                                    case 1:
+                                                        _a.sent();
+                                                        _a.label = 2;
+                                                    case 2: return [2 /*return*/];
+                                                }
+                                            });
+                                        });
+                                    }.bind(this));
+                                }
                             }.bind(this));
-                        }
-                        else if (item["metadata"]["name"].indexOf('trans') > -1) {
-                            storageRef.child(item["metadata"]["name"]).getDownloadURL().then(function (url) {
-                                var transImage = new Image();
-                                transImage.crossOrigin = "Anonymous";
-                                transImage.src = url;
-                                this.transDatabaseList.push(transImage);
-                                // this.patternDatabaseList.push(darkImage)
-                            }.bind(this));
-                        }
-                        else {
-                            storageRef.child(item["metadata"]["name"]).getDownloadURL().then(function (url) {
-                                var darkImage = new Image();
-                                darkImage.crossOrigin = "Anonymous";
-                                darkImage.src = url;
-                                this.patternDatabaseList.push(darkImage);
-                            }.bind(this));
-                        }
-                    }.bind(this));
-                    resolve();
+                            resolve();
+                            return [2 /*return*/];
+                        });
+                    });
                 }.bind(_this));
             });
         }
@@ -1179,29 +1285,24 @@ var GeneratorComponent = /** @class */ (function () {
         this.patternThree.crossOrigin = "Anonymous";
         this.patternFour = new Image();
         this.patternFour.crossOrigin = "Anonymous";
-        this.patternBuddhist = new Image();
-        this.patternBuddhist.crossOrigin = "Anonymous";
-        this.patternBedroom = new Image();
-        this.patternBedroom.crossOrigin = "Anonymous";
         this.patternFive = new Image();
         this.patternFive.crossOrigin = "Anonymous";
         this.patternSix = new Image();
         this.patternSix.crossOrigin = "Anonymous";
-        this.patternBedroom.src = 'assets/haystacks.jpg';
-        this.patternOne.src = this.initialImages[0].src;
+        this.patternOne.src = this.initialImages[4].src;
         this.patternOne.crossOrigin = "Anonymous";
         this.patternOne.onload = function () {
             var pattern = this.ctx.createPattern(this.patternOne, this.repeat);
             this.ctx.fillStyle = pattern;
-            this.patternTwo.src = this.initialImages[1].src;
+            this.patternTwo.src = this.initialImages[4].src;
             this.patternTwo.onload = function () {
                 var pattern = this.ctx.createPattern(this.patternTwo, this.repeat);
                 this.ctx.fillStyle = pattern;
-                this.patternThree.src = this.initialImages[2].src;
+                this.patternThree.src = this.initialImages[4].src;
                 this.patternThree.onload = function () {
                     var pattern = this.ctx.createPattern(this.patternThree, this.repeat);
                     this.ctx.fillStyle = pattern;
-                    this.patternFour.src = this.initialImages[3].src;
+                    this.patternFour.src = this.initialImages[4].src;
                     this.patternFour.onload = function () {
                         var pattern = this.ctx.createPattern(this.patternFour, this.repeat);
                         this.ctx.fillStyle = pattern;
@@ -1209,20 +1310,14 @@ var GeneratorComponent = /** @class */ (function () {
                         this.patternFive.onload = function () {
                             var pattern = this.ctx.createPattern(this.patternFive, this.repeat);
                             this.ctx.fillStyle = pattern;
-                            this.patternSix.src = this.initialImages[5].src;
+                            this.patternSix.src = this.initialImages[4].src;
                             this.patternSix.onload = function () {
                                 return __awaiter(this, void 0, void 0, function () {
                                     var pattern;
                                     return __generator(this, function (_a) {
-                                        switch (_a.label) {
-                                            case 0:
-                                                pattern = this.ctx.createPattern(this.patternSix, this.repeat);
-                                                this.ctx.fillStyle = pattern;
-                                                return [4 /*yield*/, this.getRandomArt(true)];
-                                            case 1:
-                                                _a.sent();
-                                                return [2 /*return*/];
-                                        }
+                                        pattern = this.ctx.createPattern(this.patternSix, this.repeat);
+                                        this.ctx.fillStyle = pattern;
+                                        return [2 /*return*/];
                                     });
                                 });
                             }.bind(this);
@@ -1238,20 +1333,30 @@ var GeneratorComponent = /** @class */ (function () {
         this.canvasSize = this.canvas.clientHeight;
         this.ctx.canvas.width = this.canvasSize;
         this.ctx.canvas.height = this.canvasSize;
+        this.ctx.imageSmoothingEnabled = true;
+        this.ctx.imageSmoothingQuality = "high";
         this.canvasTwo = document.getElementById("myCanvasTwo");
+        this.canvasTwo.height = this.canvasTwo.clientHeight;
+        this.canvasTwo.width = this.canvasTwo.clientHeight;
         this.ctxTwo = this.canvasTwo.getContext("2d");
         this.canvasSizeTwo = this.canvasTwo.clientHeight;
+        this.ctxTwo.imageSmoothingEnabled = true;
+        this.ctxTwo.imageSmoothingQuality = "high";
         this.ctxTwo.canvas.width = this.canvasSizeTwo;
         this.ctxTwo.canvas.height = this.canvasSizeTwo;
-        this.ctx.scale(.5175, .5175);
-        this.ctxTwo.scale(.5175, .5175);
+        this.ctx.scale(0.5175, 0.5175);
+        this.ctxTwo.scale(0.5175, 0.5175);
         this.restoreScale = 1.932367149758454;
         this.fullCanvasSize = this.ctx.canvas.width * this.restoreScale;
-        this.leftmostPoint = this.fullCanvasSize;
     };
-    GeneratorComponent.prototype.getRandomArt = function (clear, recurseStep) {
+    GeneratorComponent.prototype.clearCanvas = function () {
+        this.ctx.clearRect(0, 0, this.fullCanvasSize, this.fullCanvasSize);
+        this.ctx.fillStyle = "white";
+        this.ctx.fillRect(0, 0, this.fullCanvasSize, this.fullCanvasSize);
+    };
+    GeneratorComponent.prototype.getRandomArt = function (clear, recurseStep, dark) {
         return __awaiter(this, void 0, void 0, function () {
-            var _a, recurse, solidSwitch, maxDarkIndex, one, three, four, five, darkOne, darkThree, darkFour, solidSwitch, maxDarkIndex, one, three, four, five, darkThree, darkFour, darkFive, img;
+            var _a, maxDarkIndex, one, two, three, four, five, six, maxRegIndex, oneReg, twoReg, threeReg, maxDarkIndex, one, three, four, five, darkThree, darkFive, img;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
@@ -1263,15 +1368,13 @@ var GeneratorComponent = /** @class */ (function () {
                         // hiding stuff since a new image is being drawn]
                         this.loader.nativeElement.style.visibility = "visible";
                         this.singleLayer = false;
-                        recurse = false;
-                        this.objNum = Math.floor(Math.random() * 23) + 10;
+                        //these values are related to what the art will look like
                         this.patternFill = this.utilities.randomlyChooseTrueOrFalse();
-                        this.isTrunks = false;
-                        this.isArabesque = false;
-                        this.isMexico = false;
-                        this.isFrieze = false;
-                        this.isBedroom = false;
-                        this.isFriezeTwo = false;
+                        // this.isTrunks = false;
+                        // this.isArabesque = false;
+                        // this.isMexico = false;
+                        // this.isFrieze = false;
+                        // this.isFriezeTwo = false;
                         if (this.customImagesActive) {
                             this.patternOne = this.customImagesLoaded[0];
                             this.patternTwo = this.customImagesLoaded[1];
@@ -1280,179 +1383,121 @@ var GeneratorComponent = /** @class */ (function () {
                             this.patternFive = this.customImagesLoaded[4];
                             this.patternSix = this.customImagesLoaded[5];
                         }
-                        if (recurseStep === undefined) {
-                            this.offset_x = (Math.random() * 50) - 50;
-                            this.offset_y = (Math.random() * 50) - 50;
-                            this.genType = this.genTypeArr[Math.floor(Math.random() * this.genTypeArr.length)];
-                            this.patternFill = this.utilities.randomlyChooseTrueOrFalse();
-                            // if no recurse, this means t his is a new piece, not just a layer, so clear and calculate recurse chance
-                            this.ctx.clearRect(0, 0, this.fullCanvasSize, this.fullCanvasSize);
-                            this.ctx.fillStyle = 'white';
-                            this.ctx.fillRect(0, 0, this.fullCanvasSize, this.fullCanvasSize);
-                            this.ctx.translate(this.offset_x, this.offset_y);
-                            recurse = this.utilities.randomlyChooseTrueOrFalse();
-                            this.recurse = recurse;
-                            this.ctx.scale(this.restoreScale, this.restoreScale);
-                            this.ctxTwo.scale(this.restoreScale, this.restoreScale);
-                            // if(recurse) {
-                            this.ctx.scale(.5175, .5175);
-                            this.ctxTwo.scale(.5175, .5175);
+                        if (!(recurseStep === undefined)) return [3 /*break*/, 4];
+                        this.transWithRecurse = this.utilities.randomlyChooseTrueOrFalse();
+                        this.offset_x = Math.random() * 50 - 50;
+                        this.offset_y = Math.random() * 50 - 50;
+                        this.genType = this.genTypeArr[Math.floor(Math.random() * this.genTypeArr.length)];
+                        this.singleLayer = true;
+                        this.wasRecurse = this.recurse;
+                        // if no recurse, this means t his is a new piece, not just a layer, so clear and calculate recurse chance
+                        this.clearCanvas();
+                        this.recurse = dark
+                            ? false
+                            : this.utilities.randomlyChooseTrueOrFalseLessHalf();
+                        this.ctx.scale(this.restoreScale, this.restoreScale);
+                        this.ctxTwo.scale(this.restoreScale, this.restoreScale);
+                        if (this.recurse) {
+                            this.ctx.scale(0.5175, 0.5175);
+                            this.ctxTwo.scale(0.5175, 0.5175);
                             this.restoreScale = 1.932367149758454;
-                            // } else {
-                            //   this.ctx.scale(.579, .579)
-                            //   this.ctxTwo.scale(.579, .579)
-                            //   this.restoreScale = 1.72711571675;
-                            //   }
-                            this.fullCanvasSize = this.ctx.canvas.width * this.restoreScale;
-                            this.singleLayer = true;
-                            if (!recurse) {
-                                this.singleLayer = true;
-                                this.forceTrapezoidBeginPath = this.utilities.randomlyChooseTrueOrFalse();
-                                this.ctx.clearRect(0, 0, this.fullCanvasSize, this.fullCanvasSize);
-                                this.ctx.fillStyle = 'white';
-                                this.ctx.fillRect(0, 0, this.fullCanvasSize, this.fullCanvasSize);
-                                if (this.genType === 'noPattern' || (this.genType === 'transPattern' && this.singleLayer)) {
-                                    this.isTrunks = this.utilities.randomlyChooseTrueOrFalseThird();
-                                    if (!this.isTrunks) {
-                                        if (this.utilities.randomlyChooseTrueOrFalseThird) {
-                                            this.isArabesque = false;
-                                            this.isFrieze = true;
-                                            this.isFriezeTwo = false;
-                                            this.isMexico = false;
-                                            if (this.utilities.randomlyChooseTrueOrFalseThird) {
-                                                this.isFriezeTwo = true;
-                                                this.isFrieze = false;
-                                            }
-                                        }
-                                        else {
-                                            this.isFrieze = false;
-                                            this.isFriezeTwo = false;
-                                            this.isArabesque = true;
-                                            this.isMexico = false;
-                                            if (this.utilities.randomlyChooseTrueOrFalseThird) {
-                                                this.isFriezeTwo = true;
-                                                this.isArabesque = false;
-                                            }
-                                        }
-                                    }
-                                    else {
-                                        this.isArabesque = false;
-                                        this.isFrieze = false;
-                                        this.isFriezeTwo = false;
-                                        this.isMexico = false;
-                                    }
-                                    this.isArabesque = false;
-                                    this.isFrieze = false;
-                                    this.isFriezeTwo = false;
-                                    this.isMexico = false;
-                                    this.isTrunks = false;
-                                    solidSwitch = Math.floor(Math.random() * 7) + 1;
-                                    if (solidSwitch === 1) {
-                                        this.isArabesque = true;
-                                    }
-                                    else if (solidSwitch === 2) {
-                                        this.isArabesque = true;
-                                    }
-                                    else if (solidSwitch === 3) {
-                                        this.isTrunks = false;
-                                    }
-                                    else if (solidSwitch === 4) {
-                                        this.isFrieze = true;
-                                    }
-                                    else if (solidSwitch === 5) {
-                                        this.isFrieze = true;
-                                    }
-                                    else if (solidSwitch === 6) {
-                                        this.isFriezeTwo = true;
-                                    }
-                                    else {
-                                        this.isMexico = true;
-                                    }
-                                }
-                                this.beginPath = false;
-                                maxDarkIndex = this.darkDatabaseList.length - 1;
-                                one = Math.floor(Math.random() * maxDarkIndex);
-                                three = Math.floor(Math.random() * maxDarkIndex);
-                                four = Math.floor(Math.random() * maxDarkIndex);
-                                five = Math.floor(Math.random() * maxDarkIndex);
-                                if (!this.customImagesActive && this.darkDatabaseList.length >= 6) {
-                                    darkOne = this.darkDatabaseList[one];
-                                    this.patternSix = darkOne;
-                                    darkThree = this.darkDatabaseList[three];
-                                    this.patternThree = darkThree;
-                                    darkFour = this.darkDatabaseList[four];
-                                    this.patternFour = darkFour;
-                                    this.getRandomArtAlg(clear, recurse, recurseStep);
-                                }
-                                else {
-                                    this.getRandomArtAlg(clear, recurse, recurseStep);
-                                }
-                            }
                         }
                         else {
-                            // if recurseStep is defined then we know
-                            recurse = true;
+                            this.ctx.scale(0.625, 0.625);
+                            this.ctxTwo.scale(0.625, 0.625);
+                            this.restoreScale = 1.6;
                         }
-                        if (!recurse) return [3 /*break*/, 5];
-                        if (this.genType === 'noPattern' || (this.genType === 'transPattern' && this.singleLayer)) {
-                            this.isTrunks = this.utilities.randomlyChooseTrueOrFalseThird();
-                            if (!this.isTrunks) {
-                                if (this.utilities.randomlyChooseTrueOrFalseThird) {
-                                    this.isArabesque = false;
-                                    this.isFrieze = true;
-                                    this.isFriezeTwo = false;
-                                    this.isMexico = false;
-                                    if (this.utilities.randomlyChooseTrueOrFalseThird) {
-                                        this.isFriezeTwo = true;
-                                        this.isFrieze = false;
-                                    }
-                                }
-                                else {
-                                    this.isFrieze = false;
-                                    this.isFriezeTwo = false;
-                                    this.isArabesque = true;
-                                    this.isMexico = false;
-                                    if (this.utilities.randomlyChooseTrueOrFalseThird) {
-                                        this.isFriezeTwo = true;
-                                        this.isArabesque = false;
-                                    }
-                                }
-                            }
-                            else {
-                                this.isArabesque = false;
-                                this.isFrieze = false;
-                                this.isFriezeTwo = false;
-                                this.isMexico = false;
-                            }
-                            this.isArabesque = false;
-                            this.isFrieze = false;
-                            this.isFriezeTwo = false;
-                            this.isMexico = false;
-                            this.isTrunks = false;
-                            solidSwitch = Math.floor(Math.random() * 7) + 1;
-                            if (solidSwitch === 1) {
-                                this.isArabesque = true;
-                            }
-                            else if (solidSwitch === 2) {
-                                this.isArabesque = true;
-                            }
-                            else if (solidSwitch === 3) {
-                                this.isTrunks = false;
-                            }
-                            else if (solidSwitch === 4) {
-                                this.isFrieze = true;
-                            }
-                            else if (solidSwitch === 5) {
-                                this.isFrieze = true;
-                            }
-                            else if (solidSwitch === 6) {
-                                this.isFriezeTwo = true;
-                            }
-                            else {
-                                this.isMexico = true;
+                        this.fullCanvasSize = this.ctx.canvas.width * this.restoreScale;
+                        if (!!this.recurse) return [3 /*break*/, 3];
+                        this.forceTrapezoidBeginPath = this.utilities.randomlyChooseTrueOrFalse();
+                        this.clearCanvas();
+                        // if (
+                        //   this.genType === "noPattern" ||
+                        //   (this.genType === "transPattern" && this.singleLayer)
+                        // ) {
+                        //   this.isTrunks = this.utilities.randomlyChooseTrueOrFalseThird();
+                        //   if (!this.isTrunks) {
+                        //     if (this.utilities.randomlyChooseTrueOrFalseThird) {
+                        //       this.isArabesque = false;
+                        //       this.isFrieze = true;
+                        //       this.isFriezeTwo = false;
+                        //       this.isMexico = false;
+                        //       if (this.utilities.randomlyChooseTrueOrFalseThird) {
+                        //         this.isFriezeTwo = true;
+                        //         this.isFrieze = false;
+                        //       }
+                        //     } else {
+                        //       this.isFrieze = false;
+                        //       this.isFriezeTwo = false;
+                        //       this.isArabesque = true;
+                        //       this.isMexico = false;
+                        //       if (this.utilities.randomlyChooseTrueOrFalseThird) {
+                        //         this.isFriezeTwo = true;
+                        //         this.isArabesque = false;
+                        //       }
+                        //     }
+                        //   } else {
+                        //     this.isArabesque = false;
+                        //     this.isFrieze = false;
+                        //     this.isFriezeTwo = false;
+                        //     this.isMexico = false;
+                        //   }
+                        //   this.isArabesque = false;
+                        //   this.isFrieze = false;
+                        //   this.isFriezeTwo = false;
+                        //   this.isMexico = false;
+                        //   this.isTrunks = false;
+                        //   const solidSwitch = Math.floor(Math.random() * 7) + 1;
+                        //   if (solidSwitch === 1) {
+                        //     this.isArabesque = true;
+                        //   } else if (solidSwitch === 2) {
+                        //     this.isArabesque = true;
+                        //   } else if (solidSwitch === 3) {
+                        //     this.isTrunks = false;
+                        //   } else if (solidSwitch === 4) {
+                        //     this.isFrieze = true;
+                        //   } else if (solidSwitch === 5) {
+                        //     this.isFrieze = true;
+                        //   } else if (solidSwitch === 6) {
+                        //     this.isFriezeTwo = true;
+                        //   } else {
+                        //     this.isMexico = true;
+                        //   }
+                        // }
+                        if (!this.customImagesActive && this.darkDatabaseList.length >= 6) {
+                            maxDarkIndex = this.darkDatabaseList.length - 1;
+                            one = Math.floor(Math.random() * maxDarkIndex);
+                            two = Math.floor(Math.random() * maxDarkIndex);
+                            three = Math.floor(Math.random() * maxDarkIndex);
+                            four = Math.floor(Math.random() * maxDarkIndex);
+                            five = Math.floor(Math.random() * maxDarkIndex);
+                            six = Math.floor(Math.random() * maxDarkIndex);
+                            this.patternOne = this.darkDatabaseList[two];
+                            this.patternTwo = this.darkDatabaseList[five];
+                            this.patternThree = this.darkDatabaseList[three];
+                            this.patternFour = this.darkDatabaseList[four];
+                            this.patternFive = this.darkDatabaseList[six];
+                            this.patternSix = this.darkDatabaseList[one];
+                            if (this.wasRecurse) {
+                                maxRegIndex = this.patternDatabaseList.length - 1;
+                                oneReg = Math.floor(Math.random() * maxRegIndex);
+                                twoReg = Math.floor(Math.random() * maxRegIndex);
+                                threeReg = Math.floor(Math.random() * maxRegIndex);
+                                this.patternOne = this.patternDatabaseList[oneReg];
+                                this.patternTwo = this.patternDatabaseList[twoReg];
+                                this.patternFive = this.patternDatabaseList[threeReg];
                             }
                         }
-                        if (!(recurse && recurseStep === undefined)) return [3 /*break*/, 2];
+                        return [4 /*yield*/, this.getRandomArtAlg(clear, recurseStep)];
+                    case 2:
+                        _b.sent();
+                        return [2 /*return*/];
+                    case 3: return [3 /*break*/, 5];
+                    case 4:
+                        this.recurse = true;
+                        _b.label = 5;
+                    case 5:
+                        if (!(this.recurse && recurseStep === undefined)) return [3 /*break*/, 6];
                         if (!this.customImagesActive) {
                             maxDarkIndex = this.patternDatabaseList.length - 1;
                             one = Math.floor(Math.random() * maxDarkIndex);
@@ -1464,180 +1509,102 @@ var GeneratorComponent = /** @class */ (function () {
                                 this.patternOne = darkThree;
                                 this.patternTwo = darkThree;
                                 this.patternThree = darkThree;
-                                darkFour = this.patternDatabaseList[four];
                                 this.patternFour = darkThree;
                                 darkFive = this.patternDatabaseList[five];
                                 this.patternFive = darkFive;
                                 this.patternSix = darkFive;
                             }
                         }
-                        recurseStep = Math.floor(Math.random() * 4) + 4;
+                        recurseStep = Math.floor(Math.random() * 5) + 4;
                         this.startingRecurseStep = recurseStep;
-                        if (recurseStep > 18) {
-                            this.largeRecurseStep = true;
-                        }
-                        else {
-                            this.largeRecurseStep = false;
-                        }
                         img = new Image();
                         img.src = this.canvas.toDataURL();
                         img.onload = function () {
-                            this.ctx.drawImage(img, 0, 0, this.fullCanvasSize, this.fullCanvasSize, 0, 0, this.fullCanvasSize, this.fullCanvasSize);
-                            this.getRandomArtAlg(clear, recurse, recurseStep);
+                            return __awaiter(this, void 0, void 0, function () {
+                                return __generator(this, function (_a) {
+                                    switch (_a.label) {
+                                        case 0:
+                                            this.ctx.drawImage(img, 0, 0, this.fullCanvasSize, this.fullCanvasSize, 0, 0, this.fullCanvasSize, this.fullCanvasSize);
+                                            return [4 /*yield*/, this.getRandomArtAlg(clear, recurseStep)];
+                                        case 1:
+                                            _a.sent();
+                                            return [2 /*return*/];
+                                    }
+                                });
+                            });
                         }.bind(this);
-                        return [3 /*break*/, 4];
-                    case 2: return [4 /*yield*/, this.getRandomArtAlg(clear, recurse, recurseStep)];
-                    case 3:
+                        return [3 /*break*/, 8];
+                    case 6: return [4 /*yield*/, this.getRandomArtAlg(clear, recurseStep)];
+                    case 7:
                         _b.sent();
-                        _b.label = 4;
-                    case 4: return [3 /*break*/, 5];
-                    case 5: return [2 /*return*/];
+                        _b.label = 8;
+                    case 8: return [2 /*return*/];
                 }
             });
         });
     };
-    GeneratorComponent.prototype.getRandomArtAlg = function (clear, recurse, recurseStep) {
+    GeneratorComponent.prototype.getRandomArtAlg = function (clear, recurseStep) {
         return __awaiter(this, void 0, void 0, function () {
-            var rand, norm, trapTrans, layerNum, _a, randomShape, stroke, rand_1, objNum;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
                     case 0:
-                        this.patternFillSingleBegun = false;
-                        this.beginPath = this.utilities.randomlyChooseTrueOrFalse();
-                        this.randomScheme = "Random";
-                        rand = 1;
-                        this.patternOffset = 0;
                         // first layer of small objects;
                         this.resetForNewLayer();
                         return [4 /*yield*/, this.getFirstSmallLayer()];
                     case 1:
-                        _b.sent();
+                        _a.sent();
                         this.resetForNewLayer();
-                        norm = true;
-                        trapTrans = 1;
-                        layerNum = 10;
-                        if (!(norm || trapTrans === 1)) return [3 /*break*/, 6];
-                        if (trapTrans === 1) {
-                            if (this.startingRecurseStep === recurseStep) {
-                                layerNum = 30;
-                            }
-                            this.backgroundShapeArr = ['Rectangle', 'Circle', 'Line'];
-                        }
-                        else {
-                            this.backgroundShapeArr = ['Rectangle', 'Triangle', 'Circle', 'Line'];
-                        }
-                        _b.label = 2;
+                        // layer of transparent objects
+                        return [4 /*yield*/, this.getTransLayer(recurseStep)];
                     case 2:
-                        if (!(this.layerCounter < layerNum)) return [3 /*break*/, 6];
-                        // this.randomColor = this.colorArr[Math.floor(Math.random() * this.colorArr.length)];
-                        _a = this;
-                        return [4 /*yield*/, this.getRandomRgb()];
+                        // layer of transparent objects
+                        _a.sent();
+                        this.resetForNewLayer();
+                        if (!(recurseStep !== undefined)) return [3 /*break*/, 4];
+                        return [4 /*yield*/, this.getMainLayer(recurseStep)];
                     case 3:
-                        // this.randomColor = this.colorArr[Math.floor(Math.random() * this.colorArr.length)];
-                        _a.randomColor = _b.sent();
-                        this.randomColor = 'rgb(' + this.randomColor['r'] + ',' + this.randomColor['g'] + ',' + this.randomColor['b'] + ')';
-                        this.randomStrokeOpacity = Math.random() * 1;
-                        this.randomShapeOpacity = Math.random() * 1;
-                        randomShape = this.backgroundShapeArr[Math.floor(Math.random() * this.shapeArr.length)];
-                        return [4 /*yield*/, this.getRandomRgb()];
-                    case 4:
-                        stroke = _b.sent();
-                        this.ctx.strokeStyle = 'rgb(' + stroke['r'] + ',' + stroke['g'] + ',' + stroke['b'] + ')';
-                        rand = this.utilities.randomlyChooseOneOrTwo();
-                        if (rand === 1) {
-                            this.ctx.strokeStyle = 'black';
-                        }
-                        this.randomColor = this.randomColor.substring(0, this.randomColor.length - 1) + ',' + this.randomShapeOpacity + ")";
-                        this.ctx.globalAlpha = .4 - (layerNum / this.layerCounter * .01);
-                        this.ctx.fillStyle = this.randomColor;
-                        this.patternFill = this.utilities.randomlyChooseTrueOrFalse();
-                        this.ctx.lineWidth = Math.random() * 10;
-                        if (this.singleLayer) {
-                            this.ctx.lineWidth = Math.random() * 3.2;
-                            rand_1 = this.utilities.randomlyChooseTrueOrFalse();
-                            if (rand_1) {
-                                if (this.forceTrapezoidBeginPath) {
-                                    this.ctx.lineWidth = Math.random() * 10;
-                                }
-                                else {
-                                    this.ctx.lineWidth = Math.random() * 7;
-                                }
-                            }
-                        }
-                        return [4 /*yield*/, this.drawShape(randomShape)];
+                        _a.sent();
+                        return [3 /*break*/, 6];
+                    case 4: return [4 /*yield*/, this.getMainLayer()];
                     case 5:
-                        _b.sent();
-                        this.layerCounter++;
-                        return [3 /*break*/, 2];
+                        _a.sent();
+                        _a.label = 6;
                     case 6:
                         this.resetForNewLayer();
-                        objNum = this.objNum;
-                        if (this.genType === 'transPattern') {
-                            objNum = Math.floor(Math.random() * 23) + 19;
-                        }
-                        if (this.recurse) {
-                            this.normalColor = true;
-                        }
-                        if (!(recurseStep !== undefined)) return [3 /*break*/, 8];
-                        return [4 /*yield*/, this.getMainLayer(objNum, norm, rand, trapTrans, recurseStep)];
+                        return [4 /*yield*/, this.getSecondSmallLayer()];
                     case 7:
-                        _b.sent();
-                        return [3 /*break*/, 10];
-                    case 8: return [4 /*yield*/, this.getMainLayer(objNum, norm, rand, trapTrans)];
-                    case 9:
-                        _b.sent();
-                        _b.label = 10;
-                    case 10:
+                        _a.sent();
                         this.resetForNewLayer();
-                        if (!this.singleLayer) return [3 /*break*/, 12];
-                        // this.getFirstSmallLayer(true);
-                        return [4 /*yield*/, this.getSecondSmallLayer(norm)];
-                    case 11:
-                        // this.getFirstSmallLayer(true);
-                        _b.sent();
-                        return [3 /*break*/, 14];
-                    case 12: return [4 /*yield*/, this.getSecondSmallLayer(norm)];
-                    case 13:
-                        _b.sent();
-                        _b.label = 14;
-                    case 14:
-                        this.resetForNewLayer();
-                        if (!this.singleLayer) return [3 /*break*/, 16];
+                        if (!this.singleLayer) return [3 /*break*/, 9];
                         this.forceBeginPath = true;
                         return [4 /*yield*/, this.getFirstSmallLayer(true)];
-                    case 15:
-                        _b.sent();
-                        this.resetForNewLayer();
+                    case 8:
+                        _a.sent();
                         this.forceBeginPath = false;
-                        _b.label = 16;
-                    case 16:
-                        this.ctx.globalAlpha = 1;
-                        if (!(recurse && recurseStep && recurseStep > 1)) return [3 /*break*/, 18];
+                        this.resetForNewLayer();
+                        _a.label = 9;
+                    case 9:
+                        if (!(this.recurse && recurseStep && recurseStep > 1)) return [3 /*break*/, 11];
                         recurseStep--;
                         return [4 /*yield*/, this.getRandomArt(clear, recurseStep)];
-                    case 17:
-                        _b.sent();
-                        return [3 /*break*/, 19];
-                    case 18:
+                    case 10:
+                        _a.sent();
+                        return [3 /*break*/, 12];
+                    case 11:
                         this.saveCurrentArt(clear);
-                        this.ctx.translate(-this.offset_x, -this.offset_y);
-                        _b.label = 19;
-                    case 19: return [2 /*return*/];
+                        _a.label = 12;
+                    case 12: return [2 /*return*/];
                 }
             });
         });
     };
-    GeneratorComponent.prototype.getSecondSmallLayer = function (norm) {
+    GeneratorComponent.prototype.getSecondSmallLayer = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var count, light, _a, randomShape, stroke, blackStroke, rand;
+            var count, light, _a, randomShape, stroke, rand;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        count = 25;
-                        // norm = true;
-                        if (norm) {
-                            count = 45;
-                        }
+                        count = 45;
                         if (this.singleLayer) {
                             count = 60;
                         }
@@ -1653,28 +1620,31 @@ var GeneratorComponent = /** @class */ (function () {
                     case 2:
                         _a.randomColor = _b.sent();
                         this.randomStrokeOpacity = Math.random() * 1;
-                        this.randomShapeOpacity = Math.random() * .5;
+                        this.randomShapeOpacity = Math.random() * 0.5;
+                        // checking if is dark
+                        if (!this.recurse &&
+                            this.randomColor.r + this.randomColor.g + this.randomColor.b < 220) {
+                            this.randomShapeOpacity = Math.random() * 0.4;
+                        }
                         randomShape = this.smallShapeArr[Math.floor(Math.random() * this.shapeArr.length)];
                         return [4 /*yield*/, this.getRandomRgb(true)];
                     case 3:
                         stroke = _b.sent();
-                        this.ctx.strokeStyle = 'rgb(' + stroke['r'] + ',' + stroke['g'] + ',' + stroke['b'] + ', 1)';
-                        blackStroke = this.utilities.randomlyChooseTrueOrFalse();
-                        if (blackStroke && this.recurse) {
-                            this.ctx.strokeStyle = 'black';
+                        this.ctx.strokeStyle =
+                            "rgb(" + stroke["r"] + "," + stroke["g"] + "," + stroke["b"] + ", 1)";
+                        if (this.utilities.randomlyChooseTrueOrFalse() && this.recurse) {
+                            this.ctx.strokeStyle = "black";
                         }
-                        this.randomColor = 'rgb(' + this.randomColor['r'] + ',' + this.randomColor['g'] + ',' + this.randomColor['b'] + ',' + this.randomShapeOpacity + ")";
-                        // Safari feature detection
-                        // if (!this.isSafari) {
-                        // this.ctx.globalAlpha = 1;
-                        // this.randomColor = this.randomColor.substring(0, this.randomColor.length - 1) + ',' + this.randomShapeOpacity + ")";
-                        // const rand = Math.floor(Math.random() * 2) + 1;
-                        // if (rand === 1) {
-                        // this.ctx.globalAlpha = this.randomShapeOpacity;
-                        // }
-                        // } else {
-                        // this.ctx.globalAlpha = this.randomShapeOpacity;
-                        // }
+                        this.randomColor =
+                            "rgb(" +
+                                this.randomColor["r"] +
+                                "," +
+                                this.randomColor["g"] +
+                                "," +
+                                this.randomColor["b"] +
+                                "," +
+                                this.randomShapeOpacity +
+                                ")";
                         this.ctx.fillStyle = this.randomColor;
                         this.patternFill = this.utilities.randomlyChooseTrueOrFalse();
                         if (this.recurse) {
@@ -1696,7 +1666,7 @@ var GeneratorComponent = /** @class */ (function () {
                                 }
                             }
                         }
-                        return [4 /*yield*/, this.drawShape(randomShape, true)];
+                        return [4 /*yield*/, this.drawShape(randomShape, true, false, false, true)];
                     case 4:
                         _b.sent();
                         this.layerCounter++;
@@ -1708,7 +1678,7 @@ var GeneratorComponent = /** @class */ (function () {
     };
     GeneratorComponent.prototype.getFirstSmallLayer = function (smallCount) {
         return __awaiter(this, void 0, void 0, function () {
-            var smallCounter, rand, randomShape, stroke, complStroke, rand_2;
+            var smallCounter, randomShape, stroke, randNum, rand;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -1716,10 +1686,7 @@ var GeneratorComponent = /** @class */ (function () {
                         if (this.singleLayer) {
                             smallCounter = 100;
                             if (smallCount) {
-                                smallCounter = 65;
-                                if (this.forceBeginPath) {
-                                    smallCounter = 45;
-                                }
+                                smallCounter = 45;
                             }
                         }
                         _a.label = 1;
@@ -1728,73 +1695,41 @@ var GeneratorComponent = /** @class */ (function () {
                         this.randomColor = this.colorArr[Math.floor(Math.random() * this.colorArr.length)];
                         this.randomStrokeOpacity = Math.random();
                         this.randomShapeOpacity = Math.random();
-                        rand = this.utilities.randomlyChooseOneOrTwo();
-                        if (rand === 1) {
-                            // this.ctx.strokeStyle = 'black';
-                        }
-                        rand = Math.floor(Math.random() * 2) + 1;
-                        if (rand === 1 && smallCount && this.layerCounter === smallCounter) {
-                            // if(this.randomShapeOpacity < .5) {
-                            //   this.randomShapeOpacity = .6;
-                            // }
-                            // this.randomShapeOpacity = 0;
-                            // this.randomShapeOpacity = Math.random() + .5
-                        }
                         randomShape = this.smallShapeArr[Math.floor(Math.random() * this.shapeArr.length)];
                         return [4 /*yield*/, this.getRandomRgb()];
                     case 2:
                         stroke = _a.sent();
-                        if (this.randomScheme === 'Complementary') {
-                            complStroke = this.colorArr[Math.floor(Math.random() * this.colorArr.length)];
-                            this.ctx.strokeStyle = complStroke.substring(0, complStroke.length - 1) + ',' + this.randomStrokeOpacity + ")";
-                        }
-                        else if (this.randomScheme !== 'Monochromatic') {
-                            this.ctx.strokeStyle = 'rgb(' + stroke['r'] + ',' + stroke['g'] + ',' + stroke['b'] + ', 1)';
-                        }
-                        else {
-                            this.ctx.strokeStyle = 'rgb(' + stroke['r'] + ',' + stroke['g'] + ',' + stroke['b'] + ', 1)';
-                        }
-                        // if (!this.isSafari) {
+                        this.ctx.strokeStyle =
+                            "rgb(" + stroke["r"] + "," + stroke["g"] + "," + stroke["b"] + ", 1)";
                         this.ctx.globalAlpha = 1;
-                        this.randomColor = this.randomColor.substring(0, this.randomColor.length - 1) + ',' + this.randomShapeOpacity + ")";
-                        // if(!smallCount) {
-                        // if(!smallCount || (smallCount && this.layerCounter > 2 && !this.forceBeginPath)) {
-                        // if(!smallCount || (smallCount && !this.forceBeginPath)) {
-                        // if(!this.forceBeginPath) {
-                        // if (!this.forceBeginPath && smallCount && smallCounter >= 1) {
-                        //   rand = 2
-                        // }
-                        if (smallCount && !this.forceBeginPath && smallCounter < 2) {
-                            // rand = 2;
-                        }
-                        if (rand === 1) {
+                        this.randomColor =
+                            this.randomColor.substring(0, this.randomColor.length - 1) +
+                                "," +
+                                this.randomShapeOpacity +
+                                ")";
+                        this.ctx.fillStyle = this.randomColor;
+                        this.ctx.lineWidth = Math.random() * 10;
+                        this.patternFill = this.utilities.randomlyChooseTrueOrFalse();
+                        randNum = Math.floor(Math.random() * 2) + 1;
+                        if (randNum === 1) {
                             this.ctx.globalAlpha = this.randomShapeOpacity;
                         }
-                        else {
-                            // if (smallCount && !this.forceBeginPath) {
-                            //   this.randomShapeOpacity = Math.random() * .5;
-                            //   this.randomColor = this.randomColor.substring(0, this.randomColor.length - 1) + ',' + this.randomShapeOpacity + ")";
-                            // }
-                        }
-                        // }
-                        // }
-                        // } 
-                        // else {
-                        //   this.ctx.globalAlpha = this.randomShapeOpacity;
-                        // }
-                        this.ctx.fillStyle = this.randomColor;
-                        this.patternFill = this.utilities.randomlyChooseTrueOrFalse();
-                        // if (rand !== 1 && smallCount && !this.forceBeginPath && (!this.patternFill || smallCounter < 20)) {
-                        if (rand !== 1 && smallCount && !this.forceBeginPath && !this.patternFill) {
-                            this.randomShapeOpacity = Math.random() * .5;
-                            this.randomColor = this.randomColor.substring(0, this.randomColor.length - 1) + ',' + this.randomShapeOpacity + ")";
+                        if (randNum !== 1 &&
+                            smallCount &&
+                            !this.forceBeginPath &&
+                            !this.patternFill) {
+                            this.randomShapeOpacity = Math.random() * 0.5;
+                            this.randomColor =
+                                this.randomColor.substring(0, this.randomColor.length - 1) +
+                                    "," +
+                                    this.randomShapeOpacity +
+                                    ")";
                             this.ctx.fillStyle = this.randomColor;
                         }
-                        this.ctx.lineWidth = Math.random() * 10;
                         if (this.singleLayer) {
                             this.ctx.lineWidth = Math.random() * 3.2;
-                            rand_2 = this.utilities.randomlyChooseTrueOrFalse();
-                            if (rand_2) {
+                            rand = this.utilities.randomlyChooseTrueOrFalse();
+                            if (rand) {
                                 if (this.forceTrapezoidBeginPath) {
                                     this.ctx.lineWidth = Math.random() * 10;
                                 }
@@ -1817,126 +1752,165 @@ var GeneratorComponent = /** @class */ (function () {
         this.layerCounter = 0;
         this.ctx.globalAlpha = 1;
         this.aggrObjArea = 0;
-        this.dark = false;
-        this.normalColor = false;
-        this.shapeArr = ['Rectangle', 'Triangle', 'Circle', 'Line'];
+        this.shapeArr = ["Rectangle", "Triangle", "Circle", "Line"];
     };
-    GeneratorComponent.prototype.getMainLayer = function (objNum, norm, rand, trapTrans, recurseStep) {
+    GeneratorComponent.prototype.getTransLayer = function (recurseStep) {
         return __awaiter(this, void 0, void 0, function () {
-            var light, _a, randomShape, dark, stroke, newLineWidth, rand_3;
+            var layerNum, rand, _a, randomShape, stroke, rand_1, transPattern;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        this.shapeArr = ['Rectangle', 'Triangle', 'Line'];
-                        if (this.genType !== 'random') {
-                            this.patternFill = false;
+                        layerNum = 30;
+                        this.backgroundShapeArr = ["Rectangle", "Circle", "Line"];
+                        _b.label = 1;
+                    case 1:
+                        if (!(this.layerCounter < layerNum)) return [3 /*break*/, 5];
+                        _a = this;
+                        return [4 /*yield*/, this.getRandomRgb()];
+                    case 2:
+                        _a.randomColor = _b.sent();
+                        this.randomColor =
+                            "rgb(" +
+                                this.randomColor["r"] +
+                                "," +
+                                this.randomColor["g"] +
+                                "," +
+                                this.randomColor["b"] +
+                                ")";
+                        this.randomStrokeOpacity = Math.random();
+                        this.randomShapeOpacity = Math.random();
+                        randomShape = this.backgroundShapeArr[Math.floor(Math.random() * this.shapeArr.length)];
+                        return [4 /*yield*/, this.getRandomRgb()];
+                    case 3:
+                        stroke = _b.sent();
+                        this.ctx.strokeStyle =
+                            "rgb(" + stroke["r"] + "," + stroke["g"] + "," + stroke["b"] + ")";
+                        rand = this.utilities.randomlyChooseOneOrTwo();
+                        if (rand === 1) {
+                            this.ctx.strokeStyle = "black";
                         }
-                        else {
-                            this.patternFill = this.utilities.randomlyChooseTrueOrFalse();
-                            if (this.patternFill === false) {
-                                this.patternFill = this.utilities.randomlyChooseTrueOrFalse();
+                        this.randomColor =
+                            this.randomColor.substring(0, this.randomColor.length - 1) +
+                                "," +
+                                this.randomShapeOpacity +
+                                ")";
+                        this.ctx.globalAlpha = 0.4 - (layerNum / this.layerCounter) * 0.01;
+                        this.ctx.fillStyle = this.randomColor;
+                        this.patternFill = this.utilities.randomlyChooseTrueOrFalse();
+                        this.ctx.lineWidth = Math.random() * 10;
+                        if (this.singleLayer) {
+                            this.ctx.lineWidth = Math.random() * 3.2;
+                            rand_1 = this.utilities.randomlyChooseTrueOrFalse();
+                            if (rand_1) {
+                                if (this.forceTrapezoidBeginPath) {
+                                    this.ctx.lineWidth = Math.random() * 10;
+                                }
+                                else {
+                                    this.ctx.lineWidth = Math.random() * 7;
+                                }
                             }
                         }
-                        // norm = false;
-                        // if (!norm) {
+                        transPattern = recurseStep === this.startingRecurseStep &&
+                            this.recurse &&
+                            this.transWithRecurse &&
+                            this.utilities.randomlyChooseTrueOrFalse()
+                            ? true
+                            : false;
+                        return [4 /*yield*/, this.drawShape(randomShape, false, false, transPattern)];
+                    case 4:
+                        _b.sent();
+                        this.layerCounter++;
+                        return [3 /*break*/, 1];
+                    case 5: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    GeneratorComponent.prototype.getMainLayer = function (recurseStep) {
+        return __awaiter(this, void 0, void 0, function () {
+            var objNum, _a, randomShape, rand, dark, stroke, newLineWidth, rand_2;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        this.shapeArr = ["Rectangle", "Triangle", "Line"];
+                        this.patternFill = true;
+                        this.shapeArr = ["Trapezoid", "Line"];
                         objNum = Math.floor(Math.random() * 1) + 5;
-                        this.shapeArr = ['Trapezoid', 'Line'];
                         if (this.singleLayer) {
                             objNum = 6;
-                            // this.beginPath = false;
-                            this.isTrunks = this.utilities.randomlyChooseTrueOrFalse();
-                            if (this.isTrunks) {
-                                this.isArabesque = false;
-                                this.isFrieze = false;
-                                this.isFriezeTwo = false;
-                                this.patternFill = true;
-                                this.isMexico = this.utilities.randomlyChooseTrueOrFalse();
-                                if (this.isMexico) {
-                                    this.isTrunks = false;
-                                }
-                            }
-                            else {
-                                this.patternFill = false;
-                                if (this.patternFill === false) {
-                                    this.patternFill = this.utilities.randomlyChooseTrueOrFalse();
-                                    if (this.patternFill === false) {
-                                        this.patternFill = this.utilities.randomlyChooseTrueOrFalse();
-                                    }
-                                }
-                            }
+                            // this.isTrunks = this.utilities.randomlyChooseTrueOrFalse();
+                            // if (this.isTrunks) {
+                            //   this.isArabesque = false;
+                            //   this.isFrieze = false;
+                            //   this.isFriezeTwo = false;
+                            //   this.isMexico = this.utilities.randomlyChooseTrueOrFalse();
+                            //   if (this.isMexico) {
+                            //     this.isTrunks = false;
+                            //   }
+                            // }
                         }
                         _b.label = 1;
                     case 1:
                         if (!(this.layerCounter < objNum)) return [3 /*break*/, 7];
-                        light = false;
-                        if (this.recurse) {
-                            light = true;
-                        }
                         _a = this;
                         return [4 /*yield*/, this.getRandomRgb(false, true)];
                     case 2:
                         _a.randomColor = _b.sent();
-                        this.randomColor = 'rgb(' + this.randomColor['r'] + ',' + this.randomColor['g'] + ',' + this.randomColor['b'] + ')';
+                        this.randomColor =
+                            "rgb(" +
+                                this.randomColor["r"] +
+                                "," +
+                                this.randomColor["g"] +
+                                "," +
+                                this.randomColor["b"] +
+                                ")";
                         this.randomShapeOpacity = Math.random();
-                        if (this.randomShapeOpacity < 0) {
+                        if (this.layerCounter === objNum) {
                             this.randomShapeOpacity = 0;
                         }
-                        if (this.layerCounter === (objNum)) {
-                            this.randomShapeOpacity = 0;
-                            this.patternFill = false;
+                        if (!this.recurse && this.layerCounter === objNum - 1) {
+                            this.randomShapeOpacity = 0.1;
                         }
-                        // if (!this.recurse && this.layerCounter === (objNum - 2)) {
-                        //   this.randomShapeOpacity = .1;
-                        // }
-                        if (!this.recurse && this.layerCounter === (objNum - 1)) {
-                            this.randomShapeOpacity = .1;
-                        }
-                        if (this.singleLayer) {
-                            if (this.recurse) {
-                                this.ctx.globalAlpha = this.layerCounter / objNum + .2;
-                            }
-                            else {
-                                this.ctx.globalAlpha = this.layerCounter / objNum + .1;
-                            }
+                        if (this.singleLayer && this.recurse) {
+                            this.ctx.globalAlpha = this.layerCounter / objNum + 0.2;
                         }
                         else {
-                            // if(this.utilities.randomlyChooseTrueOrFalse()) {
-                            this.ctx.globalAlpha = this.layerCounter / objNum + .1;
-                            // }
+                            this.ctx.globalAlpha = this.layerCounter / objNum + 0.1;
                         }
                         randomShape = this.shapeArr[Math.floor(Math.random() * this.shapeArr.length)];
-                        // if (this.singleLayer && randomShape !== 'Line') {
-                        //   var randomShape = this.shapeArr[Math.floor(Math.random() * this.shapeArr.length)];
-                        // }
-                        // var stroke = await this.getRandomRgb(false, false, dark);
-                        // this.ctx.strokeStyle = 'rgb(' + stroke['r'] + ',' + stroke['g'] + ',' + stroke['b'] + ')';
                         rand = Math.floor(Math.random() * 2) + 1;
                         if (!(rand === 1)) return [3 /*break*/, 3];
-                        this.ctx.strokeStyle = 'black';
+                        this.ctx.strokeStyle = "black";
                         return [3 /*break*/, 5];
                     case 3:
                         dark = this.utilities.randomlyChooseOneOrTwo();
                         return [4 /*yield*/, this.getRandomRgb(false, false, dark)];
                     case 4:
                         stroke = _b.sent();
-                        this.ctx.strokeStyle = 'rgb(' + stroke['r'] + ',' + stroke['g'] + ',' + stroke['b'] + ')';
+                        this.ctx.strokeStyle =
+                            "rgb(" + stroke["r"] + "," + stroke["g"] + "," + stroke["b"] + ")";
                         _b.label = 5;
                     case 5:
-                        this.randomColor = this.randomColor.substring(0, this.randomColor.length - 1) + ',' + this.randomShapeOpacity + ")";
+                        this.randomColor =
+                            this.randomColor.substring(0, this.randomColor.length - 1) +
+                                "," +
+                                this.randomShapeOpacity +
+                                ")";
                         this.ctx.fillStyle = this.randomColor;
                         newLineWidth = Math.random() * 5 + 1;
-                        if (this.layerCounter < (objNum / 4) || (this.layerCounter > (objNum * .5) && this.layerCounter < (objNum * .6))) {
+                        if (this.layerCounter < objNum / 4 ||
+                            (this.layerCounter > objNum * 0.5 && this.layerCounter < objNum * 0.6)) {
                             newLineWidth = Math.random() * 20 + 16;
-                            if (this.layerCounter === (objNum - 1) || this.layerCounter === (objNum)) {
+                            if (this.layerCounter === objNum - 1 || this.layerCounter === objNum) {
                                 newLineWidth = Math.random() * 20 + 16;
                                 this.ctx.globalAlpha = 1;
                             }
-                            if (this.layerCounter === (objNum - 2)) {
+                            if (this.layerCounter === objNum - 2) {
                                 newLineWidth = Math.random() * 20 + 16;
                                 this.ctx.globalAlpha = 1;
                             }
                             if (!this.singleLayer && recurseStep === 1) {
-                                if (this.layerCounter === (objNum - 3)) {
+                                if (this.layerCounter === objNum - 3) {
                                     newLineWidth = Math.random() * 20 + 16;
                                 }
                             }
@@ -1944,15 +1918,14 @@ var GeneratorComponent = /** @class */ (function () {
                                 this.ctx.globalAlpha = 1;
                             }
                         }
-                        this.ctx.lineWidth = newLineWidth;
                         if (this.singleLayer) {
-                            this.patternFill = true;
-                            this.ctx.lineWidth = Math.random() * 3.2;
-                            rand_3 = this.utilities.randomlyChooseTrueOrFalse();
-                            if (rand_3) {
-                                this.ctx.lineWidth = Math.random() * 10;
+                            newLineWidth = Math.random() * 3.2;
+                            rand_2 = this.utilities.randomlyChooseTrueOrFalse();
+                            if (rand_2) {
+                                newLineWidth = Math.random() * 10;
                             }
                         }
+                        this.ctx.lineWidth = newLineWidth;
                         return [4 /*yield*/, this.drawShape(randomShape, false, true)];
                     case 6:
                         _b.sent();
@@ -1963,270 +1936,132 @@ var GeneratorComponent = /** @class */ (function () {
             });
         });
     };
-    GeneratorComponent.prototype.setXYExtremes = function (xPos, yPos, small) {
-        if (xPos < this.leftmostPoint) {
-            this.leftmostPoint = xPos;
-        }
-        if (xPos > this.rightmostPoint) {
-            this.rightmostPoint = xPos;
-        }
-        if (yPos > this.rightmostPoint) {
-            this.lowestPoint = xPos;
-        }
-    };
     GeneratorComponent.prototype.onload2promise = function (obj) {
         return new Promise(function (resolve, reject) {
             obj.onload = function () { return resolve(obj); };
             obj.onerror = reject;
         });
     };
-    GeneratorComponent.prototype.drawShape = function (shape, small, main) {
+    GeneratorComponent.prototype.drawShape = function (shape, small, main, trans, secondSmall) {
         return __awaiter(this, void 0, void 0, function () {
-            var offset_x, offset_y, xPos, yPos, height, width, currObjArea, dontBeginPath, rand1, y1, rand2, y2, rand3, y3, heightLow, heightHigh, leftMost, rightMost, addToLeftMost, rand4, y4, ty1, ty2, rand, ly1, ly2, radius;
+            var xPos, yPos, height, width, currObjArea, transIndex, dontBeginPath, rand1, y1, rand2, y2, rand3, y3, heightLow, heightHigh, leftMost, rightMost, addToLeftMost, rand4, y4, ty1, ty2, rand, ly1, ly2, radius;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        this.repeat = this.utilities.randomlyChooseTrueOrFalse() ? 'no-repeat' : 'repeat';
-                        if (this.recurse) {
-                            this.repeat = 'repeat';
-                        }
-                        ;
-                        this.repeat = 'repeat';
-                        offset_x = 0;
-                        offset_y = 0;
-                        xPos = (Math.random() * this.canvasSize) + ((this.fullCanvasSize - this.canvasSize) / 2.5);
-                        yPos = (Math.random() * this.canvasSize) + ((this.fullCanvasSize - this.canvasSize) / 2.75);
-                        if (xPos > 1500) {
-                            console.log('XPOS', xPos);
-                        }
-                        // small
-                        this.setXYExtremes(xPos, yPos, small);
+                        xPos = Math.random() * this.canvasSize +
+                            (this.fullCanvasSize - this.canvasSize) / 2.5;
+                        yPos = Math.random() * this.canvasSize +
+                            (this.fullCanvasSize - this.canvasSize) / 2.75;
                         height = (Math.random() * this.canvasSize) / 2;
                         width = (Math.random() * this.canvasSize) / 2;
                         currObjArea = height * width;
                         this.patternSwitch = Math.floor(Math.random() * 8) + 1;
-                        rand = this.utilities.randomlyChooseOneOrTwo();
-                        if (this.genType === "noPattern" && main) {
+                        if (this.recurse) {
                             this.patternFill = true;
                         }
-                        if (!this.patternFill) return [3 /*break*/, 48];
-                        // this.ctx.translate(this.offset_x, this.offset_y);
-                        if (!this.patternFillSingleBegun && (this.isFrieze || this.isFriezeTwo || this.isTrunks || this.isArabesque || this.isMexico || this.isBedroom)) {
-                            this.patternFillSingleBegun = true;
-                        }
                         else {
-                            offset_x = Math.floor(Math.random() * this.canvasSize / 2.5) - this.canvasSize / 2.5;
-                            offset_y = Math.floor(Math.random() * this.canvasSize / 2.5) - this.canvasSize / 2.5;
-                            // this.ctx.translate(offset_x, offset_y);
+                            if (this.genType === "noPattern" && main) {
+                                this.patternFill = true;
+                            }
                         }
-                        if (!(this.patternSwitch === 1)) return [3 /*break*/, 3];
-                        this.currentImage = this.patternThree;
-                        if (!!this.currentImage.complete) return [3 /*break*/, 2];
-                        return [4 /*yield*/, this.onload2promise(this.currentImage)];
+                        rand = this.utilities.randomlyChooseOneOrTwo();
+                        if (!this.patternFill) return [3 /*break*/, 22];
+                        if (!(this.patternSwitch === 1)) return [3 /*break*/, 2];
+                        return [4 /*yield*/, this.loadAndSetImage(this.patternThree)];
                     case 1:
                         _a.sent();
-                        _a.label = 2;
+                        return [3 /*break*/, 22];
                     case 2:
-                        this.ctx.fillStyle = this.ctx.createPattern(this.patternThree, this.repeat);
-                        return [3 /*break*/, 32];
+                        if (!(this.patternSwitch === 2)) return [3 /*break*/, 7];
+                        if (!(rand === 1)) return [3 /*break*/, 4];
+                        return [4 /*yield*/, this.loadAndSetImage(this.patternTwo)];
                     case 3:
-                        if (!(this.patternSwitch === 2)) return [3 /*break*/, 10];
-                        if (!(rand === 1)) return [3 /*break*/, 6];
-                        this.currentImage = this.patternTwo;
-                        this.currentImage = this.patternThree;
-                        if (!!this.currentImage.complete) return [3 /*break*/, 5];
-                        return [4 /*yield*/, this.onload2promise(this.currentImage)];
+                        _a.sent();
+                        return [3 /*break*/, 6];
                     case 4:
-                        _a.sent();
-                        _a.label = 5;
+                        if (!(rand === 2)) return [3 /*break*/, 6];
+                        return [4 /*yield*/, this.loadAndSetImage(this.patternFour)];
                     case 5:
-                        this.ctx.fillStyle = this.ctx.createPattern(this.patternTwo, this.repeat);
-                        return [3 /*break*/, 9];
-                    case 6:
-                        if (!(rand === 2)) return [3 /*break*/, 9];
-                        this.currentImage = this.patternFour;
-                        this.currentImage = this.patternThree;
-                        if (!!this.currentImage.complete) return [3 /*break*/, 8];
-                        return [4 /*yield*/, this.onload2promise(this.currentImage)];
+                        _a.sent();
+                        _a.label = 6;
+                    case 6: return [3 /*break*/, 22];
                     case 7:
-                        _a.sent();
-                        _a.label = 8;
+                        if (!(this.patternSwitch === 3)) return [3 /*break*/, 9];
+                        return [4 /*yield*/, this.loadAndSetImage(this.patternSix)];
                     case 8:
-                        this.ctx.fillStyle = this.ctx.createPattern(this.patternFour, this.repeat);
-                        _a.label = 9;
-                    case 9: return [3 /*break*/, 32];
+                        _a.sent();
+                        return [3 /*break*/, 22];
+                    case 9:
+                        if (!(this.patternSwitch === 4)) return [3 /*break*/, 14];
+                        if (!(rand === 1)) return [3 /*break*/, 11];
+                        return [4 /*yield*/, this.loadAndSetImage(this.patternFour)];
                     case 10:
-                        if (!(this.patternSwitch === 3)) return [3 /*break*/, 13];
-                        this.currentImage = this.patternSix;
-                        this.currentImage = this.patternThree;
-                        if (!!this.currentImage.complete) return [3 /*break*/, 12];
-                        return [4 /*yield*/, this.onload2promise(this.currentImage)];
+                        _a.sent();
+                        return [3 /*break*/, 13];
                     case 11:
-                        _a.sent();
-                        _a.label = 12;
+                        if (!(rand === 2)) return [3 /*break*/, 13];
+                        return [4 /*yield*/, this.loadAndSetImage(this.patternSix)];
                     case 12:
-                        this.ctx.fillStyle = this.ctx.createPattern(this.patternSix, this.repeat);
-                        return [3 /*break*/, 32];
-                    case 13:
-                        if (!(this.patternSwitch === 4)) return [3 /*break*/, 20];
-                        if (!(rand === 1)) return [3 /*break*/, 16];
-                        this.currentImage = this.patternFour;
-                        this.currentImage = this.patternThree;
-                        if (!!this.currentImage.complete) return [3 /*break*/, 15];
-                        return [4 /*yield*/, this.onload2promise(this.currentImage)];
-                    case 14:
                         _a.sent();
-                        _a.label = 15;
+                        _a.label = 13;
+                    case 13: return [3 /*break*/, 22];
+                    case 14:
+                        if (!(this.patternSwitch === 5)) return [3 /*break*/, 16];
+                        return [4 /*yield*/, this.loadAndSetImage(this.patternTwo)];
                     case 15:
-                        this.ctx.fillStyle = this.ctx.createPattern(this.patternFour, this.repeat);
-                        return [3 /*break*/, 19];
+                        _a.sent();
+                        return [3 /*break*/, 22];
                     case 16:
-                        if (!(rand === 2)) return [3 /*break*/, 19];
-                        this.currentImage = this.patternSix;
-                        this.currentImage = this.patternThree;
-                        if (!!this.currentImage.complete) return [3 /*break*/, 18];
-                        return [4 /*yield*/, this.onload2promise(this.currentImage)];
+                        if (!(this.patternSwitch === 6)) return [3 /*break*/, 18];
+                        return [4 /*yield*/, this.loadAndSetImage(this.patternOne)];
                     case 17:
                         _a.sent();
-                        _a.label = 18;
+                        return [3 /*break*/, 22];
                     case 18:
-                        this.ctx.fillStyle = this.ctx.createPattern(this.patternSix, this.repeat);
-                        _a.label = 19;
-                    case 19: return [3 /*break*/, 32];
-                    case 20:
-                        if (!(this.patternSwitch === 5)) return [3 /*break*/, 23];
-                        this.currentImage = this.patternTwo;
-                        this.currentImage = this.patternThree;
-                        if (!!this.currentImage.complete) return [3 /*break*/, 22];
-                        return [4 /*yield*/, this.onload2promise(this.currentImage)];
+                        if (!(this.patternSwitch === 7)) return [3 /*break*/, 20];
+                        return [4 /*yield*/, this.loadAndSetImage(this.patternFive)];
+                    case 19:
+                        _a.sent();
+                        return [3 /*break*/, 22];
+                    case 20: return [4 /*yield*/, this.loadAndSetImage(this.patternFour)];
                     case 21:
                         _a.sent();
                         _a.label = 22;
                     case 22:
-                        this.ctx.fillStyle = this.ctx.createPattern(this.patternTwo, this.repeat);
-                        return [3 /*break*/, 32];
+                        if (!(trans && this.transDatabaseList.length > 1)) return [3 /*break*/, 24];
+                        transIndex = Math.floor(Math.random() * (this.transDatabaseList.length - 1));
+                        this.currentImage = this.transDatabaseList[transIndex];
+                        return [4 /*yield*/, this.loadAndSetImage(this.currentImage)];
                     case 23:
-                        if (!(this.patternSwitch === 6)) return [3 /*break*/, 26];
-                        this.currentImage = this.patternOne;
-                        this.currentImage = this.patternThree;
-                        if (!!this.currentImage.complete) return [3 /*break*/, 25];
-                        return [4 /*yield*/, this.onload2promise(this.currentImage)];
+                        _a.sent();
+                        _a.label = 24;
                     case 24:
-                        _a.sent();
-                        _a.label = 25;
-                    case 25:
-                        this.ctx.fillStyle = this.ctx.createPattern(this.patternOne, this.repeat);
-                        return [3 /*break*/, 32];
-                    case 26:
-                        if (!(this.patternSwitch === 7)) return [3 /*break*/, 29];
-                        this.currentImage = this.patternFive;
-                        this.currentImage = this.patternThree;
-                        if (!!this.currentImage.complete) return [3 /*break*/, 28];
-                        return [4 /*yield*/, this.onload2promise(this.currentImage)];
-                    case 27:
-                        _a.sent();
-                        _a.label = 28;
-                    case 28:
-                        this.ctx.fillStyle = this.ctx.createPattern(this.patternFive, this.repeat);
-                        return [3 /*break*/, 32];
-                    case 29:
-                        this.currentImage = this.patternFour;
-                        this.currentImage = this.patternThree;
-                        if (!!this.currentImage.complete) return [3 /*break*/, 31];
-                        return [4 /*yield*/, this.onload2promise(this.currentImage)];
-                    case 30:
-                        _a.sent();
-                        _a.label = 31;
-                    case 31:
-                        this.ctx.fillStyle = this.ctx.createPattern(this.patternFour, this.repeat);
-                        _a.label = 32;
-                    case 32:
-                        if (!(this.isFrieze && main)) return [3 /*break*/, 35];
-                        this.currentImage = this.patternThree;
-                        this.currentImage = this.patternThree;
-                        if (!!this.currentImage.complete) return [3 /*break*/, 34];
-                        return [4 /*yield*/, this.onload2promise(this.currentImage)];
-                    case 33:
-                        _a.sent();
-                        _a.label = 34;
-                    case 34:
-                        this.ctx.fillStyle = this.ctx.createPattern(this.patternThree, this.repeat);
-                        _a.label = 35;
-                    case 35:
-                        if (!(this.isFriezeTwo && main)) return [3 /*break*/, 38];
-                        this.currentImage = this.patternFive;
-                        this.currentImage = this.patternThree;
-                        if (!!this.currentImage.complete) return [3 /*break*/, 37];
-                        return [4 /*yield*/, this.onload2promise(this.currentImage)];
-                    case 36:
-                        _a.sent();
-                        _a.label = 37;
-                    case 37:
-                        this.ctx.fillStyle = this.ctx.createPattern(this.patternFive, this.repeat);
-                        _a.label = 38;
-                    case 38:
-                        if (!(this.isTrunks && main)) return [3 /*break*/, 41];
-                        this.currentImage = this.patternSix;
-                        this.currentImage = this.patternThree;
-                        if (!!this.currentImage.complete) return [3 /*break*/, 40];
-                        return [4 /*yield*/, this.onload2promise(this.currentImage)];
-                    case 39:
-                        _a.sent();
-                        _a.label = 40;
-                    case 40:
-                        this.ctx.fillStyle = this.ctx.createPattern(this.patternSix, this.repeat);
-                        _a.label = 41;
-                    case 41:
-                        if (!(this.isArabesque && main)) return [3 /*break*/, 44];
-                        this.currentImage = this.patternOne;
-                        this.currentImage = this.patternThree;
-                        if (!!this.currentImage.complete) return [3 /*break*/, 43];
-                        return [4 /*yield*/, this.onload2promise(this.currentImage)];
-                    case 42:
-                        _a.sent();
-                        _a.label = 43;
-                    case 43:
-                        this.ctx.fillStyle = this.ctx.createPattern(this.patternOne, this.repeat);
-                        _a.label = 44;
-                    case 44:
-                        if (!(this.isMexico && main)) return [3 /*break*/, 47];
-                        this.currentImage = this.patternFour;
-                        this.currentImage = this.patternThree;
-                        if (!!this.currentImage.complete) return [3 /*break*/, 46];
-                        return [4 /*yield*/, this.onload2promise(this.currentImage)];
-                    case 45:
-                        _a.sent();
-                        _a.label = 46;
-                    case 46:
-                        console.log('this.currentImage', this.currentImage);
-                        this.ctx.fillStyle = this.ctx.createPattern(this.patternFour, this.repeat);
-                        _a.label = 47;
-                    case 47:
-                        if (this.isBedroom && main) {
-                            this.currentImage = this.patternBedroom;
-                            this.ctx.fillStyle = this.ctx.createPattern(this.patternBedroom, this.repeat);
-                        }
-                        _a.label = 48;
-                    case 48:
-                        rand = Math.floor(Math.random() * 100) + 1;
-                        if (small || (this.aggrObjArea + currObjArea + 250) >= (Math.pow(this.canvasSize, 2))) {
-                            height = Math.random() * this.canvasSize / 25;
-                            width = Math.random() * this.canvasSize / 25;
+                        if (small ||
+                            this.aggrObjArea + currObjArea + 250 >= Math.pow(this.canvasSize, 2)) {
+                            height = (Math.random() * this.canvasSize) / 25;
+                            width = (Math.random() * this.canvasSize) / 25;
                             currObjArea = height * width;
                         }
                         switch (shape) {
-                            case 'Rectangle':
-                                if ((xPos + width + this.offset_x + this.ctx.lineWidth) > this.fullCanvasSize) {
-                                    width = (this.fullCanvasSize - xPos - this.offset_x - this.ctx.lineWidth - 2);
+                            case "Rectangle":
+                                if (xPos + width + this.offset_x + this.ctx.lineWidth >
+                                    this.fullCanvasSize) {
+                                    width =
+                                        this.fullCanvasSize - xPos - this.offset_x - this.ctx.lineWidth - 2;
                                 }
-                                if ((yPos + height + this.offset_y + this.ctx.lineWidth) > this.fullCanvasSize) {
-                                    height = (this.fullCanvasSize - yPos - this.offset_y - this.ctx.lineWidth - 10);
+                                if (yPos + height + this.offset_y + this.ctx.lineWidth >
+                                    this.fullCanvasSize) {
+                                    height =
+                                        this.fullCanvasSize -
+                                            yPos -
+                                            this.offset_y -
+                                            this.ctx.lineWidth -
+                                            10;
                                 }
-                                this.setXYExtremes(width + xPos, height + yPos, small);
                                 this.ctx.fillRect(xPos, yPos, width, height);
                                 this.ctx.strokeRect(xPos, yPos, width, height);
                                 break;
-                            case 'Trapezoid':
+                            case "Trapezoid":
                                 // omitting begin path triggers the wireframe look
                                 if (!this.forceBeginPath && this.singleLayer) {
                                     if (this.forceTrapezoidBeginPath) {
@@ -2239,34 +2074,30 @@ var GeneratorComponent = /** @class */ (function () {
                                         this.ctx.beginPath();
                                     }
                                 }
-                                if (!this.utilities.randomlyChooseTrueOrFalseThird()) {
-                                    if (!this.utilities.randomlyChooseTrueOrFalseThird()) {
-                                        if (!this.utilities.randomlyChooseTrueOrFalseThird()) {
-                                            // this.ctx.lineWidth = 2;
-                                        }
-                                    }
-                                }
-                                rand1 = (Math.random() * this.canvasSize) + ((this.fullCanvasSize - this.canvasSize) / 2);
-                                y1 = (Math.random() * this.canvasSize) + ((this.fullCanvasSize - this.canvasSize) / 2);
+                                rand1 = Math.random() * this.canvasSize +
+                                    (this.fullCanvasSize - this.canvasSize) / 2;
+                                y1 = Math.random() * this.canvasSize +
+                                    (this.fullCanvasSize - this.canvasSize) / 2;
                                 if (y1 > this.fullCanvasSize + this.offset_y + this.ctx.lineWidth) {
-                                    y1 = (this.fullCanvasSize - this.offset_y - this.ctx.lineWidth - 5);
+                                    y1 = this.fullCanvasSize - this.offset_y - this.ctx.lineWidth - 5;
                                 }
-                                this.setXYExtremes(rand1, y1, small);
                                 //first point
                                 this.ctx.moveTo(rand1, y1);
-                                rand2 = (Math.random() * this.canvasSize) + ((this.fullCanvasSize - this.canvasSize) / 2);
-                                y2 = (Math.random() * this.canvasSize) + ((this.fullCanvasSize - this.canvasSize) / 2);
+                                rand2 = Math.random() * this.canvasSize +
+                                    (this.fullCanvasSize - this.canvasSize) / 2;
+                                y2 = Math.random() * this.canvasSize +
+                                    (this.fullCanvasSize - this.canvasSize) / 2;
                                 if (y2 > this.fullCanvasSize) {
-                                    y2 = (this.fullCanvasSize - 10);
+                                    y2 = this.fullCanvasSize - 10;
                                 }
                                 this.ctx.lineTo(rand2, y2);
-                                this.setXYExtremes(rand2, y2, small);
-                                rand3 = (Math.random() * this.canvasSize) + ((this.fullCanvasSize - this.canvasSize) / 2);
-                                y3 = (Math.random() * this.canvasSize) + ((this.fullCanvasSize - this.canvasSize) / 2);
+                                rand3 = Math.random() * this.canvasSize +
+                                    (this.fullCanvasSize - this.canvasSize) / 2;
+                                y3 = Math.random() * this.canvasSize +
+                                    (this.fullCanvasSize - this.canvasSize) / 2;
                                 if (y3 > this.fullCanvasSize) {
-                                    y3 = (this.fullCanvasSize - 10);
+                                    y3 = this.fullCanvasSize - 10;
                                 }
-                                this.setXYExtremes(rand3, y3, small);
                                 // third point completes second side
                                 this.ctx.lineTo(rand3, y3);
                                 heightLow = Math.max(y1, y3);
@@ -2275,21 +2106,25 @@ var GeneratorComponent = /** @class */ (function () {
                                 rightMost = Math.max(rand1, rand3);
                                 addToLeftMost = Math.random() * (rightMost - leftMost);
                                 rand4 = leftMost + addToLeftMost;
-                                y4 = heightLow - (Math.random() * (heightLow - heightHigh));
+                                y4 = heightLow - Math.random() * (heightLow - heightHigh);
                                 if (rand1 === leftMost && y1 === heightHigh && rand4 < rand2) {
                                     y4 = y1 + Math.random() * this.canvasSize;
                                 }
                                 if (y4 > this.fullCanvasSize) {
-                                    y4 = (this.fullCanvasSize - 10);
+                                    y4 = this.fullCanvasSize - 10;
                                 }
-                                this.setXYExtremes(rand4, y4, small);
                                 this.ctx.lineTo(rand4, y4);
                                 this.ctx.fill();
                                 this.ctx.lineTo(rand1, y1);
                                 this.ctx.stroke();
-                                currObjArea = this.calcPolygonArea([{ x: rand1, y: y1 }, { x: rand2, y: rand1 }, { x: rand3, y: rand2 }, { x: rand4, y: y2 }]);
+                                currObjArea = this.calcPolygonArea([
+                                    { x: rand1, y: y1 },
+                                    { x: rand2, y: rand1 },
+                                    { x: rand3, y: rand2 },
+                                    { x: rand4, y: y2 },
+                                ]);
                                 break;
-                            case 'Triangle':
+                            case "Triangle":
                                 if (!this.forceBeginPath && this.singleLayer) {
                                     if (!this.forceTrapezoidBeginPath) {
                                         this.ctx.beginPath();
@@ -2298,52 +2133,42 @@ var GeneratorComponent = /** @class */ (function () {
                                 else {
                                     this.ctx.beginPath();
                                 }
-                                if (!this.utilities.randomlyChooseTrueOrFalseThird()) {
-                                    if (!this.utilities.randomlyChooseTrueOrFalseThird()) {
-                                        if (!this.utilities.randomlyChooseTrueOrFalseThird()) {
-                                            // this.ctx.lineWidth = 2;
-                                        }
-                                    }
-                                }
                                 rand1 = xPos;
                                 rand2 = yPos;
-                                ty1 = (Math.random() * this.canvasSize) + ((this.fullCanvasSize - this.canvasSize) / 2);
-                                ty2 = (Math.random() * this.canvasSize) + ((this.fullCanvasSize - this.canvasSize) / 2);
+                                ty1 = Math.random() * this.canvasSize +
+                                    (this.fullCanvasSize - this.canvasSize) / 2;
+                                ty2 = Math.random() * this.canvasSize +
+                                    (this.fullCanvasSize - this.canvasSize) / 2;
                                 // vertex one
                                 if (ty1 > this.fullCanvasSize + this.ctx.lineWidth + this.offset_y) {
-                                    ty1 = (this.fullCanvasSize - this.offset_y - this.ctx.lineWidth - 5);
+                                    ty1 = this.fullCanvasSize - this.offset_y - this.ctx.lineWidth - 5;
                                 }
                                 this.ctx.moveTo(rand1, ty1);
-                                this.setXYExtremes(0, ty1, small);
                                 // vertex two
                                 this.ctx.lineTo(rand2, rand1);
                                 // this.ctx.stroke();
                                 if (rand1 > this.fullCanvasSize) {
-                                    rand1 = (this.fullCanvasSize - 10);
+                                    rand1 = this.fullCanvasSize - 10;
                                 }
-                                this.setXYExtremes(0, rand1, small);
-                                if (ty2 > (this.fullCanvasSize + this.ctx.lineWidth + this.offset_y)) {
-                                    ty2 = (this.fullCanvasSize - this.ctx.lineWidth - this.offset_y - 5);
+                                if (ty2 > this.fullCanvasSize + this.ctx.lineWidth + this.offset_y) {
+                                    ty2 = this.fullCanvasSize - this.ctx.lineWidth - this.offset_y - 5;
                                 }
                                 // vertex three
                                 this.ctx.lineTo(rand2, ty2);
-                                this.setXYExtremes(0, ty2, small);
                                 this.ctx.stroke();
                                 this.ctx.lineTo(rand1, ty1);
                                 this.ctx.fill();
-                                currObjArea = this.calcPolygonArea([{ x: rand1, y: ty1 }, { x: rand2, y: rand1 }, { x: rand2, y: ty2 }]);
+                                currObjArea = this.calcPolygonArea([
+                                    { x: rand1, y: ty1 },
+                                    { x: rand2, y: rand1 },
+                                    { x: rand2, y: ty2 },
+                                ]);
                                 break;
-                            case 'Line':
+                            case "Line":
                                 // this.ctx.beginPath();
-                                if (!this.utilities.randomlyChooseTrueOrFalseThird()) {
-                                    if (!this.utilities.randomlyChooseTrueOrFalseThird()) {
-                                        if (!this.utilities.randomlyChooseTrueOrFalseThird()) {
-                                            // this.ctx.setLineDash([5, 15]);
-                                            // this.ctx.lineWidth = 2;
-                                        }
-                                    }
-                                }
-                                rand1 = (Math.random() * this.canvasSize) + ((this.fullCanvasSize - this.canvasSize) / 2);
+                                rand1 =
+                                    Math.random() * this.canvasSize +
+                                        (this.fullCanvasSize - this.canvasSize) / 2;
                                 rand = Math.floor(Math.random() * 2) + 1;
                                 if (rand === 1) {
                                     rand2 = rand1 + 15;
@@ -2351,26 +2176,28 @@ var GeneratorComponent = /** @class */ (function () {
                                 else {
                                     rand2 = rand1 - 15;
                                 }
-                                ly1 = (Math.random() * this.canvasSize) + ((this.fullCanvasSize - this.canvasSize) / 2);
-                                ly2 = (Math.random() * this.canvasSize) + ((this.fullCanvasSize - this.canvasSize) / 2);
-                                this.setXYExtremes(rand1, ly1, small);
-                                this.setXYExtremes(rand2, rand1, small);
-                                this.setXYExtremes(rand2, ly2, small);
+                                ly1 = Math.random() * this.canvasSize +
+                                    (this.fullCanvasSize - this.canvasSize) / 2;
+                                ly2 = Math.random() * this.canvasSize +
+                                    (this.fullCanvasSize - this.canvasSize) / 2;
                                 this.ctx.moveTo(rand1, ly1);
                                 this.ctx.lineTo(rand2, rand1);
                                 this.ctx.lineTo(rand2, ly2);
                                 this.ctx.stroke();
                                 // pythagorean theorem
-                                currObjArea = this.ctx.lineWidth * (this.getDistance(rand1, ly1, rand2, rand1) + this.getDistance(rand2, rand1, rand2, ly2));
+                                currObjArea =
+                                    this.ctx.lineWidth *
+                                        (this.getDistance(rand1, ly1, rand2, rand1) +
+                                            this.getDistance(rand2, rand1, rand2, ly2));
                                 break;
-                            case 'Circle':
+                            case "Circle":
                                 radius = width / 2;
-                                if (!this.forceBeginPath && (this.singleLayer)) {
+                                if (!this.forceBeginPath && this.singleLayer) {
                                 }
                                 else {
                                     this.ctx.beginPath();
                                 }
-                                if ((xPos - radius + this.offset_x - this.ctx.lineWidth) < 0) {
+                                if (xPos - radius + this.offset_x - this.ctx.lineWidth < 0) {
                                     if (this.offset_x < 0) {
                                         xPos = radius - this.offset_x + this.ctx.lineWidth + 5;
                                     }
@@ -2378,7 +2205,7 @@ var GeneratorComponent = /** @class */ (function () {
                                         xPos = radius + this.ctx.lineWidth + 5;
                                     }
                                 }
-                                if ((yPos - radius + this.offset_y - this.ctx.lineWidth) < 0) {
+                                if (yPos - radius + this.offset_y - this.ctx.lineWidth < 0) {
                                     if (this.offset_y < 0) {
                                         yPos = radius - this.offset_y + this.ctx.lineWidth + 5;
                                     }
@@ -2389,16 +2216,9 @@ var GeneratorComponent = /** @class */ (function () {
                                 this.ctx.arc(xPos, yPos, radius, 0, 2 * Math.PI, false);
                                 this.ctx.fill();
                                 this.ctx.stroke();
-                                this.setXYExtremes(width + xPos, width + yPos, small);
                                 currObjArea = Math.PI * Math.pow(radius, 2);
                                 // get better with calculating for circles
                                 break;
-                        }
-                        if (this.patternFill) {
-                            if (!this.patternFillSingleBegun && (this.isFrieze || this.isFriezeTwo || this.isTrunks || this.isArabesque || this.isMexico || this.isBedroom)) {
-                            }
-                            else {
-                            }
                         }
                         this.aggrObjArea += currObjArea;
                         return [2 /*return*/];
@@ -2406,57 +2226,42 @@ var GeneratorComponent = /** @class */ (function () {
             });
         });
     };
+    GeneratorComponent.prototype.loadAndSetImage = function (pattern) {
+        return __awaiter(this, void 0, void 0, function () {
+            var repeat;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        repeat = this.utilities.randomlyChooseTrueOrFalse()
+                            ? "no-repeat"
+                            : "repeat";
+                        this.currentImage = pattern;
+                        if (!!this.currentImage.complete) return [3 /*break*/, 2];
+                        return [4 /*yield*/, this.onload2promise(this.currentImage)];
+                    case 1:
+                        _a.sent();
+                        _a.label = 2;
+                    case 2:
+                        this.ctx.fillStyle = this.ctx.createPattern(pattern, repeat);
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
     GeneratorComponent.prototype.renderImage = function (index, favorites) {
-        // if((this.fullCanvasSize - this.rightmostPoint) < (this.fullCanvasSize - (this.canvasSize * 1.5)/2)) {
-        var overflowX = this.rightmostPoint - (this.canvasSize + ((this.fullCanvasSize - this.canvasSize) / 2));
-        var overflowY = this.lowestPoint - (this.canvasSize + ((this.fullCanvasSize - this.canvasSize) / 2));
-        overflowY = 0;
-        if (overflowX > ((this.fullCanvasSize - this.canvasSize) / 2)) {
-            overflowX = ((this.fullCanvasSize - this.canvasSize) / 2);
-        }
-        if (overflowX > ((this.fullCanvasSize - this.canvasSize) / 2)) {
-            overflowX = ((this.fullCanvasSize - this.canvasSize) / 2);
-        }
-        console.log('leftmost point', this.leftmostPoint, 'starting point', ((this.fullCanvasSize - this.canvasSize) / 2));
-        var startingPointDiff = 0;
-        if (this.leftmostPoint < ((this.fullCanvasSize - this.canvasSize) / 2)) {
-            startingPointDiff = ((this.fullCanvasSize - this.canvasSize) / 2) - this.leftmostPoint;
-            console.log('this.leftmost');
-            if (this.leftmostPoint && startingPointDiff) {
-                //  this.ctx.translate((startingPointDiff), (overflowY/2))
-                //  this.ctxTwo.translate((startingPointDiff), (overflowY/2))
-            }
-        }
-        else {
-            overflowX = overflowX - ((this.leftmostPoint - ((this.fullCanvasSize - this.canvasSize) / 2)) * 2);
-        }
-        // this.ctx.translate((-overflowX/2), (overflowY/2))
         if (index !== undefined) {
             this.currImageIndex = index;
         }
         var img = new Image();
-        var imageArr = this.savedImageArr;
-        if (favorites) {
-            imageArr = this.favoritesArr;
-        }
-        if (imageArr[this.currImageIndex]) {
-            img.src = imageArr[this.currImageIndex].src;
-        }
-        else {
-            img.src = this.canvas.toDataURL();
-        }
+        var imageArr = favorites ? this.favoritesArr : this.savedImageArr;
+        img.src = imageArr[this.currImageIndex]
+            ? imageArr[this.currImageIndex].src
+            : this.canvas.toDataURL();
         this.ctxTwo.save();
         this.ctxTwo.scale(this.restoreScale, this.restoreScale);
         img.onload = function () {
             this.ctx.drawImage(img, 0, 0, this.canvasSize, this.canvasSize, 0, 0, this.canvasSize, this.canvasSize);
             this.drawImageScaled(img, this.ctxTwo);
-            if (this.singleLayer) {
-                // this.ctx.restore();
-            }
-            // this.ctxTwo.translate((overflowX/2), (-overflowY/2))
-            if (this.leftmostPoint && startingPointDiff) {
-                // this.ctxTwo.translate((-startingPointDiff), (overflowY/2))
-            }
             this.ctxTwo.restore();
             this.renderDone = true;
             this.renderDoneEmit.emit(true);
@@ -2464,7 +2269,7 @@ var GeneratorComponent = /** @class */ (function () {
             if (index === undefined) {
                 this.updateCurrentIndex.emit(this.savedImageArr.length - 1);
             }
-            console.log('this.gentype', this.genType, 'is single layer', this.singleLayer);
+            console.log("this.gentype", this.genType, "is single layer", this.singleLayer);
         }.bind(this);
     };
     GeneratorComponent.prototype.drawImageScaled = function (img, ctx) {
@@ -2483,22 +2288,14 @@ var GeneratorComponent = /** @class */ (function () {
             newSource = source;
         }
         var imgObj = {
-            'name': this.savedImageArr.length + 'index',
-            'src': newSource, 'favorite': false
+            name: this.savedImageArr.length + "index",
+            src: newSource,
+            favorite: false,
         };
-        var res = true;
-        isNew = true;
-        if (isNew) {
-            this.savedImageArr.push(imgObj);
-        }
-        else {
-            this.savedImageArr[this.currImageIndex] = imgObj;
-        }
+        this.savedImageArr.push(imgObj);
         this.currImageIndex = this.savedImageArr.length - 1;
         this.saveImageFirebase.emit(imgObj);
         this.loader.nativeElement.style.visibility = "hidden";
-        this.renderDone = true;
-        this.renderDoneEmit.emit(true);
         this.renderImage();
     };
     GeneratorComponent.prototype.setCustomImages = function (clear) {
@@ -2572,8 +2369,8 @@ var GeneratorComponent = /** @class */ (function () {
             var addY = vertices[i == vertices.length - 1 ? 0 : i + 1].y;
             var subX = vertices[i == vertices.length - 1 ? 0 : i + 1].x;
             var subY = vertices[i].y;
-            total += (addX * addY * 0.5);
-            total -= (subX * subY * 0.5);
+            total += addX * addY * 0.5;
+            total -= subX * subY * 0.5;
         }
         return Math.abs(total);
     };
@@ -2586,7 +2383,9 @@ var GeneratorComponent = /** @class */ (function () {
                     case 0: return [4 /*yield*/, this.getRandomRgb()];
                     case 1:
                         tempRgb = _a.sent();
-                        complementaryColorArr = ['rgb(' + tempRgb.r + ',' + tempRgb.g + ',' + tempRgb.b + ')'];
+                        complementaryColorArr = [
+                            "rgb(" + tempRgb.r + "," + tempRgb.g + "," + tempRgb.b + ")",
+                        ];
                         currRgb = tempRgb;
                         i = 0;
                         _a.label = 2;
@@ -2595,7 +2394,7 @@ var GeneratorComponent = /** @class */ (function () {
                         return [4 /*yield*/, this.getRandomRgb()];
                     case 3:
                         currRgb = _a.sent();
-                        complementaryColorArr.push(this.convertToRgbString(currRgb));
+                        complementaryColorArr.push("rgb(" + currRgb.r + "," + currRgb.g + "," + currRgb.b + ")");
                         _a.label = 4;
                     case 4:
                         i++;
@@ -2604,107 +2403,6 @@ var GeneratorComponent = /** @class */ (function () {
                 }
             });
         });
-    };
-    GeneratorComponent.prototype.convertToRgbString = function (rgbObj) {
-        return 'rgb(' + rgbObj.r + ',' + rgbObj.g + ',' + rgbObj.b + ')';
-    };
-    GeneratorComponent.prototype.getComplementary = function (rgb) {
-        var temphsv = this.RGB2HSV(rgb);
-        temphsv.hue = this.hueShift(temphsv.hue, 180.0);
-        var finRgb = this.HSV2RGB(temphsv);
-        return finRgb;
-    };
-    GeneratorComponent.prototype.RGB2HSV = function (rgb) {
-        var hsv;
-        hsv = new Object();
-        var max = Math.max(rgb.r, rgb.g, rgb.b);
-        var dif = max - Math.min(rgb.r, rgb.g, rgb.b);
-        hsv.saturation = (max == 0.0) ? 0 : (100 * dif / max);
-        if (hsv.saturation == 0)
-            hsv.hue = 0;
-        else if (rgb.r == max)
-            hsv.hue = 60.0 * (rgb.g - rgb.b) / dif;
-        else if (rgb.g == max)
-            hsv.hue = 120.0 + 60.0 * (rgb.b - rgb.r) / dif;
-        else if (rgb.b == max)
-            hsv.hue = 240.0 + 60.0 * (rgb.r - rgb.g) / dif;
-        if (hsv.hue < 0.0)
-            hsv.hue += 360.0;
-        hsv.value = Math.round(max * 100 / 255);
-        hsv.hue = Math.round(hsv.hue);
-        hsv.saturation = Math.round(hsv.saturation);
-        return hsv;
-    };
-    // RGB2HSV and HSV2RGB are based on Color Match Remix [http://color.twysted.net/]
-    // which is based on or copied from ColorMatch 5K [http://colormatch.dk/]
-    GeneratorComponent.prototype.HSV2RGB = function (hsv) {
-        var rgb = { 'r': null, 'g': null, 'b': null };
-        if (hsv.saturation == 0) {
-            rgb['r'] = Math.round(hsv.value * 2.55);
-            rgb['g'] = Math.round(hsv.value * 2.55);
-            rgb['b'] = Math.round(hsv.value * 2.55);
-        }
-        else {
-            hsv.hue /= 60;
-            hsv.saturation /= 100;
-            hsv.value /= 100;
-            var i = Math.floor(hsv.hue);
-            var f = hsv.hue - i;
-            var p = hsv.value * (1 - hsv.saturation);
-            var q = hsv.value * (1 - hsv.saturation * f);
-            var t = hsv.value * (1 - hsv.saturation * (1 - f));
-            switch (i) {
-                case 0:
-                    rgb.r = hsv.value;
-                    rgb.g = t;
-                    rgb.b = p;
-                    break;
-                case 1:
-                    rgb.r = q;
-                    rgb.g = hsv.value;
-                    rgb.b = p;
-                    break;
-                case 2:
-                    rgb.r = p;
-                    rgb.g = hsv.value;
-                    rgb.b = t;
-                    break;
-                case 3:
-                    rgb.r = p;
-                    rgb.g = q;
-                    rgb.b = hsv.value;
-                    break;
-                case 4:
-                    rgb.r = t;
-                    rgb.g = p;
-                    rgb.b = hsv.value;
-                    break;
-                default:
-                    rgb.r = hsv.value;
-                    rgb.g = p;
-                    rgb.b = q;
-            }
-            rgb.r = Math.round(rgb.r * 255);
-            rgb.g = Math.round(rgb.g * 255);
-            rgb.b = Math.round(rgb.b * 255);
-        }
-        return rgb;
-    };
-    //Adding hueShift 
-    GeneratorComponent.prototype.hueShift = function (h, s) {
-        h += s;
-        while (h >= 360.0)
-            h -= 360.0;
-        while (h < 0.0)
-            h += 360.0;
-        return h;
-    };
-    //min max 
-    GeneratorComponent.prototype.min3 = function (a, b, c) {
-        return (a < b) ? ((a < c) ? a : c) : ((b < c) ? b : c);
-    };
-    GeneratorComponent.prototype.max3 = function (a, b, c) {
-        return (a > b) ? ((a > c) ? a : c) : ((b > c) ? b : c);
     };
     GeneratorComponent.prototype.setLastImageColor = function () {
         return __awaiter(this, void 0, void 0, function () {
@@ -2730,66 +2428,66 @@ var GeneratorComponent = /** @class */ (function () {
                     case 0:
                         num = Math.round(0xffffff * Math.random());
                         r = num >> 16;
-                        g = num >> 8 & 255;
+                        g = (num >> 8) & 255;
                         b = num & 255;
                         if (!isSecondSmallLayer) return [3 /*break*/, 2];
                         return [4 /*yield*/, this.setLastImageColor()];
                     case 1:
                         _a.sent();
-                        if ((this.lastImageColor.r + this.lastImageColor.g + this.lastImageColor.b) < 400) {
-                            while (((r + g + b) < 620)) {
+                        if (this.lastImageColor.r + this.lastImageColor.g + this.lastImageColor.b <
+                            400) {
+                            while (r + g + b < 620) {
                                 num = Math.round(0xffffff * Math.random());
                                 r = num >> 16;
-                                g = num >> 8 & 255;
+                                g = (num >> 8) & 255;
                                 b = num & 255;
                             }
                         }
                         else {
-                            while (((r + g + b) > 120)) {
+                            while (r + g + b > 120) {
                                 num = Math.round(0xffffff * Math.random());
                                 r = num >> 16;
-                                g = num >> 8 & 255;
+                                g = (num >> 8) & 255;
                                 b = num & 255;
                             }
                         }
                         return [3 /*break*/, 3];
                     case 2:
-                        // if(light) { 
                         if (this.utilities.randomlyChooseTrueOrFalseThirdReal() && !light) {
-                            while (((r + g + b) < 620)) {
+                            while (r + g + b < 620) {
                                 num = Math.round(0xffffff * Math.random());
                                 r = num >> 16;
-                                g = num >> 8 & 255;
+                                g = (num >> 8) & 255;
                                 b = num & 255;
                             }
                         }
                         else {
-                            while (((r + g + b) < 620) && ((((r + g + b) > 220) || ((r + g + b) < 120)))) {
+                            while (r + g + b < 620 && (r + g + b > 220 || r + g + b < 120)) {
                                 num = Math.round(0xffffff * Math.random());
                                 r = num >> 16;
-                                g = num >> 8 & 255;
+                                g = (num >> 8) & 255;
                                 b = num & 255;
                             }
                         }
                         if (light) {
-                            while (((r + g + b) < 620)) {
+                            while (r + g + b < 620) {
                                 num = Math.round(0xffffff * Math.random());
                                 r = num >> 16;
-                                g = num >> 8 & 255;
+                                g = (num >> 8) & 255;
                                 b = num & 255;
                             }
                         }
                         if (dark) {
-                            while (((r + g + b) > 220) || ((r + g + b) < 120)) {
+                            while (r + g + b > 220 || r + g + b < 120) {
                                 num = Math.round(0xffffff * Math.random());
                                 r = num >> 16;
-                                g = num >> 8 & 255;
+                                g = (num >> 8) & 255;
                                 b = num & 255;
                             }
                         }
                         _a.label = 3;
                     case 3:
-                        retVal = { 'r': r, 'g': g, 'b': b };
+                        retVal = { r: r, g: g, b: b };
                         return [2 /*return*/, retVal];
                 }
             });
@@ -2800,7 +2498,7 @@ var GeneratorComponent = /** @class */ (function () {
         { type: _utilities__WEBPACK_IMPORTED_MODULE_1__["Utilities"] }
     ]; };
     __decorate([
-        Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ViewChild"])('loaderCanvas'),
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ViewChild"])("loaderCanvas"),
         __metadata("design:type", Object)
     ], GeneratorComponent.prototype, "loader", void 0);
     __decorate([
@@ -2822,6 +2520,10 @@ var GeneratorComponent = /** @class */ (function () {
     __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"])(),
         __metadata("design:type", Object)
+    ], GeneratorComponent.prototype, "currImageIndex", void 0);
+    __decorate([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"])(),
+        __metadata("design:type", Object)
     ], GeneratorComponent.prototype, "customImages", void 0);
     __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"])(),
@@ -2831,13 +2533,9 @@ var GeneratorComponent = /** @class */ (function () {
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Output"])(),
         __metadata("design:type", Object)
     ], GeneratorComponent.prototype, "updateCurrentIndex", void 0);
-    __decorate([
-        Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"])(),
-        __metadata("design:type", Object)
-    ], GeneratorComponent.prototype, "currImageIndex", void 0);
     GeneratorComponent = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"])({
-            selector: 'generator',
+            selector: "generator",
             template: __importDefault(__webpack_require__(/*! raw-loader!./generator.component.html */ "./node_modules/raw-loader/dist/cjs.js!./src/app/generator/generator.component.html")).default,
             providers: [_utilities__WEBPACK_IMPORTED_MODULE_1__["Utilities"]],
             styles: [__importDefault(__webpack_require__(/*! ./generator.component.css */ "./src/app/generator/generator.component.css")).default]
@@ -2887,6 +2585,15 @@ var Utilities = /** @class */ (function () {
     Utilities.prototype.randomlyChooseTrueOrFalse = function () {
         var num = Math.random() + 1;
         if (num < 1.5) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    };
+    Utilities.prototype.randomlyChooseTrueOrFalseLessHalf = function () {
+        var num = Math.random() * 3;
+        if (num < 1.7) {
             return false;
         }
         else {
